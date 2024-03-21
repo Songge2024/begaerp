@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- qa_top_contacts[TopContacts]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2020-03-30 15:54:55 -->
+<mapper namespace="com.bl3.pm.contacts.dao.TopContactsDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="top_id" parameterType="TopContactsPO">
+		INSERT INTO qa_top_contacts (
+		<if test="top_name != null and top_name != ''">
+	         top_name, <!-- 常用联系人 -->
+		</if>
+		<if test="user_id != null">
+	         user_id, <!-- 用户ID -->
+		</if>
+		<if test="create_id != null">
+	         create_id, <!-- 创建人id -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="top_org_name_id != null and top_org_name_id != ''">
+	         top_org_name_id, <!-- 常用联系人所属部门id -->
+		</if>
+		<if test="top_org_name != null and top_org_name != ''">
+	         top_org_name, <!-- 常用联系人所属部门 -->
+		</if>
+		<if test="top_role_name != null and top_role_name != ''">
+	         top_role_name, <!-- 常用联系人角色 -->
+		</if>
+		<if test="top_sex != null and top_sex != ''">
+	         top_sex, <!-- 常用联系人性别 -->
+		</if>
+	          top_id
+		)VALUES(
+		<if test="top_name != null and top_name != ''">
+	          #{top_name, jdbcType=VARCHAR}, <!-- 常用联系人 -->
+	    </if>
+		<if test="user_id != null">
+	          #{user_id, jdbcType=INTEGER}, <!-- 用户ID -->
+	    </if>
+		<if test="create_id != null">
+	          #{create_id, jdbcType=INTEGER}, <!-- 创建人id -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+	    <if test="top_org_name_id != null and top_org_name_id != ''">
+	          #{top_org_name_id, jdbcType=VARCHAR}, <!-- 常用联系人所属部门id -->
+	    </if>
+		<if test="top_org_name != null and top_org_name != ''">
+	          #{top_org_name, jdbcType=VARCHAR}, <!-- 常用联系人所属部门 -->
+	    </if>
+		<if test="top_role_name != null and top_role_name != ''">
+	          #{top_role_name, jdbcType=VARCHAR}, <!-- 常用联系人角色 -->
+	    </if>
+		<if test="top_sex != null and top_sex != ''">
+	          #{top_sex, jdbcType=VARCHAR}, <!-- 常用联系人性别 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="top_id" parameterType="TopContactsPO">
+		INSERT INTO qa_top_contacts (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{top_id, jdbcType=INTEGER},  <!-- 常用id -->
+		    #{top_name, jdbcType=VARCHAR},  <!-- 常用联系人 -->
+		    #{user_id, jdbcType=INTEGER},  <!-- 用户ID -->
+		    #{create_id, jdbcType=INTEGER},  <!-- 创建人id -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{top_org_name, jdbcType=VARCHAR},  <!-- 常用联系人所属部门 -->
+		    #{top_role_name, jdbcType=VARCHAR},  <!-- 常用联系人角色 -->
+		    #{top_sex, jdbcType=VARCHAR}  <!-- 常用联系人性别 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="TopContactsPO">
+		UPDATE qa_top_contacts
+		<set>
+			<if test="top_id != null">
+		          top_id = #{top_id, jdbcType=INTEGER},  <!-- 常用id -->
+			</if>
+			<if test="top_name != null">
+		          top_name = #{top_name, jdbcType=VARCHAR},  <!-- 常用联系人 -->
+			</if>
+			<if test="user_id != null">
+		          user_id = #{user_id, jdbcType=INTEGER},  <!-- 用户ID -->
+			</if>
+			<if test="create_id != null">
+		          create_id = #{create_id, jdbcType=INTEGER},  <!-- 创建人id -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="top_org_name != null">
+		          top_org_name = #{top_org_name, jdbcType=VARCHAR},  <!-- 常用联系人所属部门 -->
+			</if>
+			<if test="top_role_name != null">
+		          top_role_name = #{top_role_name, jdbcType=VARCHAR},  <!-- 常用联系人角色 -->
+			</if>
+			<if test="top_sex != null">
+		          top_sex = #{top_sex, jdbcType=VARCHAR},  <!-- 常用联系人性别 -->
+			</if>
+		</set>
+		WHERE  top_id = #{top_id}
+	</update>
+	
+	<!-- 常用联系人部门下拉框 -->
+	<select id="listPrincipalOrg" resultType="Dto"> 
+		select id as value,name as display
+		from aos_org
+		where is_del = 0
+	</select>
+	
+	<select id="listUserID" resultType="Dto">			
+		SELECT
+			au. NAME AS user_name,
+			ar.name,
+			ao.name AS org_name,
+			au.sex,
+			ao.id as org_id,
+			au.id,
+			au.status,
+			au.type,
+			au.id AS user_id
+		FROM
+			`bs_proj_teams` bpt,
+			`aos_user` au,
+			`aos_role` ar,
+			`aos_org` ao,
+			`aos_user_role` aur
+		WHERE
+			bpt.`TEAM_USER_ID` = au.`id`
+			AND au.id = aur.`user_id`
+			AND aur.`role_id` = ar.`id`
+			AND au.`org_id` = ao.`id`
+			AND au.id != '-1'
+			AND au.is_del = 0
+			AND au.NAME = #{name}
+		GROUP BY
+			au.id
+		ORDER BY
+			ao.`name`,
+			ar.`name`
+	</select>
+	
+	<select id="topUserPage" resultType="Dto">
+		SELECT
+			au.name AS user_name,
+			ar.`name` AS role_name,
+			ao.`name` AS org_name,
+			au.`sex`,
+			au.id,
+			au.`status`,
+			au.`type`,
+			au.id as user_id
+		FROM
+			`bs_proj_teams` bpt,
+			`aos_user` au,
+			`aos_role` ar,
+			`aos_org` ao,
+			`aos_user_role` aur
+			WHERE bpt.`TEAM_USER_ID` = au.`id`
+			AND au.id=aur.`user_id`
+			AND aur.`role_id` = ar.`id`
+			AND au.`org_id`=ao.`id`
+			AND au.id !='-1'
+			AND au.is_del = 0
+			<if test="id !='null' and id !=''">
+				AND au.`id`  not  in (${id}) 
+			</if>
+			<if test="id_name !='null' and id_name !=''">
+				AND au.name like '%${id_name}%'
+			</if>
+			<if test="subordinate_departments != null and subordinate_departments != ''">
+				and ao.id = #{subordinate_departments}
+			</if>
+		GROUP BY au.id 
+		ORDER BY ao.`name`,ar.`name`
+	</select>
+	
+	<select id="topUsersPage" resultType="Dto">
+		SELECT
+				au.name AS user_name,
+				ar.`name` AS role_name,
+				ao.`name` AS org_name,
+				au.`sex`,
+				au.id,
+				au.`status`,
+				au.`type`,
+				au.id as user_id
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au,
+			  `aos_role` ar,
+			  `aos_org` ao,
+			  `aos_user_role` aur
+			  WHERE bpt.`TEAM_USER_ID` = au.`id`
+			  AND au.id=aur.`user_id`
+			  AND aur.`role_id` = ar.`id`
+			  AND au.`org_id`=ao.`id`
+			  AND au.id !='-1'
+			  AND au.is_del = 0
+			  <if test="id !='null' and id !=''">
+				       AND au.`id` in (${id})
+			  </if>
+			   <if test="id =='null' or id ==''">
+				      and 1=0
+			  </if>
+			  GROUP BY au.id 
+	</select>
+	
+	<select id="countUser" resultType="Integer">
+		SELECT
+			count(*)
+		FROM
+			qa_top_contacts
+		WHERE
+	       top_name = #{name}
+	       and create_id = #{create_id}
+	</select>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM qa_top_contacts WHERE  top_id = #{top_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="TopContactsPO">
+		SELECT
+		<include refid="column" />
+		FROM qa_top_contacts WHERE  top_id = #{top_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="TopContactsPO">
+		SELECT
+		    <include refid="column" />
+		FROM qa_top_contacts
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="TopContactsPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_top_contacts
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="TopContactsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_top_contacts
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="TopContactsPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_top_contacts
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="TopContactsPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_top_contacts
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="TopContactsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_top_contacts
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="TopContactsPO" useCache="false">
+	    SELECT
+			  qa_top_contacts.top_id,  <!-- 常用id -->
+			  qa_top_contacts.top_name,  <!-- 常用联系人 -->
+			  qa_top_contacts.user_id,  <!-- 用户ID -->
+			  qa_top_contacts.create_id,  <!-- 创建人id -->
+			  qa_top_contacts.create_time,  <!-- 创建时间 -->
+			  qa_top_contacts.top_org_name_id,  <!-- 常用联系人所属部门id -->
+			  qa_top_contacts.top_org_name,  <!-- 常用联系人所属部门 -->
+			  qa_top_contacts.top_role_name,  <!-- 常用联系人角色 -->
+			  qa_top_contacts.top_sex  <!-- 常用联系人性别 -->
+		FRoM qa_top_contacts
+		<where>
+		    <if test="create_id != null ">
+		      AND qa_top_contacts.create_id = #{create_id}  <!-- 创建人id -->
+			</if>
+			<if test="top_user_name != null and top_user_name != ''">
+				AND qa_top_contacts.top_name = #{top_user_name}
+			</if>
+			<if test="top_principal_org != null and top_principal_org != ''">
+				AND qa_top_contacts.top_org_name_id = #{top_principal_org}
+			</if>
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM qa_top_contacts
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM qa_top_contacts
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  top_id,  <!-- 常用id -->
+		  top_name,  <!-- 常用联系人 -->
+		  user_id,  <!-- 用户ID -->
+		  create_id,  <!-- 创建人id -->
+		  create_time,  <!-- 创建时间 -->
+		  top_org_name_id,  <!-- 常用联系人所属部门 id-->
+		  top_org_name,  <!-- 常用联系人所属部门 -->
+		  top_role_name,  <!-- 常用联系人角色 -->
+		  top_sex  <!-- 常用联系人性别 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  qa_top_contacts.top_id,  <!-- 常用id -->
+		  qa_top_contacts.top_name,  <!-- 常用联系人 -->
+		  qa_top_contacts.user_id,  <!-- 用户ID -->
+		  qa_top_contacts.create_id,  <!-- 创建人id -->
+		  qa_top_contacts.create_time,  <!-- 创建时间 -->
+		  qa_top_contacts.top_org_name_id,  <!-- 常用联系人所属部门 -->
+		  qa_top_contacts.top_org_name,  <!-- 常用联系人所属部门 -->
+		  qa_top_contacts.top_role_name,  <!-- 常用联系人角色 -->
+		  qa_top_contacts.top_sex  <!-- 常用联系人性别 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="top_id != null ">
+		      AND top_id = #{top_id}  <!-- 常用id -->
+		</if>
+	    <if test="top_name != null and top_name != ''">
+		      AND top_name = #{top_name}  <!-- 常用联系人 -->
+		</if>
+	   <if test="user_id != null ">
+		      AND user_id = #{user_id}  <!-- 用户ID -->
+		</if>
+	   <if test="create_id != null ">
+		      AND create_id = #{create_id}  <!-- 创建人id -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+		<if test="top_org_name_id != null and top_org_name_id != ''">
+		      AND top_org_name_id = #{top_org_name_id}  <!-- 常用联系人所属部门id-->
+		</if>
+	    <if test="top_org_name != null and top_org_name != ''">
+		      AND top_org_name = #{top_org_name}  <!-- 常用联系人所属部门 -->
+		</if>
+	    <if test="top_role_name != null and top_role_name != ''">
+		      AND top_role_name = #{top_role_name}  <!-- 常用联系人角色 -->
+		</if>
+	    <if test="top_sex != null and top_sex != ''">
+		      AND top_sex = #{top_sex}  <!-- 常用联系人性别 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="top_name != null and top_name != ''">
+		      AND top_name like '${top_name}%'  <!-- 常用联系人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+		<if test="top_org_name_id != null and top_org_name_id != ''">
+		      AND top_org_name_id like '${top_org_name_id}%'  <!-- 常用联系人所属部门id -->
+		</if>
+	    <if test="top_org_name != null and top_org_name != ''">
+		      AND top_org_name like '${top_org_name}%'  <!-- 常用联系人所属部门 -->
+		</if>
+	    <if test="top_role_name != null and top_role_name != ''">
+		      AND top_role_name like '${top_role_name}%'  <!-- 常用联系人角色 -->
+		</if>
+	    <if test="top_sex != null and top_sex != ''">
+		      AND top_sex like '${top_sex}%'  <!-- 常用联系人性别 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="top_name != null and top_name != ''">
+		      Or top_name like '${top_name}%'  <!-- 常用联系人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+		<if test="top_org_name_id != null and top_org_name_id != ''">
+		      Or top_org_name_id like '${top_org_name_id}%'  <!-- 常用联系人所属部门 -->
+		</if>
+	    <if test="top_org_name != null and top_org_name != ''">
+		      Or top_org_name like '${top_org_name}%'  <!-- 常用联系人所属部门 -->
+		</if>
+	    <if test="top_role_name != null and top_role_name != ''">
+		      Or top_role_name like '${top_role_name}%'  <!-- 常用联系人角色 -->
+		</if>
+	    <if test="top_sex != null and top_sex != ''">
+		      Or top_sex like '${top_sex}%'  <!-- 常用联系人性别 -->
+		</if>
+	</sql>
+	
+</mapper>

@@ -1,0 +1,1192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- re_module_divide[ModuleDivide]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-11 11:17:18 -->
+<mapper namespace="com.bl3.pm.basic.dao.ModuleDivideDao">
+	<!-- 查询下级节点 -->
+	<select id="getNextCode" resultType="String" parameterType="Dto">
+			select 
+		IFNULL((select CONCAT(xm,zj,code) code from(
+		select LPAD(PROJ_ID,5,'0') xm,
+				IFNULL((case when LENGTH(DM_CODE)>7 
+					then (SUBSTR((select r2.DM_CODE from re_module_divide r2 
+									where r2.DM_CODE=r.DM_PARENT_CODE limit 1),5)) end),'') zj,
+				IFNULL(LPAD((select max(SUBSTR(r1.DM_CODE,-3))+1 from re_module_divide r1 
+				        			where r1.DM_PARENT_CODE=r.DM_PARENT_CODE),3,0) ,'001') code
+		  from re_module_divide r
+			where proj_id='${proj_id}' and DM_PARENT_CODE='${dm_parent_code}' limit 1) a),
+			(case
+			 when '${dm_parent_code}'=1 then CONCAT(LPAD('${proj_id}',5,'0'),'001')
+				else
+					CONCAT((SELECT DM_CODE FROM re_module_divide
+						WHERE DM_CODE = '${dm_parent_code}' and proj_id='${proj_id}' limit 1 ),'001')
+			 end
+			)
+		) dm_code
+		from dual
+	</select>
+	
+	<select id="maxDmCode" resultType="String" parameterType="Dto">
+			SELECT
+				LPAD(MAX(DM_CODE)+1 ,length(MAX(DM_CODE)+1) + (5-LENGTH(PROJ_ID)) , '0')
+			FROM
+			 	re_module_divide 
+		 	WHERE
+		 		proj_id='${proj_id}'
+		 		and DM_PARENT_CODE = '${dm_parent_code}'
+	</select>
+	
+	<select id="dmCode" resultType="String" parameterType="Dto">
+			SELECT 
+				MAX(DM_CODE)
+			FROM 
+				re_module_divide 
+			WHERE 
+				PROJ_ID = '${proj_id}'
+				and DM_PARENT_CODE = '${dm_parent_code}'
+	</select>
+	
+	<select id="select_all" resultType="ModuleDividePO">
+		select r.DM_CODE,
+			r.TEST_CODE,
+			r.DM_NAME,
+			r.DM_PARENT_CODE,
+			r.DM_IS_LEAF,
+			r.STATE,r.DM_REMARK
+		from re_module_divide r
+		where proj_id = #{proj_id} and state = 1
+	</select>
+	
+	<select id="selectAll" resultType="ModuleDividePO">
+		select r.DM_CODE,
+			r.TEST_CODE,
+			r.DM_NAME,
+			r.DM_PARENT_CODE,
+			r.DM_IS_LEAF,
+			r.STATE,
+			r.DM_REMARK
+		from re_module_divide r
+		where dm_code = #{dm_code} and state = 1
+	</select>
+	
+	<select id="dmParentCode" resultType="ModuleDividePO">
+		select 
+			r.DM_PARENT_CODE
+		from re_module_divide r
+		where dm_code = #{dm_code} and state = 1
+	</select>
+	
+	<select id="codingUserID" resultType="Dto" parameterType="Dto">
+			SELECT
+				name as coding_user_name
+			FROM
+				bs_proj_teams
+				LEFT JOIN aos_user ON TEAM_USER_ID = id 
+			WHERE
+				trp_code = 10 
+				AND proj_id = #{proj_id}
+				AND team_user_id !='-1' 
+				AND state = '1'
+	</select>
+	
+	<select id="testUserID" resultType="Dto" parameterType="Dto">
+			SELECT
+				name as test_user_name
+			FROM
+				bs_proj_teams
+				LEFT JOIN aos_user ON TEAM_USER_ID = id 
+			<where>
+				trp_code = 23 
+				AND proj_id = #{proj_id}
+				AND team_user_id !='-1' 
+				AND state = '1'
+			</where>
+	</select>
+	
+	<!-- 查询多级联动下拉框数据(第一级) -->
+	<select id="listComboBoxCascadeData" resultType="Dto">
+		SELECT
+		proj_id AS value, proj_name AS display
+		FROM
+		bs_proj_commons 
+		where state ='1'
+		order by proj_id desc
+	</select>
+
+	<!-- 查询资源模块列表 -->
+	<select id="listModulesPage" resultType="Dto" parameterType="Dto">
+		SELECT
+			a.dm_code,
+			a.dm_name,
+			a.dm_parent_code,
+			a.dm_is_leaf,
+			a.dm_sort_no,
+			a.dm_remark,
+			a.test_code,
+			a.update_user_id,
+			a.create_user_id,
+			a.update_time,
+			a.create_time,
+			a.coding_user_name,
+			a.remarks,
+			a.test_user_name,
+			(select name from aos_user where a.create_user_id=id)create_user_name,
+			(select name from aos_user where a.update_user_id=id)update_user_name,
+			a.state,
+			(
+				CASE
+				WHEN a.state = 0 THEN
+					'未启用'
+				WHEN a.state = 1 THEN
+					'已启用'
+				ELSE
+					'已作废'
+				END
+			)state_name,
+			a.proj_id,
+			b.proj_name,
+			a.coding_complete,
+			a.test_complete
+		FROM
+			re_module_divide a,
+			bs_proj_commons b
+		<where>
+		    <if test="key_name != null and key_name != ''">
+			    AND (a.dm_name LIKE '%${key_name}%' or b.proj_name LIKE '%${key_name}%' )
+			</if>
+			 <if test="dm_code != null and dm_code != ''">
+			 and  ( a.dm_code = '${dm_code}' or a.dm_parent_code = '${dm_code}' )
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+			    AND a.proj_id = '${proj_id}' 
+			</if>
+			 <if test="aos_code == 'false'">
+			    AND a.dm_parent_code = #{dm_code, jdbcType=INTEGER}
+			</if>
+			<if test="root != 'true'and code != null and code != ''">
+			    AND code like '${code}%'
+			</if>
+			<if test="state != null and state != ''">
+			    AND a.state = '${state}' 
+			</if>
+			<if test="proj_name != null and proj_name != ''">
+			    AND b.proj_name LIKE '%${proj_name}%' 
+			</if>
+			<if test="coding_complete != null and coding_complete != ''">
+				AND a.coding_complete = #{coding_complete}
+			</if>
+			<if test="test_complete != null and test_complete != ''">
+				AND a.test_complete = #{test_complete}
+			</if>
+			and b.proj_id=a.proj_id
+			and a.state!="-1"
+		</where>	
+         ORDER BY a.dm_code ASC
+	</select>
+	
+	<select id="copyListModules" resultType="Dto" parameterType="Dto">
+		SELECT
+			a.dm_id,
+			a.dm_code,
+			a.dm_name,
+			a.dm_parent_code,
+			a.dm_is_leaf,
+			a.dm_sort_no,
+			a.dm_remark,
+			a.test_code,
+			a.update_user_id,
+			a.create_user_id,
+			a.update_time,
+			a.create_time,
+			a.coding_user_name,
+			a.remarks,
+			a.test_user_name,
+			(select name from aos_user where a.create_user_id=id)create_user_name,
+			(select name from aos_user where a.update_user_id=id)update_user_name,
+			a.state,
+			(
+				CASE
+				WHEN a.state = 0 THEN
+					'未启用'
+				WHEN a.state = 1 THEN
+					'已启用'
+				ELSE
+					'已作废'
+				END
+			)state_name,
+			a.proj_id,
+			b.proj_name,
+			a.coding_complete,
+			a.test_complete
+		FROM
+			re_module_divide a,
+			bs_proj_commons b
+		<where>
+		    <if test="key_name != null and key_name != ''">
+			    AND (a.dm_name LIKE '%${key_name}%' or b.proj_name LIKE '%${key_name}%' )
+			</if>
+			 <if test="dm_code != null and dm_code != ''">
+			 and  ( a.dm_code = '${dm_code}' or a.dm_parent_code = '${dm_code}' )
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+			    AND a.proj_id = '${proj_id}' 
+			</if>
+			 <if test="aos_code == 'false'">
+			    AND a.dm_parent_code = #{dm_code, jdbcType=INTEGER}
+			</if>
+			<if test="root != 'true'and code != null and code != ''">
+			    AND code like '${code}%'
+			</if>
+			<if test="state != null and state != ''">
+			    AND a.state = '${state}' 
+			</if>
+			<if test="proj_name != null and proj_name != ''">
+			    AND b.proj_name LIKE '%${proj_name}%' 
+			</if>
+			<if test="coding_complete != null and coding_complete != ''">
+				AND a.coding_complete = #{coding_complete}
+			</if>
+			<if test="test_complete != null and test_complete != ''">
+				AND a.test_complete = #{test_complete}
+			</if>
+			and b.proj_id=a.proj_id
+			and a.state = 1
+		</where>	
+		 ORDER BY a.dm_code ASC
+	</select>
+	
+	<select id="count" parameterType="Dto" resultType="Integer">
+		SELECT 
+			COUNT(*) 
+		from 
+			re_module_divide 
+		where 
+			proj_id = #{proj_id} 
+			and state = 1
+	</select>
+	
+	<select id="dmParentCodeCounts" resultType="Integer">
+		SELECT
+			count(*)
+		FROM
+			re_module_divide  
+		WHERE
+			 dm_code = #{dm_code}
+			AND state = 1
+	</select>
+	
+	<!-- 检查删除节点中是否包含根节点 -->
+	<select id="checkRootNode" resultType="ModuleDividePO" parameterType="Dto">
+	     SELECT 
+	         <include refid="com.bl3.pm.basic.dao.ModuleDivideDao.column" />
+	      FROM re_module_divide WHERE dm_code IN (${ids}) AND dm_parent_code = '0'
+	</select>
+	
+	<select id="selectSecond_id" resultType="String">
+		select dm_code
+		from re_module_divide
+		where dm_name = #{dm_name} and proj_id = #{proj_id} and state!="-1"
+	</select>
+	
+	<select id="selectByFirstName" resultType="ModuleDividePO">
+		select *
+		from re_module_divide
+		where dm_name = #{dm_name} and proj_id = #{proj_id} and state!="-1"
+	</select>
+	
+	<select id="selectBySecondName" resultType="ModuleDividePO">
+		select *
+		from re_module_divide
+		where dm_name = #{dm_name} and proj_id = #{proj_id} and state!="-1"
+	</select>
+	
+	<insert id="insertByKey"  parameterType="ModuleDividePO">
+		INSERT INTO re_module_divide (
+		<if test="dm_name != null and dm_name != ''">
+	         dm_name, <!-- 名称 -->
+		</if>
+		<if test="dm_parent_code != null and dm_parent_code != ''">
+	         dm_parent_code, <!-- 父节点 -->
+		</if>
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 测试用例编码 -->
+		</if>
+		<if test="dm_is_leaf != null and dm_is_leaf != ''">
+	         dm_is_leaf, <!-- 是否子节点 -->
+		</if>
+		<if test="dm_sort_no != null">
+	         dm_sort_no, <!-- 排序号 -->
+		</if>
+		<if test="dm_remark != null and dm_remark != ''">
+	         dm_remark, <!-- 描述 -->
+		</if>
+		<if test="proj_id != null and proj_id != ''">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+	         update_user_id, <!-- 修改人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 修改时间 -->
+		</if>
+		<if test="create_user_id != null and create_user_id != ''">
+	         create_user_id, <!-- 新增人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 新增时间 -->
+		</if>
+		<if test="coding_user_name != null and coding_user_name != ''">
+	         coding_user_name, <!-- 开发负责人 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="test_user_name != null and test_user_name != ''">
+	         test_user_name, <!-- 測試負責人 -->
+		</if>
+		<if test="remarks != null and remarks != ''">
+	         remarks, <!-- 备注 -->
+		</if>
+	   <if test="coding_complete != null">
+   			 coding_complete, <!-- 开发成功百分比 -->
+	   </if>
+	   <if test="test_complete != null">
+   			 test_complete, <!-- 测试成功百分比 -->
+	   </if>
+		<if test="dm_code != null and dm_code != ''">
+          	 dm_code  <!-- 功能模块ID -->
+	   </if>
+		)VALUES(
+		<if test="dm_name != null and dm_name != ''">
+	          #{dm_name, jdbcType=VARCHAR}, <!-- 名称 -->
+	    </if>
+		<if test="dm_parent_code != null and dm_parent_code != ''">
+	          #{dm_parent_code, jdbcType=VARCHAR}, <!-- 父节点 -->
+	    </if>
+	    <if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 测试用例编码 -->
+	    </if>
+		<if test="dm_is_leaf != null and dm_is_leaf != ''">
+	          #{dm_is_leaf, jdbcType=VARCHAR}, <!-- 是否子节点 -->
+	    </if>
+		<if test="dm_sort_no != null">
+	          #{dm_sort_no, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+		<if test="dm_remark != null and dm_remark != ''">
+	          #{dm_remark, jdbcType=VARCHAR}, <!-- 描述 -->
+	    </if>
+		<if test="proj_id != null and proj_id != ''">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="update_user_id != null and update_user_id != ''">
+	          #{update_user_id, jdbcType=VARCHAR}, <!-- 修改人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 修改时间 -->
+	    </if>
+		<if test="create_user_id != null and create_user_id != ''">
+	          #{create_user_id, jdbcType=VARCHAR}, <!-- 新增人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 新增时间 -->
+	      </if>
+		<if test="coding_user_name != null and coding_user_name != ''">
+	          #{coding_user_name, jdbcType=VARCHAR}, <!-- 开发负责人 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		<if test="test_user_name != null and test_user_name != ''">
+	          #{test_user_name, jdbcType=VARCHAR}, <!-- 測試負責人 -->
+	    </if>
+		<if test="remarks != null and remarks != ''">
+	          #{remarks, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+	    <if test="coding_complete != null">
+   			 #{coding_complete, jdbcType=VARCHAR}, <!-- 开发成功百分比 -->
+		</if>
+		<if test="test_complete != null ">
+			 #{test_complete, jdbcType=VARCHAR}, <!-- 测试成功百分比 -->
+		</if>
+		<if test="dm_code != null and dm_code != ''">
+		     #{dm_code, jdbcType=VARCHAR} <!-- 功能模块ID -->
+	    </if>
+		)
+	</insert>
+	
+	<update id="updatefirstByKey" parameterType="ModuleDividePO">
+		UPDATE re_module_divide
+		<set>
+			<if test="dm_code != null">
+		          dm_code = #{dm_code, jdbcType=VARCHAR},  <!-- 功能模块ID -->
+			</if>
+			<if test="dm_name != null">
+		          dm_name = #{dm_name, jdbcType=VARCHAR},  <!-- 名称 -->
+			</if>
+			<if test="test_code != null">
+		          test_code = #{test_code, jdbcType=VARCHAR},  <!-- 测试用例编码-->
+			</if>
+			<if test="dm_parent_code != null">
+		          dm_parent_code = #{dm_parent_code, jdbcType=VARCHAR},  <!-- 父节点 -->
+			</if>
+			<if test="dm_is_leaf != null">
+		          dm_is_leaf = #{dm_is_leaf, jdbcType=VARCHAR},  <!-- 是否子节点 -->
+			</if>
+			<if test="dm_sort_no != null">
+		          dm_sort_no = #{dm_sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="dm_remark != null">
+		          dm_remark = #{dm_remark, jdbcType=VARCHAR},  <!-- 描述 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=VARCHAR},  <!-- 修改人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=VARCHAR},  <!-- 新增人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 新增时间 -->
+			</if>
+			<if test="coding_user_name != null">
+		          coding_user_name = #{coding_user_name, jdbcType=VARCHAR},  <!-- 开发负责人 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+			<if test="test_user_name != null">
+		          test_user_name = #{test_user_name, jdbcType=VARCHAR},  <!-- 測試負責人 -->
+			</if>
+			<if test="coding_complete != null">
+				#{coding_complete, jdbcType=VARCHAR}, <!-- 开发成功百分比 -->
+			</if>
+			<if test="test_complete != null">
+				#{test_complete, jdbcType=VARCHAR}, <!-- 测试成功百分比 -->
+			</if>
+			<if test="remarks != null">
+		          remarks = #{remarks, jdbcType=VARCHAR} <!-- 备注 -->
+			</if>
+		</set>
+		WHERE  dm_code = #{dm_code}
+	</update>
+	
+	<update id="saveGrid" parameterType="Dto">
+		UPDATE re_module_divide
+		<set>
+		<if test="coding_complete != null">
+			coding_complete = #{coding_complete, jdbcType=VARCHAR}, <!-- 开发成功百分比 -->
+		</if>
+		<if test="test_complete != null">
+			test_complete = #{test_complete, jdbcType=VARCHAR}, <!-- 测试成功百分比 -->
+		</if>
+		<if test="remarks != null">
+	       remarks = #{remarks, jdbcType=VARCHAR}, <!-- 备注 -->
+		</if>
+		<if test="update_user_id != null">
+          	update_user_id = #{update_user_id, jdbcType=INTEGER}, <!-- 修改人 -->
+	    </if>
+		  	update_time = sysdate()
+		</set>
+		WHERE  dm_code = #{dm_code}
+	</update>
+	
+	<select id="exportALLExcel" resultType="ModuleDividePO">
+		SELECT
+			a.dm_name,
+			a.dm_remark,
+			a.coding_user_name,
+			a.remarks,
+			a.test_user_name,
+			a.state,
+			b.proj_name,
+			a.coding_complete,
+			a.test_complete
+		FROM
+			re_module_divide a,
+			bs_proj_commons b
+		<where>
+		    <if test="key_name != null and key_name != ''">
+			    AND (a.dm_name LIKE '%${key_name}%' or b.proj_name LIKE '%${key_name}%' )
+			</if>
+			<if test="dm_code != null and dm_code != ''">
+			 	and  dm_code like '%${dm_code}%'
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+			    AND a.proj_id = '${proj_id}' 
+			</if>
+			<if test="root != 'true'and code != null and code != ''">
+			    AND code like '${code}%'
+			</if>
+			and b.proj_id=a.proj_id
+			and a.state!="-1"
+		</where>	
+		 ORDER BY a.dm_code ASC
+	</select>
+	
+	<select id="aList" resultType="String">
+		SELECT
+			state
+		FROM 
+			re_module_divide 
+		WHERE 
+			proj_id = #{proj_id} 
+			and dm_code = #{dm_parent_code}
+	</select>
+	
+	<select id="exportAExcel" resultType="ModuleDividePO">
+		SELECT
+			a.dm_name,
+			a.dm_remark,
+			a.coding_user_name,
+			a.remarks,
+			a.test_user_name,
+			a.state,
+			b.proj_name,
+			a.coding_complete,
+			a.test_complete
+		FROM
+			re_module_divide a,
+			bs_proj_commons b
+		<where>
+		    <if test="key_name != null and key_name != ''">
+			    AND (a.dm_name LIKE '%${key_name}%' or b.proj_name LIKE '%${key_name}%' )
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+			    AND a.proj_id = '${proj_id}' 
+			</if>
+			<if test="root != 'true'and code != null and code != ''">
+			    AND code like '${code}%'
+			</if>
+			and b.proj_id=a.proj_id
+			and a.state!="-1"
+		</where>	
+		 ORDER BY a.dm_code ASC
+	</select>
+	
+	<select id="codingUser" resultType="ModuleDividePO" >
+			SELECT
+				name as coding_user_name
+			FROM
+				bs_proj_teams
+				LEFT JOIN aos_user ON TEAM_USER_ID = id 
+			WHERE
+				trp_code = 10 
+				AND proj_id = #{proj_id}
+				AND team_user_id !='-1' 
+				AND state = '1'
+	</select>
+	
+	<select id="testUser" resultType="ModuleDividePO" >
+			SELECT
+				name as test_user_name
+			FROM
+				bs_proj_teams
+				LEFT JOIN aos_user ON TEAM_USER_ID = id 
+			<where>
+				trp_code = 23 
+				AND proj_id = #{proj_id}
+				AND team_user_id !='-1' 
+				AND state = '1'
+			</where>
+	</select>
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ModuleDividePO">
+		INSERT INTO re_module_divide (
+		<if test="dm_name != null and dm_name != ''">
+	         dm_name, <!-- 名称 -->
+		</if>
+		<if test="dm_parent_code != null and dm_parent_code != ''">
+	         dm_parent_code, <!-- 父节点 -->
+		</if>
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 测试用例编码 -->
+		</if>
+		<if test="dm_is_leaf != null and dm_is_leaf != ''">
+	         dm_is_leaf, <!-- 是否子节点 -->
+		</if>
+		<if test="dm_sort_no != null">
+	         dm_sort_no, <!-- 排序号 -->
+		</if>
+		<if test="dm_remark != null and dm_remark != ''">
+	         dm_remark, <!-- 描述 -->
+		</if>
+		<if test="proj_id != null and proj_id != ''">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+	         update_user_id, <!-- 修改人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 修改时间 -->
+		</if>
+		<if test="create_user_id != null and create_user_id != ''">
+	         create_user_id, <!-- 新增人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 新增时间 -->
+		</if>
+		<if test="coding_user_name != null and coding_user_name != ''">
+	         coding_user_name, <!-- 开发负责人 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="test_user_name != null and test_user_name != ''">
+	         test_user_name, <!-- 測試負責人 -->
+		</if>
+		<if test="remarks != null and remarks != ''">
+	         remarks, <!-- 备注 -->
+		</if>
+	   <if test="coding_complete != null">
+   			 coding_complete, <!-- 开发成功百分比 -->
+	   </if>
+	   <if test="test_complete != null">
+   			 test_complete, <!-- 测试成功百分比 -->
+	   </if>
+		<if test="dm_code != null and dm_code != ''">
+          	 dm_code  <!-- 功能模块ID -->
+	   </if>
+		)VALUES(
+		<if test="dm_name != null and dm_name != ''">
+	          #{dm_name, jdbcType=VARCHAR}, <!-- 名称 -->
+	    </if>
+		<if test="dm_parent_code != null and dm_parent_code != ''">
+	          #{dm_parent_code, jdbcType=VARCHAR}, <!-- 父节点 -->
+	    </if>
+	    <if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 测试用例编码 -->
+	    </if>
+		<if test="dm_is_leaf != null and dm_is_leaf != ''">
+	          #{dm_is_leaf, jdbcType=VARCHAR}, <!-- 是否子节点 -->
+	    </if>
+		<if test="dm_sort_no != null">
+	          #{dm_sort_no, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+		<if test="dm_remark != null and dm_remark != ''">
+	          #{dm_remark, jdbcType=VARCHAR}, <!-- 描述 -->
+	    </if>
+		<if test="proj_id != null and proj_id != ''">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="update_user_id != null and update_user_id != ''">
+	          #{update_user_id, jdbcType=VARCHAR}, <!-- 修改人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 修改时间 -->
+	    </if>
+		<if test="create_user_id != null and create_user_id != ''">
+	          #{create_user_id, jdbcType=VARCHAR}, <!-- 新增人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 新增时间 -->
+	      </if>
+		<if test="coding_user_name != null and coding_user_name != ''">
+	          #{coding_user_name, jdbcType=VARCHAR}, <!-- 开发负责人 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		<if test="test_user_name != null and test_user_name != ''">
+	          #{test_user_name, jdbcType=VARCHAR}, <!-- 測試負責人 -->
+	    </if>
+		<if test="remarks != null and remarks != ''">
+	          #{remarks, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+	    <if test="coding_complete != null">
+   			 #{coding_complete, jdbcType=VARCHAR}, <!-- 开发成功百分比 -->
+		</if>
+		<if test="test_complete != null ">
+			 #{test_complete, jdbcType=VARCHAR}, <!-- 测试成功百分比 -->
+		</if>
+		<if test="dm_code != null and dm_code != ''">
+		     #{dm_code, jdbcType=VARCHAR} <!-- 功能模块ID -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ModuleDividePO">
+		INSERT INTO re_module_divide (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{dm_code, jdbcType=VARCHAR},  <!-- 功能模块ID -->
+		    #{dm_name, jdbcType=VARCHAR},  <!-- 名称 -->
+		    #{dm_parent_code, jdbcType=VARCHAR},  <!-- 父节点 -->
+		    #{test_code, jdbcType=VARCHAR},  <!-- 测试用例编码 -->
+		    #{dm_is_leaf, jdbcType=VARCHAR},  <!-- 是否子节点 -->
+		    #{dm_sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{dm_remark, jdbcType=VARCHAR},  <!-- 描述 -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{update_user_id, jdbcType=VARCHAR},  <!-- 修改人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+		    #{create_user_id, jdbcType=VARCHAR},  <!-- 新增人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 新增时间 -->
+		    #{coding_user_name, jdbcType=VARCHAR},  <!-- 开发负责人 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+		    #{test_user_name, jdbcType=VARCHAR},  <!-- 測試負責人 -->
+		    #{remarks, jdbcType=VARCHAR}  <!-- 备注 -->
+		)
+	</insert>
+<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateAllLeaf" parameterType="ModuleDividePO">
+		UPDATE re_module_divide
+		<set>
+			<if test="dm_name != null">
+		          dm_name = #{dm_name, jdbcType=VARCHAR},  <!-- 名称 -->
+			</if>
+			<if test="dm_parent_code != null">
+		          dm_parent_code = #{dm_parent_code, jdbcType=VARCHAR},  <!-- 父节点 -->
+			</if>
+			<if test="test_code != null">
+		          test_code = #{test_code, jdbcType=VARCHAR},  <!-- 测试用例编码-->
+			</if>
+			<if test="dm_is_leaf != null">
+		          dm_is_leaf = #{dm_is_leaf, jdbcType=VARCHAR},  <!-- 是否子节点 -->
+			</if>
+			<if test="dm_sort_no != null">
+		          dm_sort_no = #{dm_sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="dm_remark != null">
+		          dm_remark = #{dm_remark, jdbcType=VARCHAR},  <!-- 描述 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=VARCHAR},  <!-- 修改人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=VARCHAR},  <!-- 新增人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 新增时间 -->
+			</if>
+			<if test="coding_user_name != null">
+		          coding_user_name = #{coding_user_name, jdbcType=VARCHAR},  <!-- 开发负责人 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+			<if test="test_user_name != null">
+		          test_user_name = #{test_user_name, jdbcType=VARCHAR},  <!-- 測試負責人 -->
+			</if>
+			<if test="remarks != null">
+		          remarks = #{remarks, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+		</set>
+		WHERE    dm_code like '${dm_code}%'  
+	</update>
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ModuleDividePO">
+		UPDATE re_module_divide
+		<set>
+			<if test="dm_code != null">
+		          dm_code = #{dm_code, jdbcType=VARCHAR},  <!-- 功能模块ID -->
+			</if>
+			<if test="dm_name != null">
+		          dm_name = #{dm_name, jdbcType=VARCHAR},  <!-- 名称 -->
+			</if>
+			<if test="test_code != null">
+		          test_code = #{test_code, jdbcType=VARCHAR},  <!-- 测试用例编码-->
+			</if>
+			<if test="dm_parent_code != null">
+		          dm_parent_code = #{dm_parent_code, jdbcType=VARCHAR},  <!-- 父节点 -->
+			</if>
+			<if test="dm_is_leaf != null">
+		          dm_is_leaf = #{dm_is_leaf, jdbcType=VARCHAR},  <!-- 是否子节点 -->
+			</if>
+			<if test="dm_sort_no != null">
+		          dm_sort_no = #{dm_sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="dm_remark != null">
+		          dm_remark = #{dm_remark, jdbcType=VARCHAR},  <!-- 描述 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=VARCHAR},  <!-- 修改人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=VARCHAR},  <!-- 新增人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 新增时间 -->
+			</if>
+			<if test="coding_user_name != null">
+		          coding_user_name = #{coding_user_name, jdbcType=VARCHAR},  <!-- 开发负责人 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+			<if test="test_user_name != null">
+		          test_user_name = #{test_user_name, jdbcType=VARCHAR},  <!-- 測試負責人 -->
+			</if>
+			<if test="coding_complete != null">
+				#{coding_complete, jdbcType=VARCHAR}, <!-- 开发成功百分比 -->
+			</if>
+			<if test="test_complete != null">
+				#{test_complete, jdbcType=VARCHAR}, <!-- 测试成功百分比 -->
+			</if>
+			<if test="remarks != null">
+		          remarks = #{remarks, jdbcType=VARCHAR} <!-- 备注 -->
+			</if>
+		</set>
+		WHERE  dm_code = #{dm_code}
+	</update>
+	
+	<select id="selectFirst_id" resultType="String">
+		SELECT
+			dm_code
+		FROM re_module_divide WHERE  dm_name = #{dm_name} and proj_id = #{proj_id} and state != -1
+	</select>
+	
+	<select id="selectParent_id" resultType="String">
+		SELECT
+			dm_code
+		FROM re_module_divide WHERE  dm_parent_code = #{first_id} and dm_name = #{dm_name} and state != -1
+	</select>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM re_module_divide WHERE  dm_code = #{dm_code}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ModuleDividePO">
+		SELECT
+		<include refid="column" />
+		FROM re_module_divide WHERE  dm_code = #{dm_code}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ModuleDividePO">
+		SELECT
+		    <include refid="column" />
+		FROM re_module_divide
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="listOnState" parameterType="Dto" resultType="ModuleDividePO">
+		SELECT
+			<include refid="column" />	
+		FROM re_module_divide
+		<where>
+		    <include refid="equal" />
+		 and state='1'
+		</where>	
+	</select>
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ModuleDividePO">
+		SELECT
+			<include refid="column" />,
+			round((coding_complete * 0.6 + test_complete * 0.4), 2) as module_percent
+		FROM re_module_divide
+		<where>
+		    <include refid="equal" />
+		 and state!='-1'
+		</where>	
+	</select>
+	
+	<!-- 查询模块的完成百分比 -->
+	<select id="completeQuery" parameterType="Dto" resultType="java.lang.String">
+		SELECT 
+			round(sum(coding_complete) / count(*)  * 0.6 + sum(test_complete) / count(*) * 0.4, 2) as module_percent
+		FROM 
+			re_module_divide 
+		where 
+			dm_code like '${dm_code}%' 
+			and dm_is_leaf = '1'	
+			and state != '-1'			
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ModuleDividePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM re_module_divide
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ModuleDividePO">
+		SELECT
+			<include refid="column" />	
+		FROM re_module_divide
+		<where>
+		    <include refid="like" />
+		    and state!='-1'
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ModuleDividePO">
+		SELECT
+			<include refid="column" />	
+		FROM re_module_divide
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ModuleDividePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM re_module_divide
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ModuleDividePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM re_module_divide
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM re_module_divide
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM re_module_divide
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	
+	
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  dm_code,  <!-- 功能模块ID -->
+		  dm_name,  <!-- 名称 -->
+		  test_code,<!--测试编码  -->
+		  dm_parent_code,  <!-- 父节点 -->
+		  dm_is_leaf,  <!-- 是否子节点 -->
+		  dm_sort_no,  <!-- 排序号 -->
+		  dm_remark,  <!-- 描述 -->
+		  proj_id,  <!-- 项目ID -->
+		  update_user_id,  <!-- 修改人 -->
+		  update_time,  <!-- 修改时间 -->
+		  create_user_id,  <!-- 新增人 -->
+		  create_time,  <!-- 新增时间 -->
+		  coding_user_name,  <!-- 开发负责人 -->
+		  state,  <!-- 状态 -->
+		  test_user_name,  <!-- 測試負責人 -->
+		  remarks,  <!-- 备注 -->
+		  coding_complete,
+		  test_complete
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  re_module_divide.dm_code,  <!-- 功能模块ID -->
+		  re_module_divide.dm_name,  <!-- 名称 -->
+		  re_module_divide.dm_parent_code,  <!-- 父节点 -->
+		  re_module_divide.dm_is_leaf,  <!-- 是否子节点 -->
+		  re_module_divide.dm_sort_no,  <!-- 排序号 -->
+		  re_module_divide.dm_remark,  <!-- 描述 -->
+		  re_module_divide.proj_id,  <!-- 项目ID -->
+		  re_module_divide.update_user_id,  <!-- 修改人 -->
+		  re_module_divide.update_time,  <!-- 修改时间 -->
+		  re_module_divide.create_user_id,  <!-- 新增人 -->
+		  re_module_divide.create_time,  <!-- 新增时间 -->
+		  re_module_divide.coding_user_name,  <!-- 开发负责人 -->
+		  re_module_divide.state,  <!-- 状态 -->
+		  re_module_divide.test_user_name,  <!-- 測試負責人 -->
+		  re_module_divide.remarks,  <!-- 备注 -->
+		  re_module_divide.coding_complete,  <!-- 备注 -->
+    	  re_module_divide.test_complete  <!-- 备注 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	    <if test="dm_code != null and dm_code != ''">
+		      AND dm_code = #{dm_code}  <!-- 功能模块ID -->
+		</if>
+	    <if test="dm_name != null and dm_name != ''">
+		      AND dm_name = #{dm_name}  <!-- 名称 -->
+		</if>
+	    <if test="dm_parent_code != null and dm_parent_code != ''">
+		      AND dm_parent_code = #{dm_parent_code}  <!-- 父节点 -->
+		</if>
+	    <if test="dm_is_leaf != null and dm_is_leaf != ''">
+		      AND dm_is_leaf = #{dm_is_leaf}  <!-- 是否子节点 -->
+		</if>
+	   <if test="dm_sort_no != null ">
+		      AND dm_sort_no = #{dm_sort_no}  <!-- 排序号 -->
+		</if>
+	    <if test="dm_remark != null and dm_remark != ''">
+		      AND dm_remark = #{dm_remark}  <!-- 描述 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id = #{update_user_id}  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 修改时间 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id = #{create_user_id}  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 新增时间 -->
+		</if>
+	    <if test="coding_user_name != null and coding_user_name != ''">
+		      AND coding_user_name = #{coding_user_name}  <!-- 开发负责人 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	    <if test="test_user_name != null and test_user_name != ''">
+		      AND test_user_name = #{test_user_name}  <!-- 測試負責人 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks = #{remarks}  <!-- 备注 -->
+		</if>
+		 <if test="coding_complete != null and coding_complete != ''">
+		      AND coding_complete = #{coding_complete}  <!-- 备注 -->
+		</if>
+		 <if test="test_complete != null and test_complete != ''">
+		      AND test_complete = #{test_complete}  <!-- 备注 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="dm_code != null and dm_code != ''">
+		      AND dm_code like '${dm_code}%'  <!-- 功能模块ID -->
+		</if>
+	    <if test="dm_name != null and dm_name != ''">
+		      AND dm_name like '${dm_name}%'  <!-- 名称 -->
+		</if>
+	    <if test="dm_parent_code != null and dm_parent_code != ''">
+		      AND dm_parent_code like '${dm_parent_code}%'  <!-- 父节点 -->
+		</if>
+	    <if test="dm_is_leaf != null and dm_is_leaf != ''">
+		      AND dm_is_leaf like '${dm_is_leaf}%'  <!-- 是否子节点 -->
+		</if>
+	    <if test="dm_remark != null and dm_remark != ''">
+		      AND dm_remark like '${dm_remark}%'  <!-- 描述 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id like '${proj_id}%'  <!-- 项目ID -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id like '${update_user_id}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id like '${create_user_id}%'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+	        <if test="coding_user_name != null and coding_user_name != ''">
+		      AND coding_user_name like '${coding_user_name}%'  <!-- 开发负责人 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	    <if test="test_user_name != null and test_user_name != ''">
+		      AND test_user_name like '${test_user_name}%'  <!-- 測試負責人 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks like '${remarks}%'  <!-- 备注 -->
+		</if>
+		<if test="coding_complete != null and coding_complete != ''">
+		      AND coding_complete like '${coding_complete}%'  <!-- 备注 -->
+		</if>
+		 <if test="test_complete != null and test_complete != ''">
+		      AND test_complete like '${test_complete}%'  <!-- 备注 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="dm_code != null and dm_code != ''">
+		      Or dm_code like '${dm_code}%'  <!-- 功能模块ID -->
+		</if>
+	    <if test="dm_name != null and dm_name != ''">
+		      Or dm_name like '${dm_name}%'  <!-- 名称 -->
+		</if>
+	    <if test="dm_parent_code != null and dm_parent_code != ''">
+		      Or dm_parent_code like '${dm_parent_code}%'  <!-- 父节点 -->
+		</if>
+	    <if test="dm_is_leaf != null and dm_is_leaf != ''">
+		      Or dm_is_leaf like '${dm_is_leaf}%'  <!-- 是否子节点 -->
+		</if>
+	    <if test="dm_remark != null and dm_remark != ''">
+		      Or dm_remark like '${dm_remark}%'  <!-- 描述 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      Or proj_id like '${proj_id}%'  <!-- 项目ID -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      Or update_user_id like '${update_user_id}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      Or create_user_id like '${create_user_id}%'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+	 	<if test="coding_user_name != null and coding_user_name != ''">
+		      Or coding_user_name like '${coding_user_name}%'  <!-- 开发负责人 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	    <if test="test_user_name != null and test_user_name != ''">
+		      Or test_user_name like '${test_user_name}%'  <!-- 測試負責人 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      Or remarks like '${remarks}%'  <!-- 备注 -->
+	    </if>
+	    <if test="coding_complete != null and coding_complete != ''">
+		      Or coding_complete like '${coding_complete}%'  <!-- 备注 -->
+		</if>
+		 <if test="test_complete != null and test_complete != ''">
+		      Or test_complete like '${test_complete}%'  <!-- 备注 -->
+		</if>
+	</sql>
+	
+	
+</mapper>

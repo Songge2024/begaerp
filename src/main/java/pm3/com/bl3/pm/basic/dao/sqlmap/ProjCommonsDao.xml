@@ -1,0 +1,777 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_proj_commons[ProjCommons]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-11 10:44:06 -->
+<mapper namespace="com.bl3.pm.basic.dao.ProjCommonsDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ProjCommonsPO">
+		INSERT INTO bs_proj_commons (
+		<if test="proj_code != null and proj_code != ''">
+	         proj_code, <!-- 项目编码 -->
+		</if>
+		<if test="proj_name != null and proj_name != ''">
+	         proj_name, <!-- 项目名称 -->
+		</if>
+		<if test="project_for_short != null and project_for_short != ''">
+	         project_for_short, <!-- 项目简称 -->
+		</if>
+		<if test="pm_user_id != null">
+	         pm_user_id, <!-- 项目经理 -->
+		</if>
+		<if test="pm2_user_id != null">
+	         pm2_user_id, <!-- 程序经理 -->
+		</if>
+		<if test="client_name != null and client_name != ''">
+	         client_name, <!-- 客户名称 -->
+		</if>
+		<if test="client_address != null and client_address != ''">
+	         client_address, <!-- 客户地址 -->
+		</if>
+		<if test="client_out_name != null and client_out_name != ''">
+	         client_out_name, <!-- 客户项目责任人姓名 -->
+		</if>
+		<if test="client_out_phone != null and client_out_phone != ''">
+	         client_out_phone, <!-- 客户项目责任人电话 -->
+		</if>
+		<if test="begin_date != null">
+	         begin_date, <!-- 项目启动时间 -->
+		</if>
+		<if test="plan_completion_time != null">
+	         plan_completion_time, <!-- 计划完成时间 -->
+		</if>
+		<if test="period != null">
+	         period, <!-- 项目计划周期 -->
+		</if>
+		<if test="ct_code != null and ct_code != ''">
+	         ct_code, <!-- 合同号 -->
+		</if>
+		<if test="ct_money != null">
+	         ct_money, <!-- 合同金额 -->
+		</if>
+		<if test="pt_desc != null and pt_desc != ''">
+	         pt_desc, <!-- 付款条件说明 -->
+		</if>
+		<if test="rt_desc != null and rt_desc != ''">
+	         rt_desc, <!-- 回款说明 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="type_code != null and type_code != ''">
+	         type_code, <!-- 类型CODE -->
+		</if>
+	         create_time, <!-- 创建时间 -->
+	    <if test="plan_workload != null and plan_workload != ''">
+	         plan_workload <!-- 计划完成工作总量 -->
+		</if>
+		)VALUES(
+		<if test="proj_code != null and proj_code != ''">
+	          #{proj_code, jdbcType=VARCHAR}, <!-- 项目编码 -->
+	    </if>
+		<if test="proj_name != null and proj_name != ''">
+	          #{proj_name, jdbcType=VARCHAR}, <!-- 项目名称 -->
+	    </if>
+	    <if test="project_for_short != null and project_for_short != ''">
+	          #{project_for_short, jdbcType=VARCHAR}, <!-- 项目简称 -->
+	    </if>
+		<if test="pm_user_id != null">
+	          #{pm_user_id, jdbcType=INTEGER}, <!-- 项目经理 -->
+	    </if>
+		<if test="pm2_user_id != null">
+	          #{pm2_user_id, jdbcType=INTEGER}, <!-- 程序经理 -->
+	    </if>
+		<if test="client_name != null and client_name != ''">
+	          #{client_name, jdbcType=VARCHAR}, <!-- 客户名称 -->
+	    </if>
+		<if test="client_address != null and client_address != ''">
+	          #{client_address, jdbcType=VARCHAR}, <!-- 客户地址 -->
+	    </if>
+		<if test="client_out_name != null and client_out_name != ''">
+	          #{client_out_name, jdbcType=VARCHAR}, <!-- 客户项目责任人姓名 -->
+	    </if>
+		<if test="client_out_phone != null and client_out_phone != ''">
+	          #{client_out_phone, jdbcType=VARCHAR}, <!-- 客户项目责任人电话 -->
+	    </if>
+		<if test="begin_date != null">
+	          #{begin_date, jdbcType=DATE}, <!-- 项目启动时间 -->
+	    </if>
+	    <if test="plan_completion_time != null">
+	          #{plan_completion_time, jdbcType=DATE}, <!-- 计划完成时间 -->
+	    </if>
+		<if test="period != null">
+	          #{period, jdbcType=INTEGER}, <!-- 项目计划周期 -->
+	    </if>
+		<if test="ct_code != null and ct_code != ''">
+	          #{ct_code, jdbcType=VARCHAR}, <!-- 合同号 -->
+	    </if>
+		<if test="ct_money != null">
+	          #{ct_money, jdbcType=NUMERIC}, <!-- 合同金额 -->
+	    </if>
+		<if test="pt_desc != null and pt_desc != ''">
+	          #{pt_desc, jdbcType=VARCHAR}, <!-- 付款条件说明 -->
+	    </if>
+		<if test="rt_desc != null and rt_desc != ''">
+	          #{rt_desc, jdbcType=VARCHAR}, <!-- 回款说明 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="type_code != null and type_code != ''">
+	          #{type_code, jdbcType=VARCHAR}, <!-- 类型CODE -->
+	    </if>
+	    sysdate(),
+	    <if test="plan_workload != null and plan_workload != ''">
+	          #{plan_workload, jdbcType=VARCHAR} <!-- 计划完成工作总量 -->
+	    </if>
+		)
+	
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ProjCommonsPO">
+		INSERT INTO bs_proj_commons (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{type_code, jdbcType=VARCHAR},  <!-- 类型CODE -->
+		    #{proj_code, jdbcType=VARCHAR},  <!-- 项目编码 -->
+		    #{proj_name, jdbcType=VARCHAR},  <!-- 项目名称 -->
+		    #{project_for_short, jdbcType=VARCHAR},  <!-- 项目简称 -->
+		    #{pm_user_id, jdbcType=INTEGER},  <!-- 项目经理 -->
+		    #{pm2_user_id, jdbcType=INTEGER},  <!-- 程序经理 -->
+		    #{client_name, jdbcType=VARCHAR},  <!-- 客户名称 -->
+		    #{client_address, jdbcType=VARCHAR},  <!-- 客户地址 -->
+		    #{client_out_name, jdbcType=VARCHAR},  <!-- 客户项目责任人姓名 -->
+		    #{client_out_phone, jdbcType=VARCHAR},  <!-- 客户项目责任人电话 -->
+		    #{begin_date, jdbcType=DATE},  <!-- 项目启动时间 -->
+		    #{period, jdbcType=INTEGER},  <!-- 项目计划周期 -->
+		    #{ct_code, jdbcType=VARCHAR},  <!-- 合同号 -->
+		    #{ct_money, jdbcType=NUMERIC},  <!-- 合同金额 -->
+		    #{pt_desc, jdbcType=VARCHAR},  <!-- 付款条件说明 -->
+		    #{rt_desc, jdbcType=VARCHAR},  <!-- 回款说明 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR}  <!-- 更新时间 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProjCommonsPO">
+		UPDATE bs_proj_commons
+		<set>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="type_code != null">
+		          type_code = #{type_code, jdbcType=VARCHAR},  <!-- 类型CODE -->
+			</if>
+			<if test="proj_code != null">
+		          proj_code = #{proj_code, jdbcType=VARCHAR},  <!-- 项目编码 -->
+			</if>
+			<if test="proj_name != null">
+		          proj_name = #{proj_name, jdbcType=VARCHAR},  <!-- 项目名称 -->
+			</if>
+			<if test="project_for_short != null">
+		          project_for_short = #{project_for_short, jdbcType=VARCHAR},  <!-- 项目简称 -->
+			</if>
+			<if test="pm_user_id != null">
+		          pm_user_id = #{pm_user_id, jdbcType=INTEGER},  <!-- 项目经理 -->
+			</if>
+			<if test="pm2_user_id != null">
+		          pm2_user_id = #{pm2_user_id, jdbcType=INTEGER},  <!-- 程序经理 -->
+			</if>
+			<if test="client_name != null">
+		          client_name = #{client_name, jdbcType=VARCHAR},  <!-- 客户名称 -->
+			</if>
+			<if test="client_address != null">
+		          client_address = #{client_address, jdbcType=VARCHAR},  <!-- 客户地址 -->
+			</if>
+			<if test="client_out_name != null">
+		          client_out_name = #{client_out_name, jdbcType=VARCHAR},  <!-- 客户项目责任人姓名 -->
+			</if>
+			<if test="client_out_phone != null">
+		          client_out_phone = #{client_out_phone, jdbcType=VARCHAR},  <!-- 客户项目责任人电话 -->
+			</if>
+			<if test="begin_date != null">
+		          begin_date = #{begin_date, jdbcType=DATE},  <!-- 项目启动时间 -->
+			</if>
+			<if test="accept_date != null">
+		          accept_date = #{accept_date, jdbcType=DATE},  <!-- 项目验收时间 -->
+			</if>
+			<if test="period != null">
+		          period = #{period, jdbcType=INTEGER},  <!-- 项目计划周期 -->
+			</if>
+			<if test="ct_code != null">
+		          ct_code = #{ct_code, jdbcType=VARCHAR},  <!-- 合同号 -->
+			</if>
+			<if test="ct_money != null">
+		          ct_money = #{ct_money, jdbcType=NUMERIC},  <!-- 合同金额 -->
+			</if>
+			<if test="pt_desc != null">
+		          pt_desc = #{pt_desc, jdbcType=VARCHAR},  <!-- 付款条件说明 -->
+			</if>
+			<if test="rt_desc != null">
+		          rt_desc = #{rt_desc, jdbcType=VARCHAR},  <!-- 回款说明 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="plan_completion_time != null">
+		          plan_completion_time = #{plan_completion_time, jdbcType=DATE},  <!-- 计划完成时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+		          update_time = sysdate(),  <!-- 更新时间 -->
+		     <if test="plan_workload != null">
+		          plan_workload = #{plan_workload, jdbcType=VARCHAR},  <!-- 计划完成工作总量 -->
+			</if>
+		</set>
+		WHERE  proj_id = #{proj_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_proj_commons WHERE  proj_id = #{proj_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProjCommonsPO">
+		SELECT
+		<include refid="column" />
+		FROM bs_proj_commons WHERE  proj_id = #{proj_id} 
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProjCommonsPO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_proj_commons
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProjCommonsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_commons
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProjCommonsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_commons
+		<where>
+		    <include refid="equal" />
+		    
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProjCommonsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_commons
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProjCommonsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_commons
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProjCommonsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_commons
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ProjCommonsPO" useCache="false">
+	    SELECT
+			<include refid="column" />
+		FRoM bs_proj_commons
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_proj_commons
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_proj_commons
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  proj_id,  <!-- 项目ID -->
+		  type_code,  <!-- 类型CODE -->
+		  proj_code,  <!-- 项目编码 -->
+		  proj_name,  <!-- 项目名称 -->
+		  project_for_short,  <!-- 项目简称 -->
+		  pm_user_id,  <!-- 项目经理 -->
+		  pm2_user_id,  <!-- 程序经理 -->
+		  client_name,  <!-- 客户名称 -->
+		  client_address,  <!-- 客户地址 -->
+		  client_out_name,  <!-- 客户项目责任人姓名 -->
+		  client_out_phone,  <!-- 客户项目责任人电话 -->
+		  begin_date,  <!-- 项目启动时间 -->
+		  period,  <!-- 项目计划周期 -->
+		  accept_date,  <!-- 项目验收时间 -->
+		  ct_code,  <!-- 合同号 -->
+		  ct_money,  <!-- 合同金额 -->
+		  pt_desc,  <!-- 付款条件说明 -->
+		  rt_desc,  <!-- 回款说明 -->
+		  state,  <!-- 状态 -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  plan_completion_time<!-- 计划完成时间 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_proj_commons.proj_id,  <!-- 项目ID -->
+		  bs_proj_commons.type_code,  <!-- 类型CODE -->
+		  bs_proj_commons.proj_code,  <!-- 项目编码 -->
+		  bs_proj_commons.proj_name,  <!-- 项目名称 -->
+		  bs_proj_commons.project_for_short,  <!-- 项目简称 -->
+		  bs_proj_commons.pm_user_id,  <!-- 项目经理 -->
+		  bs_proj_commons.pm2_user_id,  <!-- 程序经理 -->
+		  bs_proj_commons.client_name,  <!-- 客户名称 -->
+		  bs_proj_commons.client_address,  <!-- 客户地址 -->
+		  bs_proj_commons.client_out_name,  <!-- 客户项目责任人姓名 -->
+		  bs_proj_commons.client_out_phone,  <!-- 客户项目责任人电话 -->
+		  bs_proj_commons.begin_date,  <!-- 项目启动时间 -->
+		  bs_proj_commons.period,  <!-- 项目计划周期 -->
+		  bs_proj_commons.accept_date,  <!-- 项目验收时间 -->
+		  bs_proj_commons.ct_code,  <!-- 合同号 -->
+		  bs_proj_commons.ct_money,  <!-- 合同金额 -->
+		  bs_proj_commons.pt_desc,  <!-- 付款条件说明 -->
+		  bs_proj_commons.rt_desc,  <!-- 回款说明 -->
+		  bs_proj_commons.state,  <!-- 状态 -->
+		  bs_proj_commons.create_user_id,  <!-- 创建人 -->
+		  bs_proj_commons.create_time,  <!-- 创建时间 -->
+		  bs_proj_commons.update_user_id,  <!-- 更新人 -->
+		  bs_proj_commons.update_time,  <!-- 更新时间 -->
+		  bs_proj_commons.plan_completion_time,<!-- 计划完成时间 -->
+		  bs_proj_commons.plan_workload<!-- 计划完成工作总量 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+		state <![CDATA[<>]]> "-1"
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="type_code != null and type_code != ''">
+		      AND type_code = #{type_code}  <!-- 类型CODE -->
+		</if>
+	    <if test="proj_code != null and proj_code != ''">
+		      AND proj_code = #{proj_code}  <!-- 项目编码 -->
+		</if>
+	    <if test="proj_name != null and proj_name != ''">
+		      AND proj_name = #{proj_name}  <!-- 项目名称 -->
+		</if>
+		  <if test="project_for_short != null and project_for_short != ''">
+		      AND project_for_short = #{project_for_short}  <!-- 项目简称 -->
+		</if>
+	   <if test="pm_user_id != null ">
+		      AND pm_user_id = #{pm_user_id}  <!-- 项目经理 -->
+		</if>
+	   <if test="pm2_user_id != null ">
+		      AND pm2_user_id = #{pm2_user_id}  <!-- 程序经理 -->
+		</if>
+	    <if test="client_name != null and client_name != ''">
+		      AND client_name = #{client_name}  <!-- 客户名称 -->
+		</if>
+	    <if test="client_address != null and client_address != ''">
+		      AND client_address = #{client_address}  <!-- 客户地址 -->
+		</if>
+	    <if test="client_out_name != null and client_out_name != ''">
+		      AND client_out_name = #{client_out_name}  <!-- 客户项目责任人姓名 -->
+		</if>
+	    <if test="client_out_phone != null and client_out_phone != ''">
+		      AND client_out_phone = #{client_out_phone}  <!-- 客户项目责任人电话 -->
+		</if>
+	   <if test="begin_date != null ">
+		      AND begin_date = #{begin_date}  <!-- 项目启动时间 -->
+		</if>
+	   <if test="period != null ">
+		      AND period = #{period}  <!-- 项目计划周期 -->
+		</if>
+	    <if test="ct_code != null and ct_code != ''">
+		      AND ct_code = #{ct_code}  <!-- 合同号 -->
+		</if>
+	   <if test="ct_money != null ">
+		      AND ct_money = #{ct_money}  <!-- 合同金额 -->
+		</if>
+	    <if test="pt_desc != null and pt_desc != ''">
+		      AND pt_desc = #{pt_desc}  <!-- 付款条件说明 -->
+		</if>
+	    <if test="rt_desc != null and rt_desc != ''">
+		      AND rt_desc = #{rt_desc}  <!-- 回款说明 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+		 <if test="plan_completion_time != null and plan_completion_time != ''">
+		      AND plan_completion_time = #{plan_completion_time}  <!-- 计划完成时间 -->
+		</if>
+		
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+		state <![CDATA[<>]]> "-1"
+	    <if test="type_code != null and type_code != ''">
+		      AND type_code like '${type_code}%'  <!-- 类型CODE -->
+		</if>
+	    <if test="proj_code != null and proj_code != ''">
+		      AND proj_code like '${proj_code}%'  <!-- 项目编码 -->
+		</if>
+	    <if test="proj_name != null and proj_name != ''">
+		      AND proj_name like '${proj_name}%'  <!-- 项目名称 -->
+		</if>
+		<if test="project_for_short != null and project_for_short != ''">
+		      AND project_for_short like '${project_for_short}%'  <!-- 项目名称 -->
+		</if>
+	    <if test="client_name != null and client_name != ''">
+		      AND client_name like '${client_name}%'  <!-- 客户名称 -->
+		</if>
+	    <if test="client_address != null and client_address != ''">
+		      AND client_address like '${client_address}%'  <!-- 客户地址 -->
+		</if>
+	    <if test="client_out_name != null and client_out_name != ''">
+		      AND client_out_name like '${client_out_name}%'  <!-- 客户项目责任人姓名 -->
+		</if>
+	    <if test="client_out_phone != null and client_out_phone != ''">
+		      AND client_out_phone like '${client_out_phone}%'  <!-- 客户项目责任人电话 -->
+		</if>
+	    <if test="ct_code != null and ct_code != ''">
+		      AND ct_code like '${ct_code}%'  <!-- 合同号 -->
+		</if>
+	    <if test="pt_desc != null and pt_desc != ''">
+		      AND pt_desc like '${pt_desc}%'  <!-- 付款条件说明 -->
+		</if>
+	    <if test="rt_desc != null and rt_desc != ''">
+		      AND rt_desc like '${rt_desc}%'  <!-- 回款说明 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		 <if test="plan_completion_time != null and plan_completion_time != ''">
+		      AND plan_completion_time like '${plan_completion_time}%'  <!-- 计划完成时间 -->
+		</if>
+		
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+		state <![CDATA[<>]]> "-1"
+	    <if test="type_code != null and type_code != ''">
+		      Or type_code like '${type_code}%'  <!-- 类型CODE -->
+		</if>
+	    <if test="proj_code != null and proj_code != ''">
+		      Or proj_code like '${proj_code}%'  <!-- 项目编码 -->
+		</if>
+	    <if test="proj_name != null and proj_name != ''">
+		      Or proj_name like '${proj_name}%'  <!-- 项目名称 -->
+		</if>
+		<if test="project_for_short != null and project_for_short != ''">
+		      Or project_for_short like '${project_for_short}%'  <!-- 项目名称 -->
+		</if>
+	    <if test="client_name != null and client_name != ''">
+		      Or client_name like '${client_name}%'  <!-- 客户名称 -->
+		</if>
+	    <if test="client_address != null and client_address != ''">
+		      Or client_address like '${client_address}%'  <!-- 客户地址 -->
+		</if>
+	    <if test="client_out_name != null and client_out_name != ''">
+		      Or client_out_name like '${client_out_name}%'  <!-- 客户项目责任人姓名 -->
+		</if>
+	    <if test="client_out_phone != null and client_out_phone != ''">
+		      Or client_out_phone like '${client_out_phone}%'  <!-- 客户项目责任人电话 -->
+		</if>
+	    <if test="ct_code != null and ct_code != ''">
+		      Or ct_code like '${ct_code}%'  <!-- 合同号 -->
+		</if>
+	    <if test="pt_desc != null and pt_desc != ''">
+		      Or pt_desc like '${pt_desc}%'  <!-- 付款条件说明 -->
+		</if>
+	    <if test="rt_desc != null and rt_desc != ''">
+		      Or rt_desc like '${rt_desc}%'  <!-- 回款说明 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		 <if test="plan_completion_time != null and plan_completion_time != ''">
+		      Or plan_completion_time like '${plan_completion_time}%'  <!-- 计划完成时间 -->
+		</if>
+		
+	</sql>
+	
+	
+<!-- 公共grid渲染数据 查询 -->
+	<select id="listGridRendererData" resultType="Dto">
+		SELECT * FROM ${tabname}
+	</select>
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="listTree" parameterType="Dto" resultType="ProjCommonsPO">
+		SELECT 
+			bpc.`TYPE_CODE`,
+			bpc.`PROJ_ID`,
+			bpc.`PROJ_NAME`
+			FROM
+			  `bs_proj_commons` bpc,
+			  `bs_proj_teams` bpt
+			where bpc.state ='1'
+			<if test="userid != null and userid != ''">
+				    and bpt.`TEAM_USER_ID` =${userid}
+				</if>
+			AND bpt.`PROJ_ID` = bpc.`PROJ_ID`
+			AND bpt.`TRP_CODE` IN (26)
+			GROUP BY bpc.proj_id
+	</select>
+	
+	<select id="exportALLExcel" resultType="Dto">
+		select  bs_proj_commons.proj_code,
+				bs_proj_commons.proj_name,
+				bs_proj_commons.project_for_short,
+				bs_proj_commons.begin_date,
+				bs_proj_commons.state,
+				bs_proj_commons.plan_completion_time,
+				bs_proj_teams.TRP_CODE,
+				bs_proj_role_types.TRP_NAME as trp_name,
+				bs_proj_teams.TEAM_USER_ID,
+				aos_user.name as team_user_name,
+				bs_proj_teams.develop_task_user,
+				devlop_user.name as develop_task_user_name,
+				aos_user.check_user_id,
+				check_user.name check_user_name,
+				bs_proj_types.type_code,
+				bs_proj_types.type_name
+		from 	bs_proj_commons,
+				bs_proj_teams
+					left join aos_user as devlop_user on bs_proj_teams.develop_task_user = devlop_user.id, 
+				bs_proj_role_types, 
+				aos_user
+					left join aos_user as check_user on aos_user.check_user_id = check_user.id,
+				bs_proj_types	
+		<where>
+		 		bs_proj_commons.proj_id = bs_proj_teams.proj_id 
+				and bs_proj_teams.team_user_id != '-1' 
+				and bs_proj_teams.state ='1'
+				and bs_proj_teams.TRP_CODE = bs_proj_role_types.TRP_CODE
+				and bs_proj_teams.TEAM_USER_ID = aos_user.id
+				and bs_proj_commons.type_code = bs_proj_types.TYPE_CODE
+				and bs_proj_commons.state != -1
+				<if test="proj_name != null and proj_name != ''">
+			      	and bs_proj_commons.proj_name like '%${proj_name}%'  <!-- 项目名称 -->
+				</if>
+		</where>
+	</select>
+	
+	<!-- 查询项目基础信息列表 -->
+	<select id="queryProjBaseDataPage" resultType="Dto" parameterType="Dto">
+		SELECT
+			<include refid="column2" />,
+			a.ct_id AS for_ct_id,
+  			a.ct_name AS for_ct_name,
+			(SELECT 
+			  GROUP_CONCAT(au.`name`)AS NAME
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au
+			  WHERE bpt.`PROJ_ID` = bs_proj_commons.`PROJ_ID`
+			  AND bpt.`TRP_CODE` = '26'
+			  AND au.id = bpt.`TEAM_USER_ID`
+			  AND bpt.state = '1') pm_user_name,
+			  (SELECT 
+			  GROUP_CONCAT(au.`name`)AS NAME
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au
+			  WHERE bpt.`PROJ_ID` = bs_proj_commons.`PROJ_ID`
+			  AND bpt.`TRP_CODE` = '10'
+			  AND au.id = bpt.`TEAM_USER_ID`
+			  AND bpt.state = '1') pm2_user_name,
+			(select type_name from bs_proj_types 
+			where bs_proj_types.type_code=bs_proj_commons.type_code )type_name,
+			(
+		CASE
+		WHEN state = 0 THEN
+			'未启用'
+		WHEN state = 1 THEN
+			'已启用'
+		WHEN state = 2 THEN
+			'已验收'
+		WHEN state = 3 THEN
+			'已关闭'
+		ELSE
+			'已作废'
+		END
+	)state_name
+		FRoM bs_proj_commons
+		LEFT JOIN(
+	  SELECT
+	  bpc.`proj_id`, 
+	  GROUP_CONCAT(bpc.`ct_id`) AS ct_id,
+	  GROUP_CONCAT(bc.`ct_name`) AS ct_name 
+	FROM
+	  `bs_proj_contract` bpc,
+	  `bs_contract` bc
+	  WHERE bpc.`ct_id` = bc.`ct_id`
+	  GROUP BY bpc.`proj_id`
+	  )a ON a.proj_id = bs_proj_commons.`PROJ_ID`
+		<where>
+		    state != '-1'
+ 			<if test="proj_name != null and proj_name != ''">
+		      and bs_proj_commons.proj_name like '%${proj_name}%'  <!-- 项目名称 -->
+			</if>
+		</where>	
+		order by proj_id desc
+	</select>
+	<!-- 查询用户所属角色列表 -->
+	<select id="queryUnProjRoleTypes" resultType="Dto" parameterType="Dto">
+			SELECT
+			     aos_org.name AS org_name,
+                aos_user.*,
+                (select group_concat(aos_role.name) from aos_role,aos_user_role where aos_user_role.role_id=aos_role.id and aos_user_role.user_id=aos_user.id) roles
+            FROM aos_user, aos_org
+            WHERE aos_user.org_id = aos_org.id
+            and aos_user.is_del=0
+           AND (aos_user. NAME NOT LIKE '%超级用户%'
+			and  aos_user. NAME not LIKE '%系统管理员%')
+			 <if test="name != null and name != ''">
+		      AND aos_user.name like '${name}%'  <!-- 人员姓名 -->
+		</if>
+            and aos_user.id not in (
+            	SELECT team_user_id from bs_proj_teams where proj_id=#{proj_id} 
+            	<if test="trp_code != null and trp_code != ''">
+				    AND trp_code=#{trp_code}
+				</if>
+				AND state='1'
+            )
+			 ORDER BY aos_user.id DESC
+	</select>
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="listComboBoxProjId" resultType="Dto">
+			SELECT 
+			  bpt.`TEAM_USER_ID` AS value,
+			  CONCAT(
+			    au.`name`,
+			    '(',bprt.`TRP_NAME`,')-',
+			    bpt.`TEAM_USER_ID`
+			  ) AS display 
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au,
+			  `bs_proj_role_types` bprt
+			WHERE bpt.`TEAM_USER_ID` = au.`id`
+			AND bpt.`TRP_CODE` = bprt.`TRP_CODE`
+			<if test="proj_id != null and proj_id != ''">
+				    AND bpt.`PROJ_ID` = ${proj_id}
+			</if>
+			  GROUP BY value
+	</select>
+	<select id="listComboBoxWeekReport" resultType="Dto">
+	select week_id as value,task_plan_num as display from ta_week where 1=1 
+	<if test="proj_id != null and proj_id != ''">
+				    and proj_id =${proj_id}
+				</if>
+				ORDER BY create_time desc
+	 </select>
+	
+	<!-- 查询对应表id的name -->
+	<select id="querytab_name" resultType="Dto">
+			SELECT 
+		  bpc.`PROJ_NAME` 
+		FROM
+		  `bs_proj_commons` bpc 
+		WHERE bpc.`PROJ_CODE` = ${proj_id}
+	</select>
+	
+	
+</mapper>

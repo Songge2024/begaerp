@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_check_item[CheckItem]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2019-10-10 13:58:43 -->
+<mapper namespace="com.bl3.pm.process.dao.CheckItemDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="check_item_id" parameterType="CheckItemPO">
+		INSERT INTO pr_check_item (
+		<if test="type_code != null and type_code != ''">
+	         type_code, <!-- 项目类型ID -->
+		</if>
+		<if test="check_cata_id != null">
+	         check_cata_id, <!-- 检查单目录ID -->
+		</if>
+		<if test="check_item_name != null and check_item_name != ''">
+	         check_item_name, <!-- 检查单名称 -->
+		</if>
+		<if test="sort_no != null">
+	         sort_no, <!-- 排序号 -->
+		</if>
+		<if test="sort_no == null">
+	         sort_no, <!-- 排序号 -->
+		</if>
+		<if test="remark != null and remark != ''">
+	         remark, <!-- 备注 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="process_product != null and process_product != ''">
+	         process_product, <!-- 过程及产品 -->
+		</if>
+		<if test="problem_level != null and problem_level != ''">
+	         problem_level, <!-- 问题等级 -->
+		</if>
+	          check_item_id
+		)VALUES(
+		<if test="type_code != null and type_code != ''">
+	          #{type_code, jdbcType=VARCHAR}, <!-- 项目类型ID -->
+	    </if>
+		<if test="check_cata_id != null">
+	          #{check_cata_id, jdbcType=INTEGER}, <!-- 检查单目录ID -->
+	    </if>
+		<if test="check_item_name != null and check_item_name != ''">
+	          #{check_item_name, jdbcType=VARCHAR}, <!-- 检查单名称 -->
+	    </if>
+	    <if test="sort_no != null">
+	          #{sort_no, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+	     <if test="sort_no == null">
+	    	(SELECT ifnull(max(sort_no),0) FROM pr_check_item a WHERE state != -1 AND check_cata_id = #{check_cata_id} AND type_code = #{type_code})+1,
+	    </if>
+		<if test="remark != null and remark != ''">
+	          #{remark, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		<if test="process_product != null and process_product != ''">
+	          #{process_product, jdbcType=VARCHAR}, <!-- 过程及产品 -->
+	    </if>
+		<if test="problem_level != null and problem_level != ''">
+	          #{problem_level, jdbcType=VARCHAR}, <!-- 问题等级 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="check_item_id" parameterType="CheckItemPO">
+		INSERT INTO pr_check_item (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{check_item_id, jdbcType=INTEGER},  <!-- 检查单目录ID -->
+		    #{type_code, jdbcType=VARCHAR},  <!-- 项目类型ID -->
+		    #{check_cata_id, jdbcType=INTEGER},  <!-- 检查单目录ID -->
+		    #{check_item_name, jdbcType=VARCHAR},  <!-- 检查单名称 -->
+		    #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{remark, jdbcType=VARCHAR},  <!-- 备注 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+		    #{process_product, jdbcType=VARCHAR},  <!-- 过程及产品 -->
+		    #{problem_level, jdbcType=VARCHAR}  <!-- 问题等级 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="CheckItemPO">
+		UPDATE pr_check_item
+		<set>
+			<if test="check_item_id != null">
+		          check_item_id = #{check_item_id, jdbcType=INTEGER},  <!-- 检查单目录ID -->
+			</if>
+			<if test="type_code != null">
+		          type_code = #{type_code, jdbcType=VARCHAR},  <!-- 项目类型ID -->
+			</if>
+			<if test="check_cata_id != null">
+		          check_cata_id = #{check_cata_id, jdbcType=INTEGER},  <!-- 检查单目录ID -->
+			</if>
+			<if test="check_item_name != null">
+		          check_item_name = #{check_item_name, jdbcType=VARCHAR},  <!-- 检查单名称 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="remark != null">
+		          remark = #{remark, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+			<if test="process_product != null">
+		          process_product = #{process_product, jdbcType=VARCHAR},  <!-- 过程及产品 -->
+			</if>
+			<if test="problem_level != null">
+		          problem_level = #{problem_level, jdbcType=VARCHAR},  <!-- 问题等级 -->
+			</if>
+		</set>
+		WHERE  check_item_id = #{check_item_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+<!-- 	<update id="deleteByKey"> -->
+<!-- 		update pr_check_item -->
+<!-- 		set state = '-1' -->
+<!-- 		WHERE check_item_id = #{check_item_id} -->
+<!-- 	</update> -->
+    <delete id="deleteByKey">
+       DELETE FROM pr_check_item WHERE  check_item_id = #{check_item_id}
+    </delete>
+	
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="CheckItemPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_check_item WHERE  check_item_id = #{check_item_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="CheckItemPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_check_item
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="CheckItemPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_item
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="CheckItemPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_item
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="CheckItemPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_item
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="CheckItemPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_item
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="CheckItemPO" useCache="false">
+	    SELECT
+	    (		
+			CASE
+			WHEN state = 0 THEN
+				'未启用'
+			WHEN state = 1 THEN
+				'已启用'
+			ELSE
+				'已作废'
+			END
+		)state_name,
+			<include refid="column" />	
+		FRoM pr_check_item
+		<where>
+			<if test="check_cata_id != '' and check_cata_id != null">
+				check_cata_id = #{check_cata_id}
+			</if>
+			and state != '-1'
+		    <include refid="like" />
+		</where>
+		order by sort_no	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="CheckItemPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_item
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_check_item
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_check_item
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 判断是否存在重名的检查项明细 -->
+	<select id="itemCount" parameterType="Dto" resultType="Integer">
+		select COUNT(check_item_id) from pr_check_item where check_cata_id = #{check_cata_id} and check_item_name = #{check_item_name}
+	</select>
+	
+	<!-- 判断是否存在其他重名的检查项 -->
+	<select id="itemOtCount" parameterType="Dto" resultType="Integer" >
+		select COUNT(check_item_id) from pr_check_item where check_cata_id = #{check_cata_id} and check_item_name = #{check_item_name} and check_item_id != #{check_item_id}
+	</select>
+	
+	<!-- 停用 -->
+	<update id="itemStopByKey">
+		update pr_check_item a
+		set a.state = 0
+		where a.check_item_id = #{check_item_id}
+	</update>
+	<!-- 启用 -->
+	<update id="itemRunByKey">
+		update pr_check_item a
+		set a.state = 1
+		where a.check_item_id = #{check_item_id}
+	</update>
+	<!-- 表字段 -->
+	<sql id="column">
+		  check_item_id,  <!-- 检查单目录ID -->
+		  type_code,  <!-- 项目类型ID -->
+		  check_cata_id,  <!-- 检查单目录ID -->
+		  check_item_name,  <!-- 检查单名称 -->
+		  sort_no,  <!-- 排序号 -->
+		  remark,  <!-- 备注 -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state,  <!-- 状态 -->
+		  process_product,  <!-- 过程及产品 -->
+		  problem_level  <!-- 问题等级 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_check_item.check_item_id,  <!-- 检查单目录ID -->
+		  pr_check_item.type_code,  <!-- 项目类型ID -->
+		  pr_check_item.check_cata_id,  <!-- 检查单目录ID -->
+		  pr_check_item.check_item_name,  <!-- 检查单名称 -->
+		  pr_check_item.sort_no,  <!-- 排序号 -->
+		  pr_check_item.remark,  <!-- 备注 -->
+		  pr_check_item.create_user_id,  <!-- 创建人 -->
+		  pr_check_item.create_time,  <!-- 创建时间 -->
+		  pr_check_item.update_user_id,  <!-- 更新人 -->
+		  pr_check_item.update_time,  <!-- 更新时间 -->
+		  pr_check_item.state,  <!-- 状态 -->
+		  pr_check_item.process_product,  <!-- 过程及产品 -->
+		  pr_check_item.problem_level  <!-- 问题等级 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	    <if test="check_item_id != null ">
+		      AND check_item_id = #{check_item_id}  <!-- 检查单目录ID -->
+		</if>
+	    <if test="type_code != null and type_code != ''">
+		      AND type_code = #{type_code}  <!-- 项目类型ID -->
+		</if>
+	    <if test="check_cata_id != null ">
+		      AND check_cata_id = #{check_cata_id}  <!-- 检查单目录ID -->
+		</if>
+	    <if test="check_item_name != null and check_item_name != ''">
+		      AND check_item_name = #{check_item_name}  <!-- 检查单名称 -->
+		</if>
+		<if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark = #{remark}  <!-- 备注 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	    <if test="process_product != null and process_product != ''">
+		      AND process_product = #{process_product}  <!-- 过程及产品 -->
+		</if>
+	    <if test="problem_level != null and problem_level != ''">
+		      AND problem_level = #{problem_level}  <!-- 问题等级 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="type_code != null and type_code != ''">
+		      AND type_code like '${type_code}%'  <!-- 项目类型ID -->
+		</if>
+	    <if test="check_item_name != null and check_item_name != ''">
+		      AND check_item_name like '${check_item_name}%'  <!-- 检查单名称 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark like '${remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	    <if test="process_product != null and process_product != ''">
+		      AND process_product like '${process_product}%'  <!-- 过程及产品 -->
+		</if>
+	    <if test="problem_level != null and problem_level != ''">
+		      AND problem_level like '${problem_level}%'  <!-- 问题等级 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="type_code != null and type_code != ''">
+		      Or type_code like '${type_code}%'  <!-- 项目类型ID -->
+		</if>
+	    <if test="check_item_name != null and check_item_name != ''">
+		      Or check_item_name like '${check_item_name}%'  <!-- 检查单名称 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      Or remark like '${remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	    <if test="process_product != null and process_product != ''">
+		      Or process_product like '${process_product}%'  <!-- 过程及产品 -->
+		</if>
+	    <if test="problem_level != null and problem_level != ''">
+		      Or problem_level like '${problem_level}%'  <!-- 问题等级 -->
+		</if>
+	</sql>
+	
+</mapper>

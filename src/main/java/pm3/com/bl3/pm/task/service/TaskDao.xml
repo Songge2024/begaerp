@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 任务管理模块使用的SQL语句 -->
+<mapper namespace="Task">
+	<!-- 查询分组编码下的完成进度平均值 -->
+	<select id="getAVGGroupId" resultType="Integer" parameterType="Dto">
+<!-- 		SELECT AVG(percent) FROM ta_task WHERE state != 1006 AND state != 1001 AND group_id = #{group_id} -->
+			select ROUND(sum(IFNULL(percent,0))/count(*)) as task_percent
+			  from ta_task 
+			 where state not in ('1001','1006') 
+			   and proj_id = #{proj_id}
+			 <if test="group_ids != null and group_ids != ''">
+				   and group_id in 
+					<foreach collection="group_ids" item="group_id" index="index" open="(" close=")" separator=",">
+					#{group_id}
+					</foreach>
+			</if>
+	</select>
+
+	<select id="selectMaxSerialNo" parameterType="Dto" resultType="Integer">
+		SELECT IFNULL(MAX(serial_no),0)+1 FROM ta_task_logs WHERE task_id=#{task_id}
+	</select>
+	<!-- 查找与我相关的任务 -->
+	<select id="selectMyTaskPage" parameterType="Dto" resultType="Dto" useCache="false">
+	    SELECT
+    		(SELECT proj_name FROM bs_proj_commons WHERE proj_id= ta_task.proj_id) AS proj_name,
+			(SELECT ad_name FROM re_demand_action WHERE ad_id= ta_task.demand_id) AS demand_name,
+			(SELECT dm_name FROM re_module_divide WHERE dm_id= ta_task.module_id) AS module_name,
+			(SELECT NAME FROM aos_user WHERE id= ta_task.handler_user_id) AS handler_name,
+			(SELECT NAME FROM aos_user WHERE id= ta_task.assign_user_id) AS assign_name,
+			<include refid="com.bl3.pm.task.dao.TaskDao.column" />	
+		FROM ta_task 
+	   WHERE state!='1006' 
+	     AND proj_id in (${proj_ids}) 
+		 AND (handler_user_id = #{user_id} OR assign_user_id=#{user_id})
+         AND state IN (${states})
+	</select>
+	<select id="selectManagerTaskPage" parameterType="Dto" resultType="TaskPO" useCache="false">
+	    SELECT
+			ta_task.*,
+			(case when plan_end_time >= IFNULL(real_end_time,SYSDATE()) then '01' else '02' end) as task_delay_state,
+			(case when state = '1005' then update_user_id else null end) as close_user_id
+		FROM ta_task 
+			 LEFT JOIN aos_user au ON au.id = ta_task.assign_user_id
+			 LEFT JOIN aos_user aos ON aos.id = ta_task.handler_user_id 
+		where state!='1006'  <!-- 过滤已经删除的任务 -->
+		<if test="proj_ids != null and proj_ids != ''">
+	         AND proj_id IN (${proj_ids}) <!-- 当前用户项目编码集合 -->
+		</if>
+        <if test="task_states != null and task_states != ''">
+            AND state IN (${task_states})
+        </if>
+		<if test="states != null and states != ''">
+	         AND state IN (${states}) <!-- 当前用户查询状态集合 -->
+		</if>
+		<if test="group_ids != null and group_ids != ''">
+	         AND group_id IN (${group_ids}) <!-- 当前用户任务分组集合 -->
+		</if>
+			<!-- <if test="handler_user_id != null and handler_user_id != ''">
+	         AND handler_user_id IN (${handler_user_id}) 处理人
+		</if> -->
+		<if test="proj_id != null and proj_id != ''">
+	         AND proj_id IN (${proj_id}) <!-- 用户Id -->
+		</if>
+		<if test="handler_user_id != null and handler_user_id != ''">
+	         AND handler_user_id like '%${handler_user_id}%' <!-- 处理人 -->
+		</if>
+		<if test="assign_user_id != null and assign_user_id != ''">
+	         AND assign_user_id like '%${assign_user_id}%' <!-- 指派人 -->
+		</if>
+		<if test="handler_user_name != null and handler_user_name != ''">
+	         AND aos.name like '%${handler_user_name}%' <!-- 处理人 -->
+		</if>
+		<if test="assign_user_name != null and assign_user_name != ''">
+	         AND au.name like '%${assign_user_name}%' <!-- 指派人 -->
+		</if>
+		<if test="task_name != null and task_name != ''">
+	         AND (task_name like '%${task_name}%' or task_code like '%${task_name}%') <!-- 任务名称 -->
+		</if>
+		<if test="task_delay_state != null and task_delay_state != ''">
+	         and (case when plan_end_time >= IFNULL(real_end_time,SYSDATE()) then '01' else '02' end) = #{task_delay_state}
+	         <!-- 延期状态 -->
+		</if>
+		<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+				AND (
+						(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+					   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+					  )
+						OR
+						(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+					   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+					  )
+						OR
+						(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+					   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+					  )
+						OR
+						(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+					   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+					  )
+			)	
+		</if>
+	
+		order by create_time desc
+	</select>
+	
+	<select id="selectManagerTaskPageCount" parameterType="Dto" resultType="Integer" useCache="false">
+	    SELECT
+			count(*)
+		FROM ta_task where state!='1006'  <!-- 过滤已经删除的任务 -->
+		<if test="proj_ids != null and proj_ids != ''">
+	         AND proj_id IN (${proj_ids}) <!-- 当前用户项目编码集合 -->
+		</if>
+        <if test="task_states != null and task_states != ''">
+            AND state IN (${task_states})
+        </if>
+		<if test="states != null and states != ''">
+	         AND state IN (${states}) <!-- 当前用户查询状态集合 -->
+		</if>
+		<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+				AND (
+						(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+					   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+					  )
+						OR
+						(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+					   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+					  )
+						OR
+						(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+					   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+					  )
+						OR
+						(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+					   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+					  )
+			)	
+		</if>
+		<if test="group_ids != null and group_ids != ''">
+	         AND group_id IN (${group_ids}) <!-- 当前用户任务分组集合 -->
+		</if>
+			<!-- <if test="handler_user_id != null and handler_user_id != ''">
+	         AND handler_user_id IN (${handler_user_id}) 处理人
+		</if> -->
+		<if test="proj_id != null and proj_id != ''">
+	         AND proj_id IN (${proj_id}) <!-- 用户Id -->
+		</if>
+		<if test="handler_user_id != null and handler_user_id != ''">
+	         AND handler_user_id like '${handler_user_id}%' <!-- 处理人 -->
+		</if>
+		<if test="assign_user_id != null and assign_user_id != ''">
+	         AND assign_user_id like '${assign_user_id}%' <!-- 指派人 -->
+		</if>
+		<if test="task_name != null and task_name != ''">
+	         AND task_name like '%${task_name}%' <!-- 任务名称 -->
+		</if>
+		<if test="task_delay_state != null and task_delay_state != ''">
+	         and (case when plan_end_time >= IFNULL(real_end_time,SYSDATE()) then '01' else '02' end) = #{task_delay_state}
+	         <!-- 延期状态 -->
+		</if>
+	
+		order by create_time desc
+	</select>
+	
+	<!-- 根据指定状态查询和分组集合查询所有任务-->
+	<select id="selectByGroups" resultType="TaskPO" parameterType="Dto">
+	     SELECT 
+	         <include refid="com.bl3.pm.task.dao.TaskDao.column" />
+	     FROM ta_task 
+	     WHERE group_id IN (${group_ids}) AND state IN (${states})
+	</select>
+	<!-- 逻辑删除任务分组所有任务-->
+	<update id="deleteByGroups" parameterType="Dto">
+		UPDATE ta_task  
+	    SET state=#{state},
+	    	update_time=#{update_time},
+	    	update_user_id=#{update_user_id}
+	    WHERE group_id IN (${group_ids})
+	</update>
+	<!-- 根据主键集合查询任务 -->
+	<select id="selectByIds" resultType="TaskPO" parameterType="Dto">
+	     SELECT 
+	         <include refid="com.bl3.pm.task.dao.TaskDao.column" />
+	     FROM ta_task WHERE task_id IN (${task_ids}) AND state!='1006'
+	</select>
+	
+	<!-- 根据需求查询测试任务 关联的测试人员-->
+	<select id="selectDemandId" resultType="String" parameterType="Dto">
+		SELECT
+			GROUP_CONCAT(DISTINCT au.account) AS handler_user_id
+		FROM
+			ta_task tt,aos_user au
+		WHERE
+		    task_type = "1090"
+                 and  tt.handler_user_id=au.id
+		<if test="demand_id != null">
+	       AND    demand_id = #{demand_id} <!-- 用户Id -->
+		</if>
+	</select>
+	<!-- 查询需求名称-->
+	<select id="selectDemandName" resultType="String" parameterType="Dto">
+		SELECT
+			ad_name
+		FROM
+			re_demand_action
+		<where>
+		<if test="demand_id != null">
+	          ad_id = #{demand_id} <!-- 用户Id -->
+		</if>
+		</where>
+		
+	</select>
+	
+	<select id="selectTaskDto" resultType="Dto">
+		select * from ta_task where task_id = #{task_id}
+	</select>
+	<!-- 下拉框查询对应项目处理人-->
+	<select id="listHandlerComboBox" resultType="Dto">
+		select id AS value,`name`AS display from aos_user 
+		where exists (
+		select 1 from bs_proj_teams 
+ 		where aos_user.id = bs_proj_teams.TEAM_USER_ID 
+   		and state = '1'
+   		<if test="proj_id != null">
+   			and bs_proj_teams.PROJ_ID = #{proj_id}
+   		</if>
+		)
+	</select>
+	<!-- 导出 -->
+	<select id="testExampleArrayList" resultType="Dto">
+		SELECT a.task_code,
+			   a.state,
+			   a.task_name,
+			   a.plan_begin_time,
+			   a.plan_end_time,
+			   a.plan_wastage,
+			   a.percent,
+			   a.real_begin_time,
+			   a.real_end_time,
+			   a.update_time,
+			   a.real_wastage,
+			   a.task_type,
+			   a.task_level,
+			   a.task_desc,
+			   a.remark,
+			   b.proj_name,
+			   d.ad_name,
+			   c.dm_name,
+			   e.name AS assign_user_name,
+			   f.name AS handler_user_name,
+		   	   (case when plan_end_time >= IFNULL(real_end_time,SYSDATE()) then '01' else '02' end) as task_delay_state		
+		FROM ta_task a 
+		LEFT JOIN bs_proj_commons b ON a.proj_id = b.proj_id
+		LEFT JOIN re_module_divide c ON a.module_id = c.dm_code
+		LEFT JOIN re_demand_action d ON a.demand_id = d.ad_id
+		LEFT JOIN aos_user e ON a.assign_user_id = e.id
+		LEFT JOIN aos_user f ON a.handler_user_id = f.id
+		<where>
+			a.task_id in
+			<foreach collection="array" item="id" index="index" open="("
+				close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</select>
+	
+	<select id="selectParentId" resultType="Integer">
+		SELECT parent_id FROM ta_task_group WHERE state != 1003 
+			AND group_id in 
+			<foreach collection="group_ids" item="group_id" index="index" open="("
+				close=")" separator=",">
+				#{group_id}
+			</foreach>
+	</select>
+	
+	<select id="selectGroupName" resultType="String">
+		SELECT group_name FROM ta_task_group WHERE state != 1003 AND group_id = #{inte} 
+	</select>
+	
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="taskHandlerUserPage" resultType="Dto">
+			SELECT
+				au.name AS user_name,
+				ar.`name` AS role_name,
+				ao.`name` AS org_name,
+				au.`sex`,
+				au.id,
+				au.`status`,
+				au.`type`,
+				au.id as user_id
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au,
+			  `aos_role` ar,
+			  `aos_org` ao,
+			  `aos_user_role` aur
+			  WHERE bpt.`TEAM_USER_ID` = au.`id`
+			  AND au.id=aur.`user_id`
+			  AND aur.`role_id` = ar.`id`
+			  AND au.`org_id`=ao.`id`
+			  AND au.id !='-1'
+			  AND au.is_del = 0
+			  AND bpt.state = 1
+			 <if test="id !=null and id !=''">
+				AND au.`id`  not  in (${id}) 
+			</if>
+			<if test="id_name !='null' and id_name !=''">
+				AND au.name like '%${id_name}%'
+			</if>
+			<if test="subordinate_departments != null and subordinate_departments != ''">
+	            and ao.id = #{subordinate_departments}
+	      	</if>
+	      	<if test="proj_id != null and proj_id != ''">
+	      		and bpt.proj_id = #{proj_id}
+	      	</if>
+			GROUP BY au.id 
+			ORDER BY ao.`name`,ar.`name`
+	</select>
+	
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="taskHandlerUsersPage" resultType="Dto">
+			SELECT
+				au.name AS user_name,
+				ar.`name` AS role_name,
+				ao.`name` AS org_name,
+				au.`sex`,
+				au.id,
+				au.`status`,
+				au.`type`,
+				au.id as user_id
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au,
+			  `aos_role` ar,
+			  `aos_org` ao,
+			  `aos_user_role` aur
+			  WHERE bpt.`TEAM_USER_ID` = au.`id`
+			  AND au.id=aur.`user_id`
+			  AND aur.`role_id` = ar.`id`
+			  AND au.`org_id`=ao.`id`
+			  AND au.id !='-1'
+			  AND au.is_del = 0
+			  AND bpt.state = 1
+			  <if test="id !=null and id !=''">
+				       AND au.`id` in (${id})
+			  </if>
+			  <if test="id =='null' or id ==''">
+				      and 1=0
+			  </if>
+			  <if test="proj_id != null and proj_id != ''">
+	      		and bpt.proj_id = #{proj_id}
+	      	  </if>
+			  GROUP BY au.id 
+	</select>
+	
+	<!-- 常用联系人列表查询 -->
+	<select id="topContactsPage" resultType="Dto">
+			select 
+				qa_top_contacts.top_id,  
+				qa_top_contacts.top_name as user_name,  
+				qa_top_contacts.user_id,  
+				qa_top_contacts.create_id,
+				au.id,
+				au.`status`,
+				au.`type`,  
+				qa_top_contacts.create_time,
+				qa_top_contacts.top_org_name_id,
+				qa_top_contacts.top_org_name  as org_name,
+				qa_top_contacts.top_role_name as role_name,
+				qa_top_contacts.top_sex  as sex
+			from
+				`bs_proj_teams` bpt,
+				`aos_user` au,
+				qa_top_contacts
+			where
+				bpt.`TEAM_USER_ID` = au.`id`
+				AND au.id = qa_top_contacts.user_id
+				AND au.id !='-1'
+			 	AND au.is_del = 0
+			 	AND bpt.state = 1
+				<if test="user_id != null">
+					AND qa_top_contacts.create_id = #{user_id}
+				</if>
+				<if test="top_name != null and top_name != ''">
+					AND top_name = #{top_name}
+				</if>
+				<if test="top_org_name_id != null and top_org_name_id != ''">
+					AND top_org_name_id = #{top_org_name_id}
+				</if>
+				<if test="proj_id != null and proj_id != ''">
+		      		and bpt.proj_id = #{proj_id}
+	      	   </if>
+      	    GROUP BY au.id
+			ORDER BY qa_top_contacts.top_org_name
+	</select>
+	
+	<select id="selectResolveTaskPage" resultType="Dto">
+		SELECT 
+			* 
+		FROM 
+			ta_task 
+		WHERE 
+			state != 1006
+			and
+			(task_parent_id = #{task_id} 
+			OR 
+			task_root_id = #{task_id})
+	</select>
+	
+	<select id="listPrincipalOrg" resultType="Dto"> 
+		select id as value,name as display
+		from aos_org
+		where is_del = 0
+	</select>
+</mapper>

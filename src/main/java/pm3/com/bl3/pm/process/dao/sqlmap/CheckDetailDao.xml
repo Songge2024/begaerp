@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_check_detail[CheckDetail]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2019-10-22 20:32:10 -->
+<mapper namespace="com.bl3.pm.process.dao.CheckDetailDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="check_detail_id" parameterType="CheckDetailPO">
+		INSERT INTO pr_check_detail (
+		<if test="check_id != null">
+	         check_id, <!-- 检查单ID -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="check_detail_name != null and check_detail_name != ''">
+	         check_detail_name, <!-- 检查明细项名称 -->
+		</if>
+		<if test="sort_no != null">
+	         sort_no, <!-- 排序号 -->
+		</if>
+		<if test="process_product != null and process_product != ''">
+	         process_product, <!-- 过程及产品 -->
+		</if>
+		<if test="problem_level != null and problem_level != ''">
+	         problem_level, <!-- 问题等级 -->
+		</if>
+		<if test="deduct_point != null and deduct_point != ''">
+	         deduct_point, <!-- 扣分标准 -->
+		</if>
+		<if test="solve_deduct_point != null and solve_deduct_point != ''">
+	         solve_deduct_point, <!-- 解决时限扣分标准 -->
+		</if>
+		<if test="solve_times != null and solve_times != ''">
+	         solve_times, <!-- 问题解决时限 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 1 不适用 2 符合 3 不符合 -->
+		</if>
+		<if test="is_problem != null and is_problem != ''">
+	         is_problem, <!-- 是否转问题-1是转，0是不转 -->
+		</if>
+		<if test="trace_status != null and trace_status != ''">
+	         trace_status, <!-- 跟踪情况 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 设计人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+	          check_detail_id
+		)VALUES(
+		<if test="check_id != null">
+	          #{check_id, jdbcType=INTEGER}, <!-- 检查单ID -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="check_detail_name != null and check_detail_name != ''">
+	          #{check_detail_name, jdbcType=VARCHAR}, <!-- 检查明细项名称 -->
+	    </if>
+	    <if test="sort_no != null">
+	          #{sort_no, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+		<if test="process_product != null and process_product != ''">
+	          #{process_product, jdbcType=VARCHAR}, <!-- 过程及产品 -->
+	    </if>
+		<if test="problem_level != null and problem_level != ''">
+	          #{problem_level, jdbcType=VARCHAR}, <!-- 问题等级 -->
+	    </if>
+		<if test="deduct_point != null and deduct_point != ''">
+	          #{deduct_point, jdbcType=VARCHAR}, <!-- 扣分标准 -->
+	    </if>
+		<if test="solve_deduct_point != null and solve_deduct_point != ''">
+	          #{solve_deduct_point, jdbcType=VARCHAR}, <!-- 解决时限扣分标准 -->
+	    </if>
+		<if test="solve_times != null and solve_times != ''">
+	          #{solve_times, jdbcType=VARCHAR}, <!-- 问题解决时限 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 1 不适用 2 符合 3 不符合 -->
+	    </if>
+		<if test="is_problem != null and is_problem != ''">
+	          #{is_problem, jdbcType=VARCHAR}, <!-- 是否转问题-1是转，0是不转 -->
+	    </if>
+		<if test="trace_status != null and trace_status != ''">
+	          #{trace_status, jdbcType=VARCHAR}, <!-- 跟踪情况 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 设计人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="check_detail_id" parameterType="CheckDetailPO">
+		INSERT INTO pr_check_detail (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{check_detail_id, jdbcType=INTEGER},  <!-- 检查明细项ID -->
+		    #{check_id, jdbcType=INTEGER},  <!-- 检查单ID -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{check_detail_name, jdbcType=VARCHAR},  <!-- 检查明细项名称 -->
+		    #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{process_product, jdbcType=VARCHAR},  <!-- 过程及产品 -->
+		    #{problem_level, jdbcType=VARCHAR},  <!-- 问题等级 -->
+		    #{deduct_point, jdbcType=VARCHAR},  <!-- 扣分标准 -->
+		    #{solve_deduct_point, jdbcType=VARCHAR},  <!-- 解决时限扣分标准 -->
+		    #{solve_times, jdbcType=VARCHAR},  <!-- 问题解决时限 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 状态 1 不适用 2 符合 3 不符合 -->
+		    #{is_problem, jdbcType=VARCHAR},  <!-- 是否转问题-1是转，0是不转 -->
+		    #{trace_status, jdbcType=VARCHAR},  <!-- 跟踪情况 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR}  <!-- 更新时间 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="CheckDetailPO">
+		UPDATE pr_check_detail
+		<set>
+			<if test="check_detail_id != null">
+		          check_detail_id = #{check_detail_id, jdbcType=INTEGER},  <!-- 检查明细项ID -->
+			</if>
+			<if test="check_id != null">
+		          check_id = #{check_id, jdbcType=INTEGER},  <!-- 检查单ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="check_detail_name != null">
+		          check_detail_name = #{check_detail_name, jdbcType=VARCHAR},  <!-- 检查明细项名称 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="process_product != null">
+		          process_product = #{process_product, jdbcType=VARCHAR},  <!-- 过程及产品 -->
+			</if>
+			<if test="problem_level != null">
+		          problem_level = #{problem_level, jdbcType=VARCHAR},  <!-- 问题等级 -->
+			</if>
+			<if test="deduct_point != null">
+		          deduct_point = #{deduct_point, jdbcType=VARCHAR},  <!-- 扣分标准 -->
+			</if>
+			<if test="solve_deduct_point != null">
+		          solve_deduct_point = #{solve_deduct_point, jdbcType=VARCHAR},  <!-- 解决时限扣分标准 -->
+			</if>
+			<if test="solve_times != null">
+		          solve_times = #{solve_times, jdbcType=VARCHAR},  <!-- 问题解决时限 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 1 不适用 2 符合 3 不符合 -->
+			</if>
+			<if test="is_problem != null">
+		          is_problem = #{is_problem, jdbcType=VARCHAR},  <!-- 是否转问题-1是转，0是不转 -->
+			</if>
+			<if test="trace_status != null">
+		          trace_status = #{trace_status, jdbcType=VARCHAR},  <!-- 跟踪情况 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+		</set>
+		WHERE  check_detail_id = #{check_detail_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM pr_check_detail WHERE  check_detail_id = #{check_detail_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="CheckDetailPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_check_detail WHERE  check_detail_id = #{check_detail_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="CheckDetailPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_check_detail
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="CheckDetailPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_detail
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="CheckDetailPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_detail
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="CheckDetailPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_detail
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="CheckDetailPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_detail
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="CheckDetailPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_detail
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="CheckDetailPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_detail
+		<where>
+		    <include refid="equal" />
+		</where>
+		order by sort_no	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_check_detail
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_check_detail
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<select id="select_check_id" resultType="int">
+		select max(check_id) from pr_check_main WHERE check_cata_id = #{check_cata_id}
+	</select>
+	
+	<select id="cata_item" resultType="CheckDetailPO">
+		select check_item_name as check_detail_name,process_product,problem_level,sort_no
+		from pr_check_item
+		where check_cata_id = #{check_cata_id}
+          and state = '1'
+	</select>
+	
+	<select id="point" resultType="Dto">
+		select deduct_point,solve_deduct_point,solve_times
+		from pr_preserve_point
+		where problem_level = #{problem_level}
+	</select>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteDetailByKey">
+		DELETE FROM pr_check_detail WHERE  check_id = #{check_id}
+	</delete>
+	
+	<update id="checkUpdateByKey" parameterType="Dto" > 
+		update pr_check_detail
+		set
+			state = #{state}, 
+			is_problem = #{is_problem},
+			update_user_id = #{update_user_id}, 
+			update_time = sysdate(),
+			trace_status = #{trace_status}
+		where
+			pr_check_detail.check_detail_id=#{check_detail_id}
+	</update>
+	
+	<select id="selectByCheckId" parameterType="Integer" resultType="CheckDetailPO">
+		select sum(if(state = '1', 1, 0)) as none_num, 
+			 sum(if(state = '2', 1, 0)) as yes_num,
+			 sum(if(state = '3', 1, 0)) as no_num,
+			 check_id
+ 		 from pr_check_detail pcd where pcd.check_id = #{check_id}
+	</select>
+	
+	<update id="checkCountByKey" parameterType="Dto"> 
+		update pr_check_main
+		set
+			none_num = #{none_num},
+			yes_num= #{yes_num},
+			no_num= #{no_num}
+		where
+			pr_check_main.check_id=#{check_id}
+	</update>
+	
+	<select id="selectAllDetail" resultType="CheckDetailPO">
+		select check_id,proj_id,check_detail_name,process_product,problem_level,deduct_point,solve_deduct_point,solve_times,sort_no
+		from pr_check_detail
+		where check_detail_id = #{check_detail_id}
+	</select>
+	
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  check_detail_id,  <!-- 检查明细项ID -->
+		  check_id,  <!-- 检查单ID -->
+		  proj_id,  <!-- 项目ID -->
+		  check_detail_name,  <!-- 检查明细项名称 -->
+		  sort_no,  <!-- 排序号 -->
+		  process_product,  <!-- 过程及产品 -->
+		  problem_level,  <!-- 问题等级 -->
+		  deduct_point,  <!-- 扣分标准 -->
+		  solve_deduct_point,  <!-- 解决时限扣分标准 -->
+		  solve_times,  <!-- 问题解决时限 -->
+		  state,  <!-- 状态 1 不适用 2 符合 3 不符合 -->
+		  is_problem,  <!-- 是否转问题-1是转，0是不转 -->
+		  trace_status,  <!-- 跟踪情况 -->
+		  create_user_id,  <!-- 设计人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time  <!-- 更新时间 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_check_detail.check_detail_id,  <!-- 检查明细项ID -->
+		  pr_check_detail.check_id,  <!-- 检查单ID -->
+		  pr_check_detail.proj_id,  <!-- 项目ID -->
+		  pr_check_detail.check_detail_name,  <!-- 检查明细项名称 -->
+		  pr_check_detail.sort_no,  <!-- 排序号 -->
+		  pr_check_detail.process_product,  <!-- 过程及产品 -->
+		  pr_check_detail.problem_level,  <!-- 问题等级 -->
+		  pr_check_detail.deduct_point,  <!-- 扣分标准 -->
+		  pr_check_detail.solve_deduct_point,  <!-- 解决时限扣分标准 -->
+		  pr_check_detail.solve_times,  <!-- 问题解决时限 -->
+		  pr_check_detail.state,  <!-- 状态 1 不适用 2 符合 3 不符合 -->
+		  pr_check_detail.is_problem,  <!-- 是否转问题-1是转，0是不转 -->
+		  pr_check_detail.trace_status,  <!-- 跟踪情况 -->
+		  pr_check_detail.create_user_id,  <!-- 设计人 -->
+		  pr_check_detail.create_time,  <!-- 创建时间 -->
+		  pr_check_detail.update_user_id,  <!-- 更新人 -->
+		  pr_check_detail.update_time  <!-- 更新时间 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	    <!-- <if test="check_detail_id != null ">
+		      AND check_detail_id = #{check_detail_id}  检查明细项ID
+		</if> -->
+		<if test="check_cata_id != null ">
+		      AND check_id in(select check_id from pr_check_main where check_cata_id=#{check_cata_id} and proj_id = #{proj_id})  <!-- 检查单ID -->
+		</if>
+	    <if test="check_id != null ">
+		      AND check_id = #{check_id}  <!-- 检查单ID -->
+		</if>
+		<if test="none_item != null">
+		      AND none_item = sum(if(IFNULL(#{state,jdbcType=VARCHAR},'0') = '1', 1, 0)),  <!-- 状态 0 不适用 -->
+		</if>
+		<if test="yes_item != null">
+		      AND yes_item = sum(if(IFNULL(#{state,jdbcType=VARCHAR},'0') = '2', 1, 0)),  <!-- 状态 1 符合  -->
+		</if>
+		<if test="no_item != null">
+		      AND no_item = sum(if(IFNULL(#{state,jdbcType=VARCHAR},'0') = '3', 1, 0)),  <!-- 状态  2 不符合 -->
+		</if>
+	    <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="check_detail_name != null and check_detail_name != ''">
+		      AND check_detail_name = #{check_detail_name}  <!-- 检查明细项名称 -->
+		</if>
+		<if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	    <if test="process_product != null and process_product != ''">
+		      AND process_product = #{process_product}  <!-- 过程及产品 -->
+		</if>
+	    <if test="problem_level != null and problem_level != ''">
+		      AND problem_level = #{problem_level}  <!-- 问题等级 -->
+		</if>
+	    <if test="deduct_point != null and deduct_point != ''">
+		      AND deduct_point = #{deduct_point}  <!-- 扣分标准 -->
+		</if>
+	    <if test="solve_deduct_point != null and solve_deduct_point != ''">
+		      AND solve_deduct_point = #{solve_deduct_point}  <!-- 解决时限扣分标准 -->
+		</if>
+	    <if test="solve_times != null and solve_times != ''">
+		      AND solve_times = #{solve_times}  <!-- 问题解决时限 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 1 不适用 2 符合 3 不符合 -->
+		</if>
+	    <if test="is_problem != null and is_problem != ''">
+		      AND is_problem = #{is_problem}  <!-- 是否转问题-1是转，0是不转 -->
+		</if>
+	    <if test="trace_status != null and trace_status != ''">
+		      AND trace_status = #{trace_status}  <!-- 跟踪情况 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 设计人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="check_detail_name != null and check_detail_name != ''">
+		      AND check_detail_name like '${check_detail_name}%'  <!-- 检查明细项名称 -->
+		</if>
+	    <if test="process_product != null and process_product != ''">
+		      AND process_product like '${process_product}%'  <!-- 过程及产品 -->
+		</if>
+	    <if test="problem_level != null and problem_level != ''">
+		      AND problem_level like '${problem_level}%'  <!-- 问题等级 -->
+		</if>
+	    <if test="deduct_point != null and deduct_point != ''">
+		      AND deduct_point like '${deduct_point}%'  <!-- 扣分标准 -->
+		</if>
+	    <if test="solve_deduct_point != null and solve_deduct_point != ''">
+		      AND solve_deduct_point like '${solve_deduct_point}%'  <!-- 解决时限扣分标准 -->
+		</if>
+	    <if test="solve_times != null and solve_times != ''">
+		      AND solve_times like '${solve_times}%'  <!-- 问题解决时限 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 1 不适用 2 符合 3 不符合 -->
+		</if>
+	    <if test="is_problem != null and is_problem != ''">
+		      AND is_problem like '${is_problem}%'  <!-- 是否转问题-1是转，0是不转 -->
+		</if>
+	    <if test="trace_status != null and trace_status != ''">
+		      AND trace_status like '${trace_status}%'  <!-- 跟踪情况 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="check_detail_name != null and check_detail_name != ''">
+		      Or check_detail_name like '${check_detail_name}%'  <!-- 检查明细项名称 -->
+		</if>
+	    <if test="process_product != null and process_product != ''">
+		      Or process_product like '${process_product}%'  <!-- 过程及产品 -->
+		</if>
+	    <if test="problem_level != null and problem_level != ''">
+		      Or problem_level like '${problem_level}%'  <!-- 问题等级 -->
+		</if>
+	    <if test="deduct_point != null and deduct_point != ''">
+		      Or deduct_point like '${deduct_point}%'  <!-- 扣分标准 -->
+		</if>
+	    <if test="solve_deduct_point != null and solve_deduct_point != ''">
+		      Or solve_deduct_point like '${solve_deduct_point}%'  <!-- 解决时限扣分标准 -->
+		</if>
+	    <if test="solve_times != null and solve_times != ''">
+		      Or solve_times like '${solve_times}%'  <!-- 问题解决时限 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 1 不适用 2 符合 3 不符合 -->
+		</if>
+	    <if test="is_problem != null and is_problem != ''">
+		      Or is_problem like '${is_problem}%'  <!-- 是否转问题-1是转，0是不转 -->
+		</if>
+	    <if test="trace_status != null and trace_status != ''">
+		      Or trace_status like '${trace_status}%'  <!-- 跟踪情况 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	</sql>
+	
+</mapper>

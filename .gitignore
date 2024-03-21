@@ -1,0 +1,23 @@
+.settings
+*.log
+
+dist
+
+dist\
+
+/bin/
+.idea/
+.metadata
+.metadata/version.ini
+AOSuite.iml
+pm-bega.iml
+doc/a.第一章 AOSuite简介.md
+doc/b.第二章 AOSuite开发环境搭建.md
+doc/c.第三章 AOSuite十分钟快速入门.md
+doc/d.第四章 AOSuite系统管理.md
+doc/e.第五章 AOSuite界面开发.md
+doc/f.第六章 AOSuite服务端开发.md
+doc/g.第七章 AOSuiteAPI接口开发.md
+doc/h.第八章 AOSuite系统部署最佳实践.md
+doc/i.第九章 AOSuite常见问答汇总.md
+doc/j.第十章 AOSuite版本变更日志.md

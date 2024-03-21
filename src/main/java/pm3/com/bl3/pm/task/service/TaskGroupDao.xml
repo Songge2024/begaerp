@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 任务分组管理模块使用的SQL语句 -->
+<mapper namespace="TaskGroup">
+	<!-- 查询部门列表 -->
+	<select id="listTaskGroupPage" resultType="Dto" parameterType="Dto">
+			SELECT
+            <include refid="com.bl3.pm.task.dao.TaskGroupDao.column" />
+            FROM ta_task_group
+			<where>
+			    <if test="name != null and name != ''">
+				    AND group_name LIKE '%${name}%' 
+				</if>
+			    <if test="cascade == 'false'">
+				    AND parent_id = #{id} 
+				</if>
+				<if test="cascade == 'true'">
+				    AND cascade_id like '${cascade_id}%'
+				</if>
+				<if test="is_del != null and is_del != ''">
+				    AND is_del = #{is_del} 
+				</if>
+			</where>	
+			 ORDER BY sort_no ASC, group_id DESC
+	</select>
+	
+	<!-- 查询某节点下子节点的最大语义ID -->
+	<select id="getMaxCascadeId" resultType="String" parameterType="Dto">
+	     SELECT MAX(cascade_id) AS max_cascade_id FROM ta_task_group WHERE parent_id = #{parent_id} AND proj_id=#{proj_id} and state = 1001
+	</select>
+	
+	
+	<!-- 检查删除节点中是否包含根节点 -->
+	<select id="checkRootNode" resultType="TaskGroupPO" parameterType="Dto">
+	     SELECT 
+	         <include refid="com.bl3.pm.task.dao.TaskGroupDao.column" />
+	      FROM ta_task_group WHERE group_id IN (${ids}) AND parent_id = '0'
+	</select>
+
+</mapper>

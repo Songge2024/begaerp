@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_process_filetype[ProcessFiletype]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-14 16:24:05 -->
+<mapper namespace="com.bl3.pm.process.dao.ProcessFiletypeDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ProcessFiletypePO">
+		INSERT INTO pr_process_filetype (
+		<if test="process_id != null">
+	         process_id, <!-- 所属过程对应pr_process.process_id -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="subdir_id != null">
+	         subdir_id, <!-- 子目录ID -->
+		</if>
+		<if test="filetype_id != null">
+	         filetype_id, <!-- 模板文件类型IDpr_filetype.filetype_id -->
+		</if>
+		<if test="proc_filetype_name != null and proc_filetype_name != ''">
+	         proc_filetype_name, <!-- 文件类型名称 -->
+		</if>
+	         sort_no, <!-- 排序号 -->
+		<if test="file_state != null">
+	         file_state, <!-- 是否必须文件 0 否 1 是 -->
+		</if>
+		<if test="create_user_id != null and create_user_id != ''">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state,<!-- 是否需要审核状态 0 否 1 是 -->
+		</if>
+		<if test="proc_filetype_id != null">
+	          proc_filetype_id,  <!-- 文件类型ID -->
+	   </if>
+	         create_time<!-- 创建时间 -->
+		)VALUES(
+		<if test="process_id != null">
+	          #{process_id, jdbcType=INTEGER}, <!-- 所属过程对应pr_process.process_id -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+	    <if test="subdir_id != null">
+	         #{subdir_id, jdbcType=INTEGER}, <!-- 子目录ID -->
+		</if>
+		<if test="filetype_id != null">
+	          #{filetype_id, jdbcType=INTEGER}, <!-- 模板文件类型IDpr_filetype.filetype_id -->
+	    </if>
+		<if test="proc_filetype_name != null and proc_filetype_name != ''">
+	          #{proc_filetype_name, jdbcType=VARCHAR}, <!-- 文件类型名称 -->
+	    </if>
+	    (SELECT max(sort_no) FROM pr_process_filetype a WHERE proj_id = #{proj_id} and state = 1 AND subdir_id = #{subdir_id})+1,
+		<if test="file_state != null">
+	          #{file_state, jdbcType=INTEGER}, <!-- 是否必须文件 0 否 1 是 -->
+	    </if>
+		<if test="create_user_id != null and create_user_id != ''">
+	          #{create_user_id, jdbcType=VARCHAR}, <!-- 创建人 -->
+	    </if>
+		<if test="update_user_id != null and update_user_id != ''">
+	          #{update_user_id, jdbcType=VARCHAR}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR},<!-- 是否需要审核状态 0 否 1 是 -->
+	    </if>
+		<if test="proc_filetype_id != null">
+		     #{proc_filetype_id, jdbcType=INTEGER}, <!-- 文件类型ID -->
+	    </if>
+	          sysdate() <!-- 创建时间 -->
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ProcessFiletypePO">
+		INSERT INTO pr_process_filetype (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{proc_filetype_id, jdbcType=INTEGER},  <!-- 文件类型ID -->
+		    #{process_id, jdbcType=INTEGER},  <!-- 所属过程对应pr_process.process_id -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{subdir_id, jdbcType=INTEGER},  <!-- 子目录ID -->
+		    #{filetype_id, jdbcType=INTEGER},  <!-- 模板文件类型IDpr_filetype.filetype_id -->
+		    #{proc_filetype_name, jdbcType=VARCHAR},  <!-- 文件类型名称 -->
+		    #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{file_state, jdbcType=INTEGER},  <!-- 是否必须文件 0 否 1 是 -->
+		    #{create_user_id, jdbcType=VARCHAR},  <!-- 创建人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=VARCHAR},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 是否需要审核状态 0 否 1 是 -->
+		)
+	</insert>
+
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProcessFiletypePO">
+		UPDATE pr_process_filetype
+		<set>
+			<if test="proc_filetype_id != null">
+		          proc_filetype_id = #{proc_filetype_id, jdbcType=INTEGER},  <!-- 文件类型ID -->
+			</if>
+			<if test="process_id != null">
+		          process_id = #{process_id, jdbcType=INTEGER},  <!-- 所属过程对应pr_process.process_id -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="subdir_id != null">
+		          subdir_id = #{subdir_id, jdbcType=INTEGER},  <!-- 模板文件类型IDpr_filetype.filetype_id -->
+			</if>
+			<if test="filetype_id != null">
+		          filetype_id = #{filetype_id, jdbcType=INTEGER},  <!-- 模板文件类型IDpr_filetype.filetype_id -->
+			</if>
+			<if test="proc_filetype_name != null">
+		          proc_filetype_name = #{proc_filetype_name, jdbcType=VARCHAR},  <!-- 文件类型名称 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="file_state != null">
+		          file_state = #{file_state, jdbcType=INTEGER},  <!-- 是否必须文件 0 否 1 是 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=VARCHAR},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=VARCHAR},  <!-- 更新人 -->
+			</if>
+		          update_time = sysdate(),  <!-- 更新时间 -->
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 是否需要审核状态 0 否 1 是 -->
+			</if>
+		</set>
+		WHERE  proc_filetype_id = #{proc_filetype_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		update pr_process_filetype set state = 0 where proc_filetype_id = #{proc_filetype_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProcessFiletypePO">
+		SELECT
+		<include refid="column" />
+		FROM pr_process_filetype WHERE  proc_filetype_id = #{proc_filetype_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProcessFiletypePO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_process_filetype
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProcessFiletypePO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_process_filetype
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProcessFiletypePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_process_filetype
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProcessFiletypePO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_process_filetype
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProcessFiletypePO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_process_filetype
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProcessFiletypePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_process_filetype
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ProcessFiletypePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_process_filetype
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_process_filetype
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_process_filetype
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  proc_filetype_id,  <!-- 文件类型ID -->
+		  process_id,  <!-- 所属过程对应pr_process.process_id -->
+		  proj_id,  <!-- 项目ID -->
+		  subdir_id,  <!-- 子目录id -->
+		  filetype_id,  <!-- 模板文件类型IDpr_filetype.filetype_id -->
+		  proc_filetype_name,  <!-- 文件类型名称 -->
+		  sort_no,  <!-- 排序号 -->
+		  file_state,  <!-- 是否必须文件 0 否 1 是 -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 是否需要审核状态 0 否 1 是 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_process_filetype.proc_filetype_id,  <!-- 文件类型ID -->
+		  pr_process_filetype.process_id,  <!-- 所属过程对应pr_process.process_id -->
+		  pr_process_filetype.proj_id,  <!-- 项目ID -->
+		  pr_process_filetype.subdir_id,  <!-- 子目录ID -->
+		  pr_process_filetype.filetype_id,  <!-- 模板文件类型IDpr_filetype.filetype_id -->
+		  pr_process_filetype.proc_filetype_name,  <!-- 文件类型名称 -->
+		  pr_process_filetype.sort_no,  <!-- 排序号 -->
+		  pr_process_filetype.file_state,  <!-- 是否必须文件 0 否 1 是 -->
+		  pr_process_filetype.create_user_id,  <!-- 创建人 -->
+		  pr_process_filetype.create_time,  <!-- 创建时间 -->
+		  pr_process_filetype.update_user_id,  <!-- 更新人 -->
+		  pr_process_filetype.update_time,  <!-- 更新时间 -->
+		  pr_process_filetype.state  <!-- 是否需要审核状态 0 否 1 是 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="proc_filetype_id != null ">
+		      AND proc_filetype_id = #{proc_filetype_id}  <!-- 文件类型ID -->
+		</if>
+	   <if test="process_id != null ">
+		      AND process_id = #{process_id}  <!-- 所属过程对应pr_process.process_id -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+		<if test="subdir_id != null ">
+		      AND subdir_id = #{subdir_id}  <!-- 子目录ID -->
+		</if>
+	   <if test="filetype_id != null ">
+		      AND filetype_id = #{filetype_id}  <!-- 模板文件类型IDpr_filetype.filetype_id -->
+		</if>
+	    <if test="proc_filetype_name != null and proc_filetype_name != ''">
+		      AND proc_filetype_name = #{proc_filetype_name}  <!-- 文件类型名称 -->
+		</if>
+	   <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	   <if test="file_state != null ">
+		      AND file_state = #{file_state}  <!-- 是否必须文件 0 否 1 是 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+		<if test="rootdir_id != null and rootdir_id != ''">
+		      AND subdir_id in (select process_subdir_id from pr_process where proj_id = #{proj_id} and rootdir_id =#{rootdir_id} and state = 1)  <!-- 更新时间 -->
+		</if>
+		      AND state >=1  <!-- 是否需要审核状态 0 否 1 是 -->
+		      order by sort_no
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="proc_filetype_name != null and proc_filetype_name != ''">
+		      AND proc_filetype_name like '${proc_filetype_name}%'  <!-- 文件类型名称 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 是否需要审核状态 0 否 1 是 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="proc_filetype_name != null and proc_filetype_name != ''">
+		      Or proc_filetype_name like '${proc_filetype_name}%'  <!-- 文件类型名称 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      Or create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      Or update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 是否需要审核状态 0 否 1 是 -->
+		</if>
+	</sql>
+	
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="byProcListPage" parameterType="Dto" resultType="ProcessFiletypePO" useCache="false">
+	    SELECT
+			<include refid="column" />,
+			(select count(*) from pr_process_file_upload ppfu
+			  where ppfu.proj_id = ppf.proj_id
+			    and ppfu.process_id = ppf.process_id
+			    and ppfu.proc_filetype_id = ppf.proc_filetype_id
+			    and ppfu.state = '1') as file_num
+		FRoM pr_process_filetype ppf
+		<where>
+			exists (  
+				select 1 from pr_process pp 
+				 where ppf.proj_id = pp.proj_id
+				   and ppf.process_id = pp.process_id
+				   <if test="rootdir_id != null and rootdir_id != ''">
+				   		and pp.rootdir_id = #{rootdir_id}  
+				   </if>
+				   <if test="process_id != null and process_id != ''">
+				   		and ppf.process_id = #{process_id}  
+				   </if>
+				   <if test="proj_id != null and proj_id != ''">
+						and ppf.proj_id = #{proj_id} 
+				   </if>
+			)
+			and ppf.state = '1'
+		</where>	
+	</select>
+	
+	
+		<!-- 查询是否重复 -->
+	<select id="countFiletypeId" resultType="Integer">
+		select count(1) from pr_process_filetype 
+		where proj_id = #{proj_id}
+		 and subdir_id = #{subdir_id}
+		 and filetype_id =#{filetype_id}
+		 and state = 1
+	</select>
+	
+	
+	<!-- 查询是否已上传文件 -->
+	<select id="countFiletype" resultType="Integer">
+	select count(1) from pr_process_file_upload a where a.proj_id =#{proj_id} and a.proc_filetype_id = #{proc_filetype_id}
+	</select>
+</mapper>

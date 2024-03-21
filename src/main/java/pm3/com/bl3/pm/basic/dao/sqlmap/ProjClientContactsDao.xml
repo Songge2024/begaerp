@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_proj_client_contacts[ProjClientContacts]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-13 14:59:53 -->
+<mapper namespace="com.bl3.pm.basic.dao.ProjClientContactsDao">
+	<!-- 查询项目联系人信息列表 -->
+	<select id="queryProjContactDataPage" resultType="Dto" parameterType="Dto">
+		 SELECT
+			<include refid="column" />,
+			(select proj_name from bs_proj_commons 
+			 where bs_proj_commons.proj_id=bs_proj_client_contacts.proj_id )proj_name
+		FRoM bs_proj_client_contacts
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ProjClientContactsPO">
+		INSERT INTO bs_proj_client_contacts (
+		<if test="cont_name != null and cont_name != ''">
+	         cont_name, <!-- 联系人姓名 -->
+		</if>
+		<if test="cont_phone != null and cont_phone != ''">
+	         cont_phone, <!-- 联系人电话 -->
+		</if>
+		<if test="cont_email != null and cont_email != ''">
+	         cont_email, <!-- 联系人邮箱 -->
+		</if>
+		<if test="cont_remark != null and cont_remark != ''">
+	         cont_remark, <!-- 沟通说明 -->
+		</if>
+		<if test="cont_frequency != null and cont_frequency != ''">
+	         cont_frequency, <!-- 沟通频次 -->
+		</if>
+		<if test="cont_desc != null and cont_desc != ''">
+	         cont_desc, <!-- 联系人说明 -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id <!-- 项目ID -->
+		</if>
+		)VALUES(
+		<if test="cont_name != null and cont_name != ''">
+	          #{cont_name, jdbcType=VARCHAR}, <!-- 联系人姓名 -->
+	    </if>
+		<if test="cont_phone != null and cont_phone != ''">
+	          #{cont_phone, jdbcType=VARCHAR}, <!-- 联系人电话 -->
+	    </if>
+		<if test="cont_email != null and cont_email != ''">
+	          #{cont_email, jdbcType=VARCHAR}, <!-- 联系人邮箱 -->
+	    </if>
+		<if test="cont_remark != null and cont_remark != ''">
+	          #{cont_remark, jdbcType=VARCHAR}, <!-- 沟通说明 -->
+	    </if>
+		<if test="cont_frequency != null and cont_frequency != ''">
+	          #{cont_frequency, jdbcType=VARCHAR}, <!-- 沟通频次 -->
+	    </if>
+		<if test="cont_desc != null and cont_desc != ''">
+	          #{cont_desc, jdbcType=VARCHAR}, <!-- 联系人说明 -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER} <!-- 项目ID -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ProjClientContactsPO">
+		INSERT INTO bs_proj_client_contacts (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{cont_id, jdbcType=INTEGER},  <!-- 联系人ID -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{cont_name, jdbcType=VARCHAR},  <!-- 联系人姓名 -->
+		    #{cont_phone, jdbcType=VARCHAR},  <!-- 联系人电话 -->
+		    #{cont_email, jdbcType=VARCHAR},  <!-- 联系人邮箱 -->
+		    #{cont_remark, jdbcType=VARCHAR},  <!-- 沟通说明 -->
+		    #{cont_frequency, jdbcType=VARCHAR},  <!-- 沟通频次 -->
+		    #{cont_desc, jdbcType=VARCHAR}  <!-- 联系人说明 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProjClientContactsPO">
+		UPDATE bs_proj_client_contacts
+		<set>
+			<if test="cont_id != null">
+		          cont_id = #{cont_id, jdbcType=INTEGER},  <!-- 联系人ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="cont_name != null">
+		          cont_name = #{cont_name, jdbcType=VARCHAR},  <!-- 联系人姓名 -->
+			</if>
+			<if test="cont_phone != null">
+		          cont_phone = #{cont_phone, jdbcType=VARCHAR},  <!-- 联系人电话 -->
+			</if>
+			<if test="cont_email != null">
+		          cont_email = #{cont_email, jdbcType=VARCHAR},  <!-- 联系人邮箱 -->
+			</if>
+			<if test="cont_remark != null">
+		          cont_remark = #{cont_remark, jdbcType=VARCHAR},  <!-- 沟通说明 -->
+			</if>
+			<if test="cont_frequency != null">
+		          cont_frequency = #{cont_frequency, jdbcType=VARCHAR},  <!-- 沟通频次 -->
+			</if>
+			<if test="cont_desc != null">
+		          cont_desc = #{cont_desc, jdbcType=VARCHAR},  <!-- 联系人说明 -->
+			</if>
+		</set>
+		WHERE  cont_id = #{cont_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_proj_client_contacts WHERE  cont_id = #{cont_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProjClientContactsPO">
+		SELECT
+		<include refid="column" />
+		FROM bs_proj_client_contacts WHERE  cont_id = #{cont_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProjClientContactsPO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_proj_client_contacts
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProjClientContactsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_client_contacts
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProjClientContactsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_client_contacts
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProjClientContactsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_client_contacts
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProjClientContactsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_client_contacts
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProjClientContactsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_client_contacts
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ProjClientContactsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_client_contacts
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_proj_client_contacts
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_proj_client_contacts
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  cont_id,  <!-- 联系人ID -->
+		  proj_id,  <!-- 项目ID -->
+		  cont_name,  <!-- 联系人姓名 -->
+		  cont_phone,  <!-- 联系人电话 -->
+		  cont_email,  <!-- 联系人邮箱 -->
+		  cont_remark,  <!-- 沟通说明 -->
+		  cont_frequency,  <!-- 沟通频次 -->
+		  cont_desc  <!-- 联系人说明 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_proj_client_contacts.cont_id,  <!-- 联系人ID -->
+		  bs_proj_client_contacts.proj_id,  <!-- 项目ID -->
+		  bs_proj_client_contacts.cont_name,  <!-- 联系人姓名 -->
+		  bs_proj_client_contacts.cont_phone,  <!-- 联系人电话 -->
+		  bs_proj_client_contacts.cont_email,  <!-- 联系人邮箱 -->
+		  bs_proj_client_contacts.cont_remark,  <!-- 沟通说明 -->
+		  bs_proj_client_contacts.cont_frequency,  <!-- 沟通频次 -->
+		  bs_proj_client_contacts.cont_desc  <!-- 联系人说明 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="cont_id != null ">
+		      AND cont_id = #{cont_id}  <!-- 联系人ID -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="cont_name != null and cont_name != ''">
+		      AND cont_name = #{cont_name}  <!-- 联系人姓名 -->
+		</if>
+	    <if test="cont_phone != null and cont_phone != ''">
+		      AND cont_phone = #{cont_phone}  <!-- 联系人电话 -->
+		</if>
+	    <if test="cont_email != null and cont_email != ''">
+		      AND cont_email = #{cont_email}  <!-- 联系人邮箱 -->
+		</if>
+	    <if test="cont_remark != null and cont_remark != ''">
+		      AND cont_remark = #{cont_remark}  <!-- 沟通说明 -->
+		</if>
+	    <if test="cont_frequency != null and cont_frequency != ''">
+		      AND cont_frequency = #{cont_frequency}  <!-- 沟通频次 -->
+		</if>
+	    <if test="cont_desc != null and cont_desc != ''">
+		      AND cont_desc = #{cont_desc}  <!-- 联系人说明 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="cont_name != null and cont_name != ''">
+		      AND cont_name like '${cont_name}%'  <!-- 联系人姓名 -->
+		</if>
+	    <if test="cont_phone != null and cont_phone != ''">
+		      AND cont_phone like '${cont_phone}%'  <!-- 联系人电话 -->
+		</if>
+	    <if test="cont_email != null and cont_email != ''">
+		      AND cont_email like '${cont_email}%'  <!-- 联系人邮箱 -->
+		</if>
+	    <if test="cont_remark != null and cont_remark != ''">
+		      AND cont_remark like '${cont_remark}%'  <!-- 沟通说明 -->
+		</if>
+	    <if test="cont_frequency != null and cont_frequency != ''">
+		      AND cont_frequency like '${cont_frequency}%'  <!-- 沟通频次 -->
+		</if>
+	    <if test="cont_desc != null and cont_desc != ''">
+		      AND cont_desc like '${cont_desc}%'  <!-- 联系人说明 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="cont_name != null and cont_name != ''">
+		      Or cont_name like '${cont_name}%'  <!-- 联系人姓名 -->
+		</if>
+	    <if test="cont_phone != null and cont_phone != ''">
+		      Or cont_phone like '${cont_phone}%'  <!-- 联系人电话 -->
+		</if>
+	    <if test="cont_email != null and cont_email != ''">
+		      Or cont_email like '${cont_email}%'  <!-- 联系人邮箱 -->
+		</if>
+	    <if test="cont_remark != null and cont_remark != ''">
+		      Or cont_remark like '${cont_remark}%'  <!-- 沟通说明 -->
+		</if>
+	    <if test="cont_frequency != null and cont_frequency != ''">
+		      Or cont_frequency like '${cont_frequency}%'  <!-- 沟通频次 -->
+		</if>
+	    <if test="cont_desc != null and cont_desc != ''">
+		      Or cont_desc like '${cont_desc}%'  <!-- 联系人说明 -->
+		</if>
+	</sql>
+	
+</mapper>

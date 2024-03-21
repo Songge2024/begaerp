@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.bl3.pm.task.dao.WeStorageDao">
+	<!-- 获取周报编码 -->
+	<select id="weeklyCode" resultType="Integer" >
+		SELECT
+			IFNULL(max(test_code), 0)
+		FROM
+			ta_week
+	</select>
+	<!-- 获取周报 -->
+	<select id="weekFlag"  resultType="Integer" >
+			SELECT
+			IFNULL(SUBSTRING(MAX(task_plan_num),2,2),0)
+		FROM
+			ta_week where proj_id=#{proj_id}
+	</select>
+	<!-- 获取项目名称项目编码 -->
+	<select id="getProjN" resultType="Dto" >
+		SELECT
+			proj_code
+			
+		FROM
+			bs_proj_commons
+		WHERE
+			proj_code = #{proj_code}
+	</select>
+	<!-- 获取评审编码 -->
+	<select id="getManageCode" resultType="Integer" >
+		SELECT
+					IFNULL(max(manage_code), 0) as manage_code
+				FROM
+					qa_files_manage
+	</select>
+	<!-- 获取意见编码 -->
+	<select id="getOpinionCode" resultType="Integer" >
+		SELECT
+			IFNULL(max(opinion_code), 0) + 1
+		FROM
+			qa_files_manage
+	</select>
+	
+	 <!-- 内容信息列表 -->
+	<select id="userText" resultType="Dto" parameterType="Dto" >
+			SELECT *
+			FROM
+			qa_reply_news
+			<where>	
+			<if test="text_code != null and text_code != ''">
+		       AND text_code = #{text_code}  <!-- 内容code-->
+			</if>
+			</where>
+	</select>
+	<!-- 获取项目成员任务 -->
+	<select id="week_name" resultType="Dto" parameterType="Dto">
+		SELECT 
+		GROUP_CONCAT(
+		    CONCAT(
+		      task_name,
+		      ':',
+		       task_desc,
+		      '--',
+		      IF(
+		        state = 1003,
+		        "未完成",
+		        "已完成"
+		      ),
+		      IF(
+		        percent = 100,
+		        IFNULL(CONCAT('(', real_end_time, ')'), ''),
+		        IFNULL(CONCAT('(任务进度', percent, '%)'), '')
+		      )
+		    )
+		  ) remarks,
+		  ( SELECT CASE task_type WHEN 1040 THEN "1040" WHEN 1090 THEN "1090"  ELSE "1030" END)week_class,
+		  (SELECT id FROM `aos_user` WHERE handler_user_id=id)owner_id,
+		  (SELECT NAME FROM `aos_user` WHERE handler_user_id=id)owner_name,
+		   plan_begin_time begin_date,
+		   plan_end_time end_date,
+		   real_end_time finish_time,
+		  ( SELECT CASE state WHEN 1003 THEN "未完成"  ELSE "已完成" END)finish_cond
+		FROM
+		  `ta_task` 
+			WHERE proj_id = #{proj_id}
+			  AND (real_begin_time <![CDATA[ <= ]]> #{begin_date} AND state IN (1003)  or
+			 	( real_end_time >= #{begin_date} AND real_end_time <![CDATA[ <= ]]> #{end_date}) )
+			  AND state IN (1004,1005) 
+			 GROUP BY owner_id ,week_class
+	</select>
+	
+	<!-- 获取项目成员任务标题 -->
+	<select id="week_T" resultType="Dto" parameterType="Dto">
+		SELECT 
+		GROUP_CONCAT(
+		    CONCAT(
+		      task_name,
+		      '-',
+		      IF(
+		        state = 1003,
+		        "未完成",
+		        "已完成"
+		      ),
+		      IF(
+		        percent = 100,
+		        IFNULL(CONCAT('(', real_end_time, ')'), ''),
+		        IFNULL(CONCAT('(任务进度', percent, '%)'), '')
+		      )
+		    )
+		  ) remarks,
+		  ( SELECT CASE task_type WHEN 1040 THEN "1040" WHEN 1090 THEN "1090"  ELSE "1030" END)week_class,
+		  (SELECT id FROM `aos_user` WHERE handler_user_id=id)owner_id,
+		  (SELECT NAME FROM `aos_user` WHERE handler_user_id=id)owner_name,
+		   plan_begin_time begin_date,
+		   plan_end_time end_date,
+		   real_end_time finish_time,
+		  ( SELECT CASE state WHEN 1003 THEN "未完成"  ELSE "已完成" END)finish_cond
+		FROM
+		  `ta_task` 
+			WHERE proj_id = #{proj_id}
+			  AND (real_begin_time <![CDATA[ <= ]]> #{begin_date} AND state IN (1003)  or
+			 	( real_end_time >= #{begin_date} AND real_end_time <![CDATA[ <= ]]> #{end_date}) )
+			  AND state IN (1004,1005) 
+			 GROUP BY owner_id ,week_class
+	</select>
+	
+	<!-- 获取项目成员任务描述 -->
+	<select id="week_N" resultType="Dto" parameterType="Dto">
+		SELECT 
+		GROUP_CONCAT(
+		    CONCAT(
+		      task_desc,
+		      '-',
+		      IF(
+		        state = 1003,
+		        "未完成",
+		        "已完成"
+		      ),
+		      IF(
+		        percent = 100,
+		        IFNULL(CONCAT('(', real_end_time, ')'), ''),
+		        IFNULL(CONCAT('(任务进度', percent, '%)'), '')
+		      )
+		    )
+		  ) remarks,
+		  ( SELECT CASE task_type WHEN 1040 THEN "1040" WHEN 1090 THEN "1090"  ELSE "1030" END)week_class,
+		  (SELECT id FROM `aos_user` WHERE handler_user_id=id)owner_id,
+		  (SELECT NAME FROM `aos_user` WHERE handler_user_id=id)owner_name,
+		   plan_begin_time begin_date,
+		   plan_end_time end_date,
+		   real_end_time finish_time,
+		  ( SELECT CASE state WHEN 1003 THEN "未完成"  ELSE "已完成" END)finish_cond
+		FROM
+		  `ta_task` 
+			WHERE proj_id = #{proj_id}
+			  AND (real_begin_time <![CDATA[ <= ]]> #{begin_date} AND state IN (1003)  or
+			 	( real_end_time >= #{begin_date} AND real_end_time <![CDATA[ <= ]]> #{end_date}) )
+			  AND state IN (1004,1005) 
+			 GROUP BY owner_id ,week_class
+	</select>
+	
+	<!-- 查询项目数据 -->
+	<select id="getProjt" resultType="Dto">
+		SELECT
+        	q.*
+        	,t.*	 
+        FROM ta_week_report q,ta_week t
+        WHERE q.test_code=t.test_code AND proj_code= #{proj_code}
+	</select>
+	
+	<!-- 根据编码删除数据持久化对象 -->
+	<delete id="deleteTc">
+		DELETE FROM ta_week_report WHERE  test_code = #{test_code}
+	</delete>
+	<!-- 根据编码删除数据持久化对象 -->
+	<delete id="deleteTh">
+		DELETE FROM ta_work_hour WHERE  test_code = #{test_code}
+	</delete>
+	<delete id="deleteMx">
+		DELETE FROM ta_week WHERE  test_code = #{test_code}
+	</delete>
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="WeekReportPO">
+		INSERT INTO ta_week_report (
+		<if test="proj_name != null and proj_name != ''">
+	         proj_name, <!-- 项目名称 -->
+		</if>
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 周报编码 -->
+		</if>
+		<if test="remarks != null and remarks != ''">
+	         remarks, <!-- 任务描述 -->
+		</if>
+		<if test="owner_id != null">
+	         owner_id, <!-- 责任人id -->
+		</if>
+		<if test="owner_name != null">
+	         owner_name, <!-- 责任人 -->
+		</if>
+		
+		<if test="finish_time != null and finish_time != ''">
+	         finish_time, <!-- 实际完成实际 -->
+		</if>
+		<if test="finish_cond != null and finish_cond != ''">
+	         finish_cond, <!-- 完成情况 -->
+		</if>
+		<if test="descc != null and descc != ''">
+	         descc, <!-- 任务偏差分析及解决措施 -->
+		</if>
+		<if test="proj_id != null and proj_id  != ''">
+	         proj_id , <!-- 项目编码 -->
+		</if>
+		<if test="week_name != null and week_name != ''">
+	         week_name, <!-- 周报名称 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 周报状态 -->
+		</if>
+		<if test="task_plan_num != null">
+	         task_plan_num, <!-- 项目周 -->
+		</if>
+		<if test="week_class != null">
+	         week_class, <!-- 任务分类 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		
+	          id
+		)VALUES(
+		<if test="proj_name != null and proj_name != ''">
+	          #{proj_name, jdbcType=VARCHAR}, <!-- 项目名称 -->
+	    </if>
+		<if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 周报编码 -->
+	    </if>
+		<if test="remarks != null and remarks != ''">
+	          #{remarks, jdbcType=VARCHAR}, <!-- 任务描述 -->
+	    </if>
+		<if test="owner_id != null">
+	          #{owner_id, jdbcType=VARCHAR}, <!-- 责任人id -->
+	    </if>
+		<if test="owner_name != null">
+	          #{owner_name, jdbcType=VARCHAR}, <!-- 责任人 -->
+	    </if>
+		
+		<if test="finish_time != null and finish_time != ''">
+	          #{finish_time, jdbcType=VARCHAR}, <!-- 实际完成实际 -->
+	    </if>
+		<if test="finish_cond != null and finish_cond != ''">
+	          #{finish_cond, jdbcType=VARCHAR}, <!-- 完成情况 -->
+	    </if>
+		<if test="descc != null and descc != ''">
+	          #{descc, jdbcType=VARCHAR}, <!-- 任务偏差分析及解决措施 -->
+	    </if>
+		<if test="proj_id  != null and proj_id  != ''">
+	          #{proj_id , jdbcType=VARCHAR}, <!-- 项目编码 -->
+	    </if>
+		<if test="week_name != null and week_name != ''">
+	          #{week_name, jdbcType=VARCHAR}, <!-- 周报名称 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 周报状态 -->
+	    </if>
+		<if test="task_plan_num != null">
+	          #{task_plan_num, jdbcType=VARCHAR}, <!-- 更新人 -->
+	    </if>
+		<if test="week_class != null">
+	          #{week_class, jdbcType=VARCHAR}, <!-- 任务分类 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		
+	          null
+		)
+	</insert>
+	
+	
+	<!-- 新增下周工作计划 -->
+	<insert id="insert_week_plan" useGeneratedKeys="true" keyProperty="id" parameterType="WeekReportPO">
+		INSERT INTO ta_week_report (
+		<if test="proj_name != null and proj_name != ''">
+	         proj_name, <!-- 项目名称 -->
+		</if>
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 周报编码 -->
+		</if>
+		<if test="remarks != null and remarks != ''">
+	         remarks, <!-- 任务描述 -->
+		</if>
+		<if test="owner_id != null">
+	         owner_id, <!-- 责任人id -->
+		</if>
+		<if test="owner_name != null">
+	         owner_name, <!-- 责任人 -->
+		</if>
+		<if test="begin_date != null and begin_date != ''">
+	         begin_date, <!-- 计划开始时间 -->
+		</if>
+		<if test="end_date != null and end_date != ''">
+	         end_date, <!-- 计划结束时间 -->
+		</if>
+		<if test="proj_id != null and proj_id  != ''">
+	         proj_id , <!-- 项目编码 -->
+		</if>
+		<if test="week_name != null and week_name != ''">
+	         week_name, <!-- 周报名称 -->
+		</if>
+		<if test="task_plan_num != null">
+	         task_plan_num, <!-- 项目周 -->
+		</if>
+		<if test="week_class != null">
+	         week_class, <!-- 任务分类 -->
+		</if>
+		week_flag,
+	          id
+		)VALUES(
+		<if test="proj_name != null and proj_name != ''">
+	          #{proj_name, jdbcType=VARCHAR}, <!-- 项目名称 -->
+	    </if>
+		<if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 周报编码 -->
+	    </if>
+		<if test="remarks != null and remarks != ''">
+	          #{remarks, jdbcType=VARCHAR}, <!-- 任务描述 -->
+	    </if>
+		<if test="owner_id != null">
+	          #{owner_id, jdbcType=VARCHAR}, <!-- 责任人id -->
+	    </if>
+		<if test="owner_name != null">
+	          #{owner_name, jdbcType=VARCHAR}, <!-- 责任人 -->
+	    </if>
+		<if test="begin_date != null and begin_date != ''">
+	          #{begin_date, jdbcType=VARCHAR}, <!-- 计划开始时间 -->
+	    </if>
+		<if test="end_date != null and end_date != ''">
+	          #{end_date, jdbcType=VARCHAR}, <!-- 计划结束时间 -->
+	    </if>
+		<if test="proj_id  != null and proj_id  != ''">
+	          #{proj_id , jdbcType=VARCHAR}, <!-- 项目编码 -->
+	    </if>
+		<if test="week_name != null and week_name != ''">
+	          #{week_name, jdbcType=VARCHAR}, <!-- 周报名称 -->
+	    </if>
+		<if test="task_plan_num != null">
+	          #{task_plan_num, jdbcType=VARCHAR}, <!-- 更新人 -->
+	    </if>
+		<if test="week_class != null">
+	          #{week_class, jdbcType=VARCHAR}, <!-- 任务分类 -->
+	    </if>
+	   		 2,
+	          null
+		)
+	</insert>
+	<!-- 是否存在已经插入的数据  -->
+    <select id ="weeklyCount" resultType="Integer" parameterType="String">
+    	select  count(*) from ta_week
+    	     <where>
+    	     	<if test="_parameter != null">
+    	        and test_code = #{test_code}
+    	     	</if>
+    	     </where>
+    </select>
+	
+	<!-- 是否存在已经插入的数据  -->
+    <select id ="weekhsCount" resultType="Integer" parameterType="Dto">
+    	select  count(*) from ta_work_hour
+    	     where
+    	         test_code=#{test_code}
+    	        and user_id=#{user_id}
+    </select>
+	<!-- 根据ID查询名  -->
+    <select id ="proj_people" resultType="String" parameterType="String">
+    	select name as owner_name from aos_user
+    	     where
+    	         id in (#{id})
+    	        
+    </select>
+    
+    <!-- 如果工时存在则更新 -->
+    <update id ="upWeekhs"  parameterType="Dto">
+    	update ta_work_hour  set  work_hours=#{work_hours}  ,business_hours=#{business_hours}
+    	     where
+    	         test_code=#{test_code}
+    	        and user_id=#{user_id}
+    </update>
+    
+     <!-- 修改提交状态-->
+    <update id ="state_update"  parameterType="Dto">
+    	update ta_week  set  flag=2 , opiniontion= #{opiniontion}  ,
+    	back_user_id= #{back_user_id},
+    	back_time= #{back_time}
+    	     where
+    	         week_id=#{week_id}
+    </update>
+    
+    <!-- 删除主表一条数据  -->
+    <delete id ="weeklyDel"  >
+    	delete   from ta_week 
+    	    where   test_code=#{test_code}
+    	    
+    </delete>	
+    <!-- 删除明细一条数据  -->
+    <delete id ="weeklyDeDel"  >
+    	delete   from ta_week_report 
+    	      where   test_code=#{test_code}
+    </delete>	
+    <!-- 删除工期表  -->
+    <delete id ="weeklyDelH"  >
+    	delete   from ta_work_hour 
+    	      where   test_code=#{test_code}
+    </delete>	
+    	
+    	
+    	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="inserts" useGeneratedKeys="true" keyProperty="work_id" parameterType="WorkHour">
+		INSERT INTO ta_work_hour (
+		<if test="user_id != null">
+	         user_id, <!-- 创建人 -->
+		</if>
+		<if test="proj_id != null and proj_id  != ''">
+	         proj_id , <!-- 项目编码 -->
+		</if>
+		
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 周报编码 -->
+		</if>
+		
+		<if test="work_hours != null and work_hours != ''">
+	         work_hours <!-- 目前情况说明 -->
+		</if>
+		
+	         
+		)VALUES(
+		
+		<if test="uesr_id != null">
+	          #{uesr_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+	    <if test="proj_id  != null and proj_id  != ''">
+	          #{proj_id , jdbcType=INTEGER}, <!-- 项目编码 -->
+	    </if>
+		<if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 周报编码 -->
+	    </if>
+	    
+		<if test="work_hours != null and work_hours != ''">
+	          #{work_hours, jdbcType=VARCHAR} <!-- 周报名称 -->
+	    </if>
+		
+		
+		)
+	</insert>
+    	
+    <!-- 获取项目启动时间  -->
+   <select id ="getProjdt" resultType="java.util.Date" parameterType="String">
+			SELECT 
+			  b.`BEGIN_DATE` as begin_date
+			FROM
+				  `bs_proj_commons` b 
+			WHERE b.`PROJ_ID` = #{PROJ_ID}
+			AND b.`STATE`=1
+    </select>
+    	
+    	
+    	
+    	
+</mapper>

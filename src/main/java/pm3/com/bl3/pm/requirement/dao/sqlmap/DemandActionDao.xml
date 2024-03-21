@@ -1,0 +1,1165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- re_demand_action[DemandAction]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-19 11:08:28 -->
+<mapper namespace="com.bl3.pm.requirement.dao.DemandActionDao">
+	<!-- 查询需求数据集合 -->
+	<select id="listDemandData" resultType="Dto" parameterType="Dto">
+	    SELECT
+			<include refid="column" />	
+		FRoM re_demand_action
+		<where>
+		    <include refid="like" />
+		    and state='1'
+		</where>	
+	</select>
+		<!-- 查询需求,设计，编码，测试详细界面 -->
+	<select id="listDetailDemandData" resultType="Dto" parameterType="Dto">
+	    SELECT
+			<include refid="com.bl3.pm.task.dao.TaskDao.column" />	,
+	  (select name from aos_user where id=handler_user_id )handler_user_name,
+	  (select name from aos_user where id=assign_user_id )assign_user_name,
+	  (select proj_name from bs_proj_commons 
+		where bs_proj_commons.proj_id=ta_task.proj_id)proj_name,
+		(
+		CASE
+		WHEN state = 1001 THEN
+			'草稿'
+		WHEN state = 1002 THEN
+			'已发布'
+		WHEN state = 1003 THEN
+			'已接收'
+		WHEN state = 1004 THEN
+			'已完成'
+		WHEN state = 1005 THEN
+			'已关闭'
+		ELSE
+			'已删除'
+		END
+		)state_name,
+		(
+		CASE
+		WHEN task_type = 1020 THEN
+			'设计'
+		WHEN task_type = 1030 THEN
+			'开发'
+		ELSE
+			'测试'
+		END
+		)task_type_name,
+		(
+		CASE
+		WHEN task_type = 1010 THEN
+			'一般'
+		WHEN task_type = 1020 THEN
+			'急'
+		WHEN task_type = 1030 THEN
+			'加急'
+		ELSE
+			'特急'
+		END
+		)task_level_name
+		from ta_task
+		<where>
+		    <include refid="com.bl3.pm.task.dao.TaskDao.equal" />
+		    and state!='1001' and state!='1006'
+		</where>	
+	</select>
+<!-- 查询需求,设计，编码，测试 -->
+	<select id="listMutiModelDemandState" resultType="Dto" parameterType="Dto">
+				SELECT
+				r.ad_id,
+				r.ad_code,
+				r.dm_code,
+				r.dm_first_code,
+				r.ad_name,
+				r.ad_type,
+				r.state,
+				re.dm_name,
+				cs.task_type cs_task_type,
+				bm.task_type bm_task_type,
+				sj.task_type sj_task_type,
+				IFNULL(	ROUND((cs.ts),1), '无') cs_ts,
+				IFNULL(CONCAT(ROUND((cs.COMPLETION), 2),'%'),'无') cs_completion,
+				IFNULL(ROUND((bm.ts),1), '无') bm_ts,
+				IFNULL(CONCAT(ROUND((bm. COMPLETION), 2),'%'),'无') bm_completion,
+				IFNULL(ROUND((sj.ts),1), '无') sj_ts,
+				IFNULL(CONCAT(ROUND((sj.COMPLETION), 2),'%'),'无') sj_completion,
+					IFNULL(ROUND((qt.ts),1), '无') qt_ts,
+				IFNULL(CONCAT(ROUND((qt.COMPLETION), 2),'%'),'无') qt_completion
+				FROM
+					re_demand_action r
+				LEFT JOIN (
+					SELECT
+						demand_id,
+						t.proj_id,
+						task_type,
+						IFNULL(real_wastage, 0) wcts,
+						sum(IFNULL(round((real_wastage),1), plan_wastage)) AS ts,
+						(SELECT count(*) from ta_task k 
+						   WHERE k.state != '1001'
+							AND k.state != "1006" 
+							AND a.proj_id = k.proj_id
+							AND k.demand_id = a.ad_id
+							AND k.task_type = '${cs_task_type}'
+							AND k.proj_id = '${proj_id}'
+						and k.real_wastage is not NULL)/(SELECT count(*) from ta_task k 
+						   WHERE k.state != '1001'
+							AND k.state != "1006" 
+							AND a.proj_id = k.proj_id
+							AND k.demand_id = a.ad_id
+							AND k.task_type = '${cs_task_type}'
+							AND k.proj_id = '${proj_id}'
+						)*100 COMPLETION
+					FROM
+						ta_task t,re_demand_action a
+					WHERE
+						t.state != '1001'
+					and t.state != "1006"
+					and a.proj_id=t.proj_id
+					and t.demand_id=a.ad_id
+					and task_type = '${cs_task_type}'
+					and t.proj_id='${proj_id}'
+					GROUP BY
+ 					 t.demand_id
+				) cs ON r.proj_id = cs.proj_id
+				AND r.ad_id = cs.demand_id
+				LEFT JOIN (
+					SELECT
+						demand_id,
+						t.proj_id,
+						task_type,
+						IFNULL(real_wastage, 0) wcts,
+						sum(IFNULL(round((real_wastage),1), plan_wastage)) AS ts,
+						(SELECT count(*) from ta_task k 
+						   WHERE k.state != '1001'
+							AND k.state != "1006" 
+							AND a.proj_id = k.proj_id
+							AND k.demand_id = a.ad_id
+							AND k.task_type = '${bm_task_type}'
+							AND k.proj_id = '${proj_id}'
+						and k.real_wastage is not NULL)/(SELECT count(*) from ta_task k 
+						   WHERE k.state != '1001'
+							AND k.state != "1006" 
+							AND a.proj_id = k.proj_id
+							AND k.demand_id = a.ad_id
+							AND k.task_type = '${bm_task_type}'
+							AND k.proj_id = '${proj_id}'
+						)*100 COMPLETION
+					FROM
+						ta_task t,re_demand_action a
+					WHERE
+						t.state != '1001'
+					and t.state != "1006"
+					and a.proj_id=t.proj_id
+					and t.demand_id=a.ad_id
+					and task_type = '${bm_task_type}'
+					and t.proj_id='${proj_id}'
+					GROUP BY
+ 					 t.demand_id
+				) bm ON r.proj_id = bm.proj_id
+				AND r.ad_id = bm.demand_id
+				LEFT JOIN (
+					SELECT
+						demand_id,
+						t.proj_id,
+						task_type,
+						IFNULL(real_wastage, 0) wcts,
+						sum(IFNULL(round((real_wastage),1), plan_wastage)) AS ts,
+						(SELECT count(*) from ta_task k 
+						   WHERE k.state != '1001'
+							AND k.state != "1006" 
+							AND a.proj_id = k.proj_id
+							AND k.demand_id = a.ad_id
+							AND k.task_type = '${qt_task_type}'
+							AND k.proj_id = '${proj_id}'
+						and k.real_wastage is not NULL)/(SELECT count(*) from ta_task k 
+						   WHERE k.state != '1001'
+							AND k.state != "1006" 
+							AND a.proj_id = k.proj_id
+							AND k.demand_id = a.ad_id
+							AND k.task_type = '${qt_task_type}'
+							AND k.proj_id = '${proj_id}'
+						)*100 COMPLETION
+					FROM
+						ta_task t,re_demand_action a
+					WHERE
+						t.state != '1001'
+					and t.state != "1006"
+					and a.proj_id=t.proj_id
+					and t.demand_id=a.ad_id
+					and task_type = '${qt_task_type}'
+					and t.proj_id='${proj_id}'
+					GROUP BY
+ 					 t.demand_id
+				) qt ON r.proj_id =qt.proj_id
+				AND r.ad_id = qt.demand_id
+				LEFT JOIN (
+					SELECT
+						demand_id,
+						t.proj_id,
+						task_type,
+						IFNULL(real_wastage, 0) wcts,
+						sum(IFNULL(round((real_wastage),1), plan_wastage)) AS ts,
+						(SELECT count(*) from ta_task k 
+						   WHERE k.state != '1001'
+							AND k.state != "1006" 
+							AND a.proj_id = k.proj_id
+							AND k.demand_id = a.ad_id
+							AND k.task_type = '${sj_task_type}'
+							AND k.proj_id = '${proj_id}'
+						and k.real_wastage is not NULL)/(SELECT count(*) from ta_task k 
+						   WHERE k.state != '1001'
+							AND k.state != "1006" 
+							AND a.proj_id = k.proj_id
+							AND k.demand_id = a.ad_id
+							AND k.task_type = '${sj_task_type}'
+							AND k.proj_id = '${proj_id}'
+						)*100 COMPLETION
+					FROM
+						ta_task t,re_demand_action a
+					WHERE
+						t.state != '1001'
+					and t.state != "1006"
+					and a.proj_id=t.proj_id
+					and t.demand_id=a.ad_id
+					and task_type = '${sj_task_type}'
+					and t.proj_id='${proj_id}'
+					GROUP BY
+ 					 t.demand_id
+				) sj ON r.proj_id = sj.proj_id
+				AND r.ad_id = sj.demand_id
+				LEFT JOIN re_module_divide re ON r.dm_first_code = re.DM_CODE
+				WHERE
+					r.proj_id = '${proj_id}' 
+					AND r.STATE = '1'
+					<if test="ad_name != null and ad_name != ''">
+				        and r.ad_name like '%${ad_name}%'
+					</if>
+					<if test="dm_first_code != null and dm_first_code != ''">
+				        and r.dm_first_code = '${dm_first_code}'
+					</if>
+	</select>
+	
+	<select id="listModuleDivideComboBox" resultType="Dto">	
+		SELECT
+			r.dm_code AS value,
+			r.dm_name AS display
+		FROM
+			re_module_divide r
+			LEFT JOIN re_demand_action re ON re.dm_first_code = r.dm_code 
+		WHERE r.DM_PARENT_CODE = 1 
+		<if test="proj_id != null and proj_id != ''">
+	        and r.proj_id = '${proj_id}'
+		</if>
+		GROUP BY display
+		
+	</select>
+	<!-- 查询模块名称下拉框 -->
+	<select id="listComboBoxModelData" resultType="Dto">
+		SELECT
+		dm_code AS value, dm_name AS display
+		FROM
+		re_module_divide
+		where dm_parent_code !='0'
+	</select>
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="AD_ID" parameterType="DemandActionPO">
+		INSERT INTO re_demand_action (
+		<if test="ad_code != null and ad_code != ''">
+	         ad_code, <!-- 需求功能表ID -->
+		</if>
+		<if test="dm_code != null and dm_code != ''">
+	         dm_code, <!-- 功能模块ID -->
+		</if>
+		<if test="dm_first_code != null and dm_first_code != ''">
+			dm_first_code,
+		</if>
+		<if test="ad_name != null and ad_name != ''">
+	         ad_name, <!-- 名称 -->
+		</if>
+		<if test="ad_type != null and ad_type != ''">
+	         ad_type, <!-- 需求类型 -->
+		</if>
+		<if test="ad_raise_date != null and ad_raise_date != ''">
+	         ad_raise_date, <!-- 提出时间 -->
+		</if>
+		<if test="ad_plan_finish_date != null and ad_plan_finish_date != ''">
+	         ad_plan_finish_date, <!-- 计划完成时间 -->
+		</if>
+		<if test="ad_claim_finish_date != null and ad_claim_finish_date != ''">
+	         ad_claim_finish_date, <!-- 要求完成时间 -->
+		</if>
+		<if test="ad_actual_finish_date != null and ad_actual_finish_date != ''">
+	         ad_actual_finish_date, <!-- 实际完成时间 -->
+		</if>
+		<if test="ad_source != null and ad_source != ''">
+	         ad_source, <!-- 需求来源 -->
+		</if>
+		<if test="ad_source_remark != null and ad_source_remark != ''">
+	         ad_source_remark, <!-- 来源说明 -->
+		</if>
+		<if test="ad_difficulty != null and ad_difficulty != ''">
+	         ad_difficulty, <!-- 难易程度 -->
+		</if>
+		<if test="ad_priority != null and ad_priority != ''">
+	         ad_priority, <!-- 优先级 -->
+		</if>
+		<if test="ad_workload != null and ad_workload != ''">
+	         ad_workload, <!-- 估计工作量 -->
+		</if>
+		<if test="ad_content != null and ad_content != ''">
+	         ad_content, <!-- 内容 -->
+		</if>
+		<if test="ad_remark != null and ad_remark != ''">
+	         ad_remark, <!-- 备注 -->
+		</if>
+		<if test="ad_chage_source != null and ad_chage_source != ''">
+	         ad_chage_source, <!-- 变更来源 -->
+		</if>
+		<if test="ad_chage_introducer != null and ad_chage_introducer != ''">
+	         ad_chage_introducer, <!-- 变更提出人 -->
+		</if>
+		<if test="ad_chage_number != null and ad_chage_number != ''">
+	         ad_chage_number, <!-- 变更软件版本号 -->
+		</if>
+		<if test="ad_chage_audit != null and ad_chage_audit != ''">
+	         ad_chage_audit, <!-- 变更审核意见 -->
+		</if>
+		<if test="proj_id != null and proj_id != ''">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 修改人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 修改时间 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 新增人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 新增时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="demand_code != null and demand_code != ''">
+	         demand_code, <!-- 需求编码 -->
+		</if>
+		<if test="is_product_satisfied != null and is_product_satisfied != ''">
+			is_product_satisfied, <!-- 产品是否满足(0:否,1:是) -->
+		</if>
+		<if test="ad_claim_start_date != null and ad_claim_start_date != ''">
+			ad_claim_start_date, <!-- 要求开始时间 -->
+		</if>
+		<if test="development_member != null and development_member != ''">
+			development_member, <!-- 开发成员 -->
+		</if>
+	          AD_ID
+		)VALUES(
+		<if test="ad_code != null and ad_code != ''">
+	          #{ad_code, jdbcType=VARCHAR}, <!-- 需求功能表ID -->
+	    </if>
+		<if test="dm_code != null and dm_code != ''">
+	          #{dm_code, jdbcType=VARCHAR}, <!-- 功能模块ID -->
+	    </if>
+	    <if test="dm_first_code != null and dm_first_code != ''">
+	          #{dm_first_code, jdbcType=VARCHAR}, <!-- 功能模块ID -->
+	    </if>
+		<if test="ad_name != null and ad_name != ''">
+	          #{ad_name, jdbcType=VARCHAR}, <!-- 名称 -->
+	    </if>
+		<if test="ad_type != null and ad_type != ''">
+	          #{ad_type, jdbcType=VARCHAR}, <!-- 需求类型 -->
+	    </if>
+		<if test="ad_raise_date != null and ad_raise_date != ''">
+	          #{ad_raise_date, jdbcType=VARCHAR}, <!-- 提出时间 -->
+	    </if>
+		<if test="ad_plan_finish_date != null and ad_plan_finish_date != ''">
+	          #{ad_plan_finish_date, jdbcType=VARCHAR}, <!-- 计划完成时间 -->
+	    </if>
+		<if test="ad_claim_finish_date != null and ad_claim_finish_date != ''">
+	          #{ad_claim_finish_date, jdbcType=VARCHAR}, <!-- 要求完成时间 -->
+	    </if>
+		<if test="ad_actual_finish_date != null and ad_actual_finish_date != ''">
+	          #{ad_actual_finish_date, jdbcType=VARCHAR}, <!-- 实际完成时间 -->
+	    </if>
+		<if test="ad_source != null and ad_source != ''">
+	          #{ad_source, jdbcType=VARCHAR}, <!-- 需求来源 -->
+	    </if>
+		<if test="ad_source_remark != null and ad_source_remark != ''">
+	          #{ad_source_remark, jdbcType=VARCHAR}, <!-- 来源说明 -->
+	    </if>
+		<if test="ad_difficulty != null and ad_difficulty != ''">
+	          #{ad_difficulty, jdbcType=VARCHAR}, <!-- 难易程度 -->
+	    </if>
+		<if test="ad_priority != null and ad_priority != ''">
+	          #{ad_priority, jdbcType=VARCHAR}, <!-- 优先级 -->
+	    </if>
+		<if test="ad_workload != null and ad_workload != ''">
+	          #{ad_workload, jdbcType=VARCHAR}, <!-- 估计工作量 -->
+	    </if>
+		<if test="ad_content != null and ad_content != ''">
+	          #{ad_content, jdbcType=VARCHAR}, <!-- 内容 -->
+	    </if>
+		<if test="ad_remark != null and ad_remark != ''">
+	          #{ad_remark, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+		<if test="ad_chage_source != null and ad_chage_source != ''">
+	          #{ad_chage_source, jdbcType=VARCHAR}, <!-- 变更来源 -->
+	    </if>
+		<if test="ad_chage_introducer != null and ad_chage_introducer != ''">
+	          #{ad_chage_introducer, jdbcType=VARCHAR}, <!-- 变更提出人 -->
+	    </if>
+		<if test="ad_chage_number != null and ad_chage_number != ''">
+	          #{ad_chage_number, jdbcType=VARCHAR}, <!-- 变更软件版本号 -->
+	    </if>
+		<if test="ad_chage_audit != null and ad_chage_audit != ''">
+	          #{ad_chage_audit, jdbcType=VARCHAR}, <!-- 变更审核意见 -->
+	    </if>
+		<if test="proj_id != null and proj_id != ''">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 修改人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 修改时间 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 新增人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 新增时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+	    <if test="demand_code != null and demand_code != ''">
+	         #{demand_code, jdbcType=VARCHAR}, <!-- 需求编码 -->
+		</if>
+		<if test="is_product_satisfied != null and is_product_satisfied != ''">
+			#{is_product_satisfied,jdbcType=VARCHAR}, <!-- 产品是否满足(0:否,1:是) -->
+		</if>
+		<if test="ad_claim_start_date != null and ad_claim_start_date != ''">
+			#{ad_claim_start_date,jdbcType=VARCHAR}, <!-- 要求开始时间 -->
+		</if>
+		<if test="development_member != null and development_member != ''">
+			#{development_member,jdbcType=VARCHAR}, <!-- 开发成员 -->
+		</if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="AD_ID" parameterType="DemandActionPO">
+		INSERT INTO re_demand_action (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{ad_id, jdbcType=INTEGER},  <!-- 需求表ID -->
+		    #{ad_code, jdbcType=VARCHAR},  <!-- 需求功能表ID -->
+		    #{dm_code, jdbcType=VARCHAR},  <!-- 功能模块ID -->
+		    #{ad_name, jdbcType=VARCHAR},  <!-- 名称 -->
+		    #{ad_type, jdbcType=VARCHAR},  <!-- 需求类型 -->
+		    #{ad_raise_date, jdbcType=VARCHAR},  <!-- 提出时间 -->
+		    #{ad_plan_finish_date, jdbcType=VARCHAR},  <!-- 计划完成时间 -->
+		    #{ad_claim_finish_date, jdbcType=VARCHAR},  <!-- 要求完成时间 -->
+		    #{ad_actual_finish_date, jdbcType=VARCHAR},  <!-- 实际完成时间 -->
+		    #{ad_source, jdbcType=VARCHAR},  <!-- 需求来源 -->
+		    #{ad_source_remark, jdbcType=VARCHAR},  <!-- 来源说明 -->
+		    #{ad_difficulty, jdbcType=VARCHAR},  <!-- 难易程度 -->
+		    #{ad_priority, jdbcType=VARCHAR},  <!-- 优先级 -->
+		    #{ad_workload, jdbcType=VARCHAR},  <!-- 估计工作量 -->
+		    #{ad_content, jdbcType=VARCHAR},  <!-- 内容 -->
+		    #{ad_remark, jdbcType=VARCHAR},  <!-- 备注 -->
+		    #{ad_chage_source, jdbcType=VARCHAR},  <!-- 变更来源 -->
+		    #{ad_chage_introducer, jdbcType=VARCHAR},  <!-- 变更提出人 -->
+		    #{ad_chage_number, jdbcType=VARCHAR},  <!-- 变更软件版本号 -->
+		    #{ad_chage_audit, jdbcType=VARCHAR},  <!-- 变更审核意见 -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 修改人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 新增人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 新增时间 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+		    #{demand_code, jdbcType=VARCHAR}  <!-- 需求编码 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="DemandActionPO">
+		UPDATE re_demand_action
+		<set>
+			<if test="ad_id != null and ad_id != ''">
+		          ad_id = #{ad_id, jdbcType=INTEGER},  <!-- 需求表ID -->
+			</if>
+			<if test="ad_code != null and ad_code != ''">
+		          ad_code = #{ad_code, jdbcType=VARCHAR},  <!-- 需求功能表ID -->
+			</if>
+			<if test="dm_code != null and dm_code != ''">
+		          dm_code = #{dm_code, jdbcType=VARCHAR},  <!-- 功能模块ID -->
+			</if>
+			<if test="ad_name != null and ad_name != ''">
+		          ad_name = #{ad_name, jdbcType=VARCHAR},  <!-- 名称 -->
+			</if>
+			<if test="ad_type != null and ad_type != ''">
+		          ad_type = #{ad_type, jdbcType=VARCHAR},  <!-- 需求类型 -->
+			</if>
+			<if test="ad_raise_date != null and ad_raise_date != ''">
+		          ad_raise_date = #{ad_raise_date, jdbcType=VARCHAR},  <!-- 提出时间 -->
+			</if>
+			<if test="ad_plan_finish_date != null and ad_plan_finish_date != ''">
+		          ad_plan_finish_date = #{ad_plan_finish_date, jdbcType=VARCHAR},  <!-- 计划完成时间 -->
+			</if>
+			<if test="ad_claim_finish_date != null and ad_claim_finish_date != ''">
+		          ad_claim_finish_date = #{ad_claim_finish_date, jdbcType=VARCHAR},  <!-- 要求完成时间 -->
+			</if>
+			<if test="ad_actual_finish_date != null and ad_actual_finish_date != ''">
+		          ad_actual_finish_date = #{ad_actual_finish_date, jdbcType=VARCHAR},  <!-- 实际完成时间 -->
+			</if>
+			<if test="ad_source != null and ad_source != ''">
+		          ad_source = #{ad_source, jdbcType=VARCHAR},  <!-- 需求来源 -->
+			</if>
+			<if test="ad_source_remark != null and ad_source_remark != ''">
+		          ad_source_remark = #{ad_source_remark, jdbcType=VARCHAR},  <!-- 来源说明 -->
+			</if>
+			<if test="ad_difficulty != null and ad_difficulty != ''">
+		          ad_difficulty = #{ad_difficulty, jdbcType=VARCHAR},  <!-- 难易程度 -->
+			</if>
+			<if test="ad_priority != null and ad_priority != ''">
+		          ad_priority = #{ad_priority, jdbcType=VARCHAR},  <!-- 优先级 -->
+			</if>
+			<if test="ad_workload != null and ad_workload != ''">
+		          ad_workload = #{ad_workload, jdbcType=VARCHAR},  <!-- 估计工作量 -->
+			</if>
+			<if test="ad_content != null and ad_content != ''">
+		          ad_content = #{ad_content, jdbcType=VARCHAR},  <!-- 内容 -->
+			</if>
+			<if test="ad_remark != null and ad_remark != ''">
+		          ad_remark = #{ad_remark, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+			<if test="ad_chage_source != null and ad_chage_source != ''">
+		          ad_chage_source = #{ad_chage_source, jdbcType=VARCHAR},  <!-- 变更来源 -->
+			</if>
+			<if test="ad_chage_introducer != null and ad_chage_introducer != ''">
+		          ad_chage_introducer = #{ad_chage_introducer, jdbcType=VARCHAR},  <!-- 变更提出人 -->
+			</if>
+			<if test="ad_chage_number != null and ad_chage_number != ''">
+		          ad_chage_number = #{ad_chage_number, jdbcType=VARCHAR},  <!-- 变更软件版本号 -->
+			</if>
+			<if test="ad_chage_audit != null and ad_chage_audit != ''">
+		          ad_chage_audit = #{ad_chage_audit, jdbcType=VARCHAR},  <!-- 变更审核意见 -->
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="update_user_id != null and update_user_id != ''">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 修改人 -->
+			</if>
+			<if test="update_time != null and update_time != ''">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+			</if>
+			<if test="create_user_id != null and create_user_id != ''">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 新增人 -->
+			</if>
+			<if test="create_time != null and create_time != ''">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 新增时间 -->
+			</if>
+			<if test="state != null and state != ''">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+			<if test="demand_code != null and demand_code != ''">
+		          demand_code = #{demand_code, jdbcType=VARCHAR},  <!-- 需求编码 -->
+			</if>
+		</set>
+		WHERE  ad_id = #{ad_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM re_demand_action WHERE  ad_id = #{ad_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="DemandActionPO">
+		SELECT
+		<include refid="column" />
+		FROM re_demand_action WHERE  ad_id = #{ad_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="DemandActionPO">
+		SELECT
+		    <include refid="column" />
+		FROM re_demand_action
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="DemandActionPO">
+		SELECT
+			<include refid="column" />	
+		FROM re_demand_action
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="DemandActionPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM re_demand_action
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="DemandActionPO">
+		SELECT
+			<include refid="column" />	
+		FROM re_demand_action
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="DemandActionPO">
+		SELECT
+			<include refid="column" />	
+		FROM re_demand_action
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="DemandActionPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM re_demand_action
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 查询资源模块列表 -->
+	<select id="listModulesPage" resultType="Dto" parameterType="Dto">
+		SELECT
+			ad_id,
+			ad_code,
+			dm_code,
+			demand_code,
+			ad_name,
+			ad_type,
+			ad_raise_date,
+			ad_plan_finish_date,
+			ad_claim_finish_date,
+			ad_actual_finish_date,
+			ad_source,
+			ad_source_remark,
+			ad_difficulty,
+			ad_priority,
+			( CASE
+				WHEN ad_priority = 1 THEN '特急'
+				WHEN ad_priority = 2 THEN '急'
+				WHEN ad_priority = 3 THEN '普通'
+				ELSE
+					'一般'
+				END
+			) ad_priority_name,
+			ad_workload,
+			ad_content,
+			ad_remark,
+			ad_chage_source,
+			ad_chage_introducer,
+			ad_chage_number,
+			ad_chage_audit,
+			proj_id,
+			(select proj_name from bs_proj_commons where bs_proj_commons.proj_id=re_demand_action.proj_id)proj_name,
+			(select name from aos_user where id=update_user_id)update_user_name,
+			(select name from aos_user where id=create_user_id)create_user_name,
+			update_user_id,
+			update_time,
+			create_user_id,
+			create_time,
+			state,
+			is_product_satisfied,
+			ad_claim_start_date,
+			development_member,
+			( CASE
+				WHEN state = 0 THEN '未启用'
+				WHEN state = 1 THEN '已启用'
+				WHEN state = 2 THEN '已完成'
+				ELSE
+					'已作废'
+				END
+			)state_name,
+			( CASE
+				WHEN ad_type = 1 THEN '原始需求'
+				ELSE
+					'变更需求'
+				END
+			)ad_type_name,
+			(SELECT dm_name FROM re_module_divide WHERE re_module_divide.dm_code = re_demand_action.dm_code ) dm_code_name,
+			IFNULL(( SELECT count(*) as task_count FROM ta_task a,re_module_divide d WHERE a.module_id = d.dm_code and d.proj_id = re_demand_action.proj_id and a.state != '1006' and a.demand_id = re_demand_action.AD_ID),0) task_count
+		FROM
+			re_demand_action
+		where 1 = 1
+		    <if test="ad_name != null and ad_name != ''">
+			    AND ad_name LIKE '%${ad_name}%' 
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+			    AND proj_id = #{proj_id}
+			</if>
+			<if test="dm_code != null and dm_code != ''">
+			    AND dm_code like '${dm_code}%'
+			</if>
+			<if test="state != null and state != ''">
+				<if test="state != 4 ">
+			    	AND state = #{state}
+			    </if>
+			    <if test="state == 4 ">
+			    	AND state in ('0','1','2','9999')
+			    </if>
+			</if>
+		 ORDER BY ad_id desc
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="DemandActionPO" useCache="false">
+	    SELECT
+			<include refid="column" />,
+			(select dm_name from re_module_divide 
+			where re_module_divide.dm_code=re_demand_action.dm_code)dm_code_name,
+			(
+		CASE
+		WHEN state = 1 THEN
+			'有效'
+		ELSE
+			'无效'
+		END
+	)state_name
+		FRoM re_demand_action
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<select id="firstDmCode" resultType="String">
+		select dm_code from re_module_divide where dm_name = #{firstName} and proj_id = #{proj_id} and state = 1 and dm_parent_code = 1;
+	</select>
+	
+	<select id="secondDmCode" resultType="String">
+		select dm_code from re_module_divide where dm_name = #{secondName} and dm_parent_code = #{firstDmCode} and proj_id = #{proj_id} and state = 1;
+	</select>
+	
+	<select id="thirdDmCode" resultType="String">
+		select dm_code from re_module_divide where dm_name = #{thirdName} and dm_parent_code = #{secondDmCode} and proj_id = #{proj_id} and state = 1;
+	</select>
+	
+	<select id="fourthDmCode" resultType="String">
+		select dm_code from re_module_divide where dm_name = #{fourthName} and dm_parent_code = #{thirdDmCode} and proj_id = #{proj_id} and state = 1;
+	</select>
+	
+	<select id="fifthDmCode" resultType="String">
+		select dm_code from re_module_divide where dm_name = #{fifthName} and dm_parent_code = #{fourthDmCode} and proj_id = #{proj_id} and state = 1;
+	</select>
+	
+	<select id="result" resultType="Integer">
+		SELECT count(*) FROM re_demand_action WHERE proj_id = #{proj_id} and dm_code = #{dm_code} and ad_name = #{ad_name}
+	</select>
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM re_demand_action
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM re_demand_action
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  ad_id,  <!-- 需求表ID -->
+		  ad_code,  <!-- 需求功能表ID -->
+		  dm_code,  <!-- 功能模块ID -->
+		  dm_first_code, <!-- 第一模块编码 -->>
+		  ad_name,  <!-- 名称 -->
+		  ad_type,  <!-- 需求类型 -->
+		  ad_raise_date,  <!-- 提出时间 -->
+		  ad_plan_finish_date,  <!-- 计划完成时间 -->
+		  ad_claim_finish_date,  <!-- 要求完成时间 -->
+		  ad_actual_finish_date,  <!-- 实际完成时间 -->
+		  ad_source,  <!-- 需求来源 -->
+		  ad_source_remark,  <!-- 来源说明 -->
+		  ad_difficulty,  <!-- 难易程度 -->
+		  ad_priority,  <!-- 优先级 -->
+		  ad_workload,  <!-- 估计工作量 -->
+		  ad_content,  <!-- 内容 -->
+		  ad_remark,  <!-- 备注 -->
+		  ad_chage_source,  <!-- 变更来源 -->
+		  ad_chage_introducer,  <!-- 变更提出人 -->
+		  ad_chage_number,  <!-- 变更软件版本号 -->
+		  ad_chage_audit,  <!-- 变更审核意见 -->
+		  proj_id,  <!-- 项目ID -->
+		  update_user_id,  <!-- 修改人 -->
+		  update_time,  <!-- 修改时间 -->
+		  create_user_id,  <!-- 新增人 -->
+		  create_time,  <!-- 新增时间 -->
+		  state,  <!-- 状态 -->
+		  demand_code, <!-- 需求编码 -->
+		  is_product_satisfied, <!-- 产品是否满足(0:否,1:是) -->
+		  ad_claim_start_date, <!-- 要求开始时间 -->
+		  development_member <!-- 开发成员 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  re_demand_action.ad_id,  <!-- 需求表ID -->
+		  re_demand_action.ad_code,  <!-- 需求功能表ID -->
+		  re_demand_action.dm_code,  <!-- 功能模块ID -->
+		  re_demand_action.dm_first_code,
+		  re_demand_action.ad_name,  <!-- 名称 -->
+		  re_demand_action.ad_type,  <!-- 需求类型 -->
+		  re_demand_action.ad_raise_date,  <!-- 提出时间 -->
+		  re_demand_action.ad_plan_finish_date,  <!-- 计划完成时间 -->
+		  re_demand_action.ad_claim_finish_date,  <!-- 要求完成时间 -->
+		  re_demand_action.ad_actual_finish_date,  <!-- 实际完成时间 -->
+		  re_demand_action.ad_source,  <!-- 需求来源 -->
+		  re_demand_action.ad_source_remark,  <!-- 来源说明 -->
+		  re_demand_action.ad_difficulty,  <!-- 难易程度 -->
+		  re_demand_action.ad_priority,  <!-- 优先级 -->
+		  re_demand_action.ad_workload,  <!-- 估计工作量 -->
+		  re_demand_action.ad_content,  <!-- 内容 -->
+		  re_demand_action.ad_remark,  <!-- 备注 -->
+		  re_demand_action.ad_chage_source,  <!-- 变更来源 -->
+		  re_demand_action.ad_chage_introducer,  <!-- 变更提出人 -->
+		  re_demand_action.ad_chage_number,  <!-- 变更软件版本号 -->
+		  re_demand_action.ad_chage_audit,  <!-- 变更审核意见 -->
+		  re_demand_action.proj_id,  <!-- 项目ID -->
+		  re_demand_action.update_user_id,  <!-- 修改人 -->
+		  re_demand_action.update_time,  <!-- 修改时间 -->
+		  re_demand_action.create_user_id,  <!-- 新增人 -->
+		  re_demand_action.create_time,  <!-- 新增时间 -->
+		  re_demand_action.state,  <!-- 状态 -->
+		  re_demand_action.demand_code <!-- 需求编码 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="ad_id != null ">
+		      AND ad_id = #{ad_id}  <!-- 需求表ID -->
+		</if>
+	    <if test="ad_code != null and ad_code != ''">
+		      AND ad_code = #{ad_code}  <!-- 需求功能表ID -->
+		</if>
+	    <if test="dm_code != null and dm_code != ''">
+		      AND dm_code = #{dm_code}  <!-- 功能模块ID -->
+		</if>
+	    <if test="ad_name != null and ad_name != ''">
+		      AND ad_name = #{ad_name}  <!-- 名称 -->
+		</if>
+	    <if test="ad_type != null and ad_type != ''">
+		      AND ad_type = #{ad_type}  <!-- 需求类型 -->
+		</if>
+	    <if test="ad_raise_date != null and ad_raise_date != ''">
+		      AND ad_raise_date = #{ad_raise_date}  <!-- 提出时间 -->
+		</if>
+	    <if test="ad_plan_finish_date != null and ad_plan_finish_date != ''">
+		      AND ad_plan_finish_date = #{ad_plan_finish_date}  <!-- 计划完成时间 -->
+		</if>
+	    <if test="ad_claim_finish_date != null and ad_claim_finish_date != ''">
+		      AND ad_claim_finish_date = #{ad_claim_finish_date}  <!-- 要求完成时间 -->
+		</if>
+	    <if test="ad_actual_finish_date != null and ad_actual_finish_date != ''">
+		      AND ad_actual_finish_date = #{ad_actual_finish_date}  <!-- 实际完成时间 -->
+		</if>
+	    <if test="ad_source != null and ad_source != ''">
+		      AND ad_source = #{ad_source}  <!-- 需求来源 -->
+		</if>
+	    <if test="ad_source_remark != null and ad_source_remark != ''">
+		      AND ad_source_remark = #{ad_source_remark}  <!-- 来源说明 -->
+		</if>
+	    <if test="ad_difficulty != null and ad_difficulty != ''">
+		      AND ad_difficulty = #{ad_difficulty}  <!-- 难易程度 -->
+		</if>
+	    <if test="ad_priority != null and ad_priority != ''">
+		      AND ad_priority = #{ad_priority}  <!-- 优先级 -->
+		</if>
+	    <if test="ad_workload != null and ad_workload != ''">
+		      AND ad_workload = #{ad_workload}  <!-- 估计工作量 -->
+		</if>
+	    <if test="ad_content != null and ad_content != ''">
+		      AND ad_content = #{ad_content}  <!-- 内容 -->
+		</if>
+	    <if test="ad_remark != null and ad_remark != ''">
+		      AND ad_remark = #{ad_remark}  <!-- 备注 -->
+		</if>
+	    <if test="ad_chage_source != null and ad_chage_source != ''">
+		      AND ad_chage_source = #{ad_chage_source}  <!-- 变更来源 -->
+		</if>
+	    <if test="ad_chage_introducer != null and ad_chage_introducer != ''">
+		      AND ad_chage_introducer = #{ad_chage_introducer}  <!-- 变更提出人 -->
+		</if>
+	    <if test="ad_chage_number != null and ad_chage_number != ''">
+		      AND ad_chage_number = #{ad_chage_number}  <!-- 变更软件版本号 -->
+		</if>
+	    <if test="ad_chage_audit != null and ad_chage_audit != ''">
+		      AND ad_chage_audit = #{ad_chage_audit}  <!-- 变更审核意见 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 修改时间 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 新增时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+		<if test="demand_code != null and demand_code != ''">
+		      AND demand_code = #{demand_code}  <!-- 需求编码 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="ad_code != null and ad_code != ''">
+		      AND ad_code like '${ad_code}%'  <!-- 需求功能表ID -->
+		</if>
+	    <if test="dm_code != null and dm_code != ''">
+		      AND dm_code like '${dm_code}%'  <!-- 功能模块ID -->
+		</if>
+	    <if test="ad_name != null and ad_name != ''">
+		      AND ad_name like '${ad_name}%'  <!-- 名称 -->
+		</if>
+	    <if test="ad_type != null and ad_type != ''">
+		      AND ad_type like '${ad_type}%'  <!-- 需求类型 -->
+		</if>
+	    <if test="ad_raise_date != null and ad_raise_date != ''">
+		      AND ad_raise_date like '${ad_raise_date}%'  <!-- 提出时间 -->
+		</if>
+	    <if test="ad_plan_finish_date != null and ad_plan_finish_date != ''">
+		      AND ad_plan_finish_date like '${ad_plan_finish_date}%'  <!-- 计划完成时间 -->
+		</if>
+	    <if test="ad_claim_finish_date != null and ad_claim_finish_date != ''">
+		      AND ad_claim_finish_date like '${ad_claim_finish_date}%'  <!-- 要求完成时间 -->
+		</if>
+	    <if test="ad_actual_finish_date != null and ad_actual_finish_date != ''">
+		      AND ad_actual_finish_date like '${ad_actual_finish_date}%'  <!-- 实际完成时间 -->
+		</if>
+	    <if test="ad_source != null and ad_source != ''">
+		      AND ad_source like '${ad_source}%'  <!-- 需求来源 -->
+		</if>
+	    <if test="ad_source_remark != null and ad_source_remark != ''">
+		      AND ad_source_remark like '${ad_source_remark}%'  <!-- 来源说明 -->
+		</if>
+	    <if test="ad_difficulty != null and ad_difficulty != ''">
+		      AND ad_difficulty like '${ad_difficulty}%'  <!-- 难易程度 -->
+		</if>
+	    <if test="ad_priority != null and ad_priority != ''">
+		      AND ad_priority like '${ad_priority}%'  <!-- 优先级 -->
+		</if>
+	    <if test="ad_workload != null and ad_workload != ''">
+		      AND ad_workload like '${ad_workload}%'  <!-- 估计工作量 -->
+		</if>
+	    <if test="ad_content != null and ad_content != ''">
+		      AND ad_content like '${ad_content}%'  <!-- 内容 -->
+		</if>
+	    <if test="ad_remark != null and ad_remark != ''">
+		      AND ad_remark like '${ad_remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="ad_chage_source != null and ad_chage_source != ''">
+		      AND ad_chage_source like '${ad_chage_source}%'  <!-- 变更来源 -->
+		</if>
+	    <if test="ad_chage_introducer != null and ad_chage_introducer != ''">
+		      AND ad_chage_introducer like '${ad_chage_introducer}%'  <!-- 变更提出人 -->
+		</if>
+	    <if test="ad_chage_number != null and ad_chage_number != ''">
+		      AND ad_chage_number like '${ad_chage_number}%'  <!-- 变更软件版本号 -->
+		</if>
+	    <if test="ad_chage_audit != null and ad_chage_audit != ''">
+		      AND ad_chage_audit like '${ad_chage_audit}%'  <!-- 变更审核意见 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id like '${proj_id}%'  <!-- 项目ID -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+		<if test="demand_code != null and demand_code != ''">
+		      AND demand_code = '${demand_code}%'  <!-- 需求编码 -->
+		</if>
+		
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="ad_code != null and ad_code != ''">
+		      Or ad_code like '${ad_code}%'  <!-- 需求功能表ID -->
+		</if>
+	    <if test="dm_code != null and dm_code != ''">
+		      Or dm_code like '${dm_code}%'  <!-- 功能模块ID -->
+		</if>
+	    <if test="ad_name != null and ad_name != ''">
+		      Or ad_name like '${ad_name}%'  <!-- 名称 -->
+		</if>
+	    <if test="ad_type != null and ad_type != ''">
+		      Or ad_type like '${ad_type}%'  <!-- 需求类型 -->
+		</if>
+	    <if test="ad_raise_date != null and ad_raise_date != ''">
+		      Or ad_raise_date like '${ad_raise_date}%'  <!-- 提出时间 -->
+		</if>
+	    <if test="ad_plan_finish_date != null and ad_plan_finish_date != ''">
+		      Or ad_plan_finish_date like '${ad_plan_finish_date}%'  <!-- 计划完成时间 -->
+		</if>
+	    <if test="ad_claim_finish_date != null and ad_claim_finish_date != ''">
+		      Or ad_claim_finish_date like '${ad_claim_finish_date}%'  <!-- 要求完成时间 -->
+		</if>
+	    <if test="ad_actual_finish_date != null and ad_actual_finish_date != ''">
+		      Or ad_actual_finish_date like '${ad_actual_finish_date}%'  <!-- 实际完成时间 -->
+		</if>
+	    <if test="ad_source != null and ad_source != ''">
+		      Or ad_source like '${ad_source}%'  <!-- 需求来源 -->
+		</if>
+	    <if test="ad_source_remark != null and ad_source_remark != ''">
+		      Or ad_source_remark like '${ad_source_remark}%'  <!-- 来源说明 -->
+		</if>
+	    <if test="ad_difficulty != null and ad_difficulty != ''">
+		      Or ad_difficulty like '${ad_difficulty}%'  <!-- 难易程度 -->
+		</if>
+	    <if test="ad_priority != null and ad_priority != ''">
+		      Or ad_priority like '${ad_priority}%'  <!-- 优先级 -->
+		</if>
+	    <if test="ad_workload != null and ad_workload != ''">
+		      Or ad_workload like '${ad_workload}%'  <!-- 估计工作量 -->
+		</if>
+	    <if test="ad_content != null and ad_content != ''">
+		      Or ad_content like '${ad_content}%'  <!-- 内容 -->
+		</if>
+	    <if test="ad_remark != null and ad_remark != ''">
+		      Or ad_remark like '${ad_remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="ad_chage_source != null and ad_chage_source != ''">
+		      Or ad_chage_source like '${ad_chage_source}%'  <!-- 变更来源 -->
+		</if>
+	    <if test="ad_chage_introducer != null and ad_chage_introducer != ''">
+		      Or ad_chage_introducer like '${ad_chage_introducer}%'  <!-- 变更提出人 -->
+		</if>
+	    <if test="ad_chage_number != null and ad_chage_number != ''">
+		      Or ad_chage_number like '${ad_chage_number}%'  <!-- 变更软件版本号 -->
+		</if>
+	    <if test="ad_chage_audit != null and ad_chage_audit != ''">
+		      Or ad_chage_audit like '${ad_chage_audit}%'  <!-- 变更审核意见 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      Or proj_id like '${proj_id}%'  <!-- 项目ID -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+		<if test="demand_code != null and demand_code != ''">
+		      AND demand_code like '${demand_code}%'  <!-- 需求编码 -->
+		</if>
+	</sql>
+	
+	
+	<!-- 查询需求关联任务列表 -->
+	<select id="listFindTask" resultType="Dto" parameterType="Dto">
+		SELECT
+			a.*,
+			d.dm_name,
+			u.name AS deal_man_name,
+			au.name AS create_name
+		FROM ta_task a
+		  	LEFT JOIN re_module_divide d
+		    ON a.module_id = d.dm_code
+		    LEFT JOIN aos_user u
+		    ON a.handler_user_id = u.id
+		    LEFT JOIN aos_user au
+		    ON a.assign_user_id = au.id
+		where a.state != '1006'
+			<if test="proj_id != null and proj_id != ''">
+			    AND a.proj_id = #{proj_id}
+			</if>
+			<if test="demand_id != null and demand_id != ''">
+		    	AND a.demand_id = #{demand_id}
+			</if>
+		 ORDER BY a.create_time desc
+	</select>
+	
+	<!-- 查询需求关联缺陷列表 -->
+	<select id="listFindBug" resultType="Dto" parameterType="Dto">
+		SELECT
+			 a.*,
+		  d.dm_name,
+		  u.name      AS deal_man_name,
+		  au.name     AS bug_create_name
+		FROM qa_bug_manage a
+		  LEFT JOIN aos_user u
+		    ON a.deal_man = u.id
+		  LEFT JOIN aos_user au
+		    ON a.create_name = au.id
+		  LEFT JOIN re_module_divide d
+		    ON a.stand_id = d.dm_code
+			where 1 = 1
+				<if test="proj_id != null and proj_id != ''">
+				    AND a.proj_id = #{proj_id}
+				</if>
+				<if test="demand_id != null and demand_id != ''">
+				    	AND a.demand_id = #{demand_id}
+				</if>
+			 ORDER BY a.create_time desc
+	</select>
+	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="getDemandCodeRows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM re_demand_action a
+		<where>
+		    <if test="proj_id != null and proj_id != ''">
+			    AND a.proj_id = #{proj_id}
+			</if>
+			<if test="demand_code != null and demand_code != ''">
+			    	AND a.demand_code = #{demand_code}
+			</if>
+			<if test="ad_id != null and ad_id != ''">
+			    	AND a.ad_id != #{ad_id}
+			</if>
+		</where>
+	</select>
+</mapper>

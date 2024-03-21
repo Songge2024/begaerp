@@ -1,0 +1,2425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-18 11:03:34 -->
+<mapper namespace="WorkloadReportDao">
+<select id="proj" resultType="dto">  
+</select>
+	<!-- 项目工作量统计 -->
+	<select id="projectWorkloadReportList" resultType="dto">  
+		select 
+			bs_proj_commons.proj_id,
+			bs_proj_commons.proj_name,
+			IFNULL(task.task_total_count, 0) as task_total_count,
+			IFNULL(task.task_yfb_count, 0) as task_yfb_count,
+			IFNULL(task.task_yjs_count, 0) as task_yjs_count,
+			IFNULL(task.task_ywc_count, 0) as task_ywc_count,
+			IFNULL(task.task_ygb_count, 0) as task_ygb_count,
+			IFNULL(task.task_yzt_count, 0) as task_yzt_count,
+			IFNULL(task.task_plan_wastage, 0) as task_plan_wastage,
+			IFNULL(task.task_real_wastage, 0) as task_real_wastage,
+			IFNULL(task.task_ygb_real_wastage, 0) as task_ygb_real_wastage,
+			IFNULL(bug.bug_total_count, 0) as bug_total_count,
+			IFNULL(bug.bug_wjj_count, 0) as bug_wjj_count,
+			IFNULL(bug.bug_yjj_count, 0) as bug_yjj_count,
+			IFNULL(bug.bug_yqcl_count, 0) as bug_yqcl_count,
+			IFNULL(bug.bug_gb_count, 0) as bug_gb_count,
+			IFNULL(bug.bug_cxdk_count, 0) as bug_jj_count,
+			IFNULL(bug.bug_cxdk_count, 0) as bug_cxdk_count,
+			IFNULL(bug.bug_wffx_count, 0) as bug_wffx_count,
+			IFNULL(bug.bug_plan_wastage, 0) as bug_plan_wastage,
+			IFNULL(bug.bug_real_wastage, 0) as bug_real_wastage,
+			IFNULL(bug.bug_gb_real_wastage, 0) as bug_gb_real_wastage,
+			IFNULL(meeting.meeting_total_count, 0) as meeting_total_count,
+			IFNULL(meeting.meeting_yfq_count, 0) as meeting_yfq_count,
+			IFNULL(meeting.meeting_yzj_count, 0) as meeting_yzj_count,
+			IFNULL(meeting.meeting_real_wastage, 0) as meeting_real_wastage,
+			IFNULL(meeting.meeting_yzj_real_wastage, 0) as meeting_yzj_real_wastage,
+			IFNULL(demand.demand_total_count, 0) as demand_total_count,
+			IFNULL(demand.demand_ys_count, 0) as demand_ys_count,
+			IFNULL(demand.demand_bg_count, 0) as demand_bg_count,
+			IFNULL(task.task_plan_wastage, 0) + IFNULL(bug.bug_plan_wastage, 0) as total_plan_wastage,
+			IFNULL(task.task_real_wastage, 0) + IFNULL(bug.bug_real_wastage, 0) + IFNULL(meeting.meeting_real_wastage, 0) as total_real_wastage
+		  from bs_proj_commons
+		 left JOIN (
+				select ta_task.proj_id,
+					  count(*) as task_total_count,
+					  SUM(case when state = '1002' then 1 else 0 end) as task_yfb_count,
+					  SUM(case when state = '1003' then 1 else 0 end) as task_yjs_count,
+					  SUM(case when state = '1004' then 1 else 0 end) as task_ywc_count,
+					  SUM(case when state = '1005' then 1 else 0 end) as task_ygb_count,
+					  SUM(case when state = '1007' then 1 else 0 end) as task_yzt_count,
+<!-- 					  SUM(plan_wastage) as task_plan_wastage, -->
+<!-- 					  SUM(IFNULL(real_wastage, TRUNCATE(plan_wastage * percent / 100, 1))) task_real_wastage, -->
+					aaa.task_plan_wastage as task_plan_wastage,
+					aaa.task_real_wastage as task_real_wastage,
+					  SUM(case when state = '1005' then real_wastage else 0 end) as task_ygb_real_wastage
+				 from ta_task
+				 	LEFT JOIN
+				 		(SELECT
+				 			ta.proj_id,
+							sum(ta.query_real_wastage) AS task_real_wastage,
+							sum(ta.query_plan_wastage) AS task_plan_wastage
+						FROM
+						(SELECT
+							proj_id,
+							proj_name,
+							group_id,
+							state,
+							task_type,
+							task_code,
+							task_name,
+							grade,
+							plan_begin_time,
+							plan_end_time,
+							real_begin_time,
+							real_end_time,
+							plan_wastage,
+							real_wastage,
+							plan_day,
+							real_day,
+							query_day,
+							handler_user_id,
+							handler_user_name,
+							assign_user_id,
+							assign_user_name,
+							ROUND(
+								(plan_wastage / plan_day) * query_day,
+								1
+							) AS query_plan_wastage,
+							ROUND(
+								(real_wastage / plan_day) * query_day,
+								1
+							) AS query_real_wastage,
+							percent
+						FROM
+							(
+								SELECT
+									ta_task.proj_id,
+									bs_proj_commons.PROJ_NAME AS proj_name,
+									ta_task.group_id,
+									ta_task.state,
+									ta_task.task_type,
+									ta_task.task_code,
+									ta_task.task_name,
+									ta_task.grade,
+									ta_task.plan_begin_time,
+									ta_task.plan_end_time,
+									ta_task.real_begin_time,
+									ta_task.real_end_time,
+									ta_task.plan_wastage,
+									IFNULL( real_wastage, TRUNCATE (plan_wastage * percent / 100, 1) ) AS real_wastage,
+									ta_task.percent,
+									to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 AS plan_day,
+									to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 AS real_day,
+									(case when 
+										(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+										 )
+										then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+							        when 
+							        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+										 )
+										then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+							        when 
+							        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+										 ) 
+										then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+							      	else 
+							      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+									ta_task.handler_user_id,
+									handler_user. NAME AS handler_user_name,
+									ta_task.assign_user_id,
+									assign_user. NAME AS assign_user_name
+								FROM
+									ta_task,
+									bs_proj_commons,
+									aos_user AS handler_user,
+									aos_user AS assign_user
+								WHERE
+									ta_task.proj_id = bs_proj_commons.PROJ_ID
+								AND ta_task.handler_user_id = handler_user.id
+								AND ta_task.assign_user_id = assign_user.id
+								AND ta_task.state NOT IN (1001, 1006)
+								<if test="proj_name != null and proj_name != ''">
+						            AND bs_proj_commons.proj_name like '%${proj_name}%'   
+						        </if>
+								<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+					 				AND (
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+									)	
+				 			</if>
+							) AS task
+						)ta
+						GROUP BY ta.proj_id
+					) aaa ON aaa.proj_id = ta_task.proj_id 
+		    where state not in (1001, 1006)  
+		      and ta_task.proj_id in (
+						select DISTINCT proj_id from bs_proj_teams where team_user_id = #{login_user_id} and state = 1
+			  )
+			  <if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+	 				AND (
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+								OR
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+								OR
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+								OR
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+					)	
+ 			</if>
+				group by proj_id
+			) as task on bs_proj_commons.proj_id = task.proj_id
+		
+		left join (
+				select proj_id, 
+					   count(*) as bug_total_count,
+					   SUM(case when state = '1000' then 1 else 0 end) as bug_wjj_count,
+					   SUM(case when state = '1001' then 1 else 0 end) as bug_yjj_count,
+					   SUM(case when state = '1002' then 1 else 0 end) as bug_yqcl_count,
+					   SUM(case when state = '1003' then 1 else 0 end) as bug_gb_count,
+					   SUM(case when state = '1004' then 1 else 0 end) as bug_jj_count,
+					   SUM(case when state = '1005' then 1 else 0 end) as bug_cxdk_count,
+					   SUM(case when state = '1006' then 1 else 0 end) as bug_wffx_count,
+					   SUM(plan_wastage) bug_plan_wastage,
+					   SUM(real_wastage) bug_real_wastage,
+					   SUM(case when state = '1003' then real_wastage else 0 end) as bug_gb_real_wastage
+				  from qa_bug_manage 
+			     where 1=1
+			       and proj_id in (
+						 select DISTINCT proj_id from bs_proj_teams where team_user_id = #{login_user_id} and state = 1
+			       )
+			   	<if test="plan_begin_time != null and plan_begin_time != ''">
+					AND qa_bug_manage.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+				</if>
+				<if test="plan_end_time != null and plan_end_time != ''">
+					AND qa_bug_manage.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+			 group by proj_id
+		) as bug on bs_proj_commons.proj_id = bug.proj_id
+		
+		left join (
+				select a.proj_id, 
+					   count(*) as meeting_total_count,
+					   SUM(case when b.msg_state = '1' then 1 else 0 end) as meeting_yfq_count,
+					   SUM(case when b.msg_state = '2' then 1 else 0 end) as meeting_yzj_count,
+		       	 	   SUM(a.workload) as meeting_real_wastage,
+		       	       SUM(case when b.msg_state = '2' then a.workload else 0 end) as meeting_yzj_real_wastage
+		          from qa_files_manage a , qa_message b
+				 where a.manage_code = b.mang_id
+				 	AND b.msg_state NOT IN (3)
+				   and a.proj_id in (
+						 select DISTINCT proj_id from bs_proj_teams where team_user_id = #{login_user_id} and state = 1
+			       )
+				 <if test="plan_begin_time != null and plan_begin_time != ''">
+					AND a.begin_date <![CDATA[  >=  ]]> '${plan_begin_time}'
+				</if>
+				<if test="plan_end_time != null and plan_end_time != ''">
+					AND a.begin_date <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+		 group by a.proj_id
+		) as meeting on bs_proj_commons.proj_id = meeting.proj_id
+		
+		LEFT JOIN (
+				select proj_id,
+					   count(*) as demand_total_count,
+					   SUM(case when ad_type = '1' then 1 else 0 end) as demand_ys_count,
+					   SUM(case when state &lt;&gt; '1' then 1 else 0 end) as demand_bg_count
+			      from re_demand_action
+			     where state in ('0','1') 
+			     <if test="plan_begin_time != null and plan_begin_time != ''">
+				  	AND re_demand_action.AD_PLAN_FINISH_DATE <![CDATA[  >=  ]]> '${plan_begin_time}'
+				 </if>
+				<if test="plan_end_time != null and plan_end_time != ''">
+				   AND re_demand_action.AD_PLAN_FINISH_DATE <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+			 group by proj_id
+		) as demand on bs_proj_commons.proj_id = demand.proj_id
+		
+		where bs_proj_commons.STATE != '-1'
+		  and bs_proj_commons.proj_id in (
+				select DISTINCT proj_id from bs_proj_teams where team_user_id = #{login_user_id} and state = 1
+		  )
+		<if test="proj_id != null and proj_id != ''">
+			and bs_proj_commons.proj_id in (#{proj_id})
+		</if>
+	    <if test="proj_name != null and proj_name != ''">
+            and bs_proj_commons.proj_name like '%${proj_name}%'   
+        </if>
+        <if test="proj_id_state != null and proj_id_state != 0">
+            and bs_proj_commons.state = #{proj_id_state}
+       </if>
+		order by bs_proj_commons.CREATE_TIME
+		
+    </select>  
+    
+	<!-- 个人工作量统计 -->    
+    <select id="personWorkloadReportList" resultType="dto">  
+		select 
+			bs_proj_commons.proj_id,
+			bs_proj_commons.proj_name,
+			IFNULL(task.task_total_count, 0) as task_total_count,
+			IFNULL(task.task_yfb_count, 0) as task_yfb_count,
+			IFNULL(task.task_yjs_count, 0) as task_yjs_count,
+			IFNULL(task.task_ywc_count, 0) as task_ywc_count,
+			IFNULL(task.task_ygb_count, 0) as task_ygb_count,
+			IFNULL(task.task_yzt_count, 0) as task_yzt_count,
+			IFNULL(task.task_plan_wastage, 0) as task_plan_wastage,
+			IFNULL(task.task_real_wastage, 0) as task_real_wastage,
+			IFNULL(task.task_ygb_real_wastage, 0) as task_ygb_real_wastage,
+			IFNULL(bug.bug_total_count, 0) as bug_total_count,
+			IFNULL(bug.bug_wjj_count, 0) as bug_wjj_count,
+			IFNULL(bug.bug_yjj_count, 0) as bug_yjj_count,
+			IFNULL(bug.bug_yqcl_count, 0) as bug_yqcl_count,
+			IFNULL(bug.bug_gb_count, 0) as bug_gb_count,
+			IFNULL(bug.bug_cxdk_count, 0) as bug_jj_count,
+			IFNULL(bug.bug_cxdk_count, 0) as bug_cxdk_count,
+			IFNULL(bug.bug_wffx_count, 0) as bug_wffx_count,
+			IFNULL(bug.bug_plan_wastage, 0) as bug_plan_wastage,
+			IFNULL(bug.bug_real_wastage, 0) as bug_real_wastage,
+			IFNULL(bug.bug_gb_real_wastage,0) as bug_gb_real_wastage,
+			IFNULL(meeting.meeting_total_count, 0) as meeting_total_count,
+			IFNULL(meeting.meeting_yfq_count, 0) as meeting_yfq_count,
+			IFNULL(meeting.meeting_yzj_count, 0) as meeting_yzj_count,
+			IFNULL(meeting.meeting_real_wastage, 0) as meeting_real_wastage,
+			IFNULL(meeting.meeting_yzj_real_wastage, 0) as meeting_yzj_real_wastage,
+			IFNULL(demand.demand_total_count, 0) as demand_total_count,
+			IFNULL(demand.demand_ys_count, 0) as demand_ys_count,
+			IFNULL(demand.demand_bg_count, 0) as demand_bg_count,
+			IFNULL(task.task_plan_wastage, 0) + IFNULL(bug.bug_plan_wastage, 0) as total_plan_wastage,
+			IFNULL(task.task_real_wastage, 0) + IFNULL(bug.bug_real_wastage, 0) + IFNULL(meeting.meeting_real_wastage, 0) as total_real_wastage
+		  from bs_proj_commons
+		 LEFT JOIN (
+				select ta_task.proj_id,
+					  count(*) as task_total_count,
+					  SUM(case when state = '1002' then 1 else 0 end) as task_yfb_count,
+					  SUM(case when state = '1003' then 1 else 0 end) as task_yjs_count,
+					  SUM(case when state = '1004' then 1 else 0 end) as task_ywc_count,
+					  SUM(case when state = '1005' then 1 else 0 end) as task_ygb_count,
+					  SUM(case when state = '1007' then 1 else 0 end) as task_yzt_count,
+					  aaa.task_plan_wastage as task_plan_wastage,
+					  aaa.task_real_wastage task_real_wastage,
+					  SUM(case when state = '1005' then real_wastage else 0 end) as task_ygb_real_wastage
+				 from ta_task
+				 		LEFT JOIN
+				 		(SELECT
+				 			ta.proj_id,
+							sum(ta.query_real_wastage) AS task_real_wastage,
+							sum(ta.query_plan_wastage) AS task_plan_wastage
+						FROM
+						(SELECT
+							proj_id,
+							proj_name,
+							group_id,
+							state,
+							task_type,
+							task_code,
+							task_name,
+							grade,
+							plan_begin_time,
+							plan_end_time,
+							real_begin_time,
+							real_end_time,
+							plan_wastage,
+							real_wastage,
+							plan_day,
+							real_day,
+							query_day,
+							handler_user_id,
+							handler_user_name,
+							assign_user_id,
+							assign_user_name,
+							ROUND(
+								(plan_wastage / plan_day) * query_day,
+								1
+							) AS query_plan_wastage,
+							ROUND(
+								(real_wastage / plan_day) * query_day,
+								1
+							) AS query_real_wastage,
+							percent
+						FROM
+							(
+								SELECT
+									ta_task.proj_id,
+									bs_proj_commons.PROJ_NAME AS proj_name,
+									ta_task.group_id,
+									ta_task.state,
+									ta_task.task_type,
+									ta_task.task_code,
+									ta_task.task_name,
+									ta_task.grade,
+									ta_task.plan_begin_time,
+									ta_task.plan_end_time,
+									ta_task.real_begin_time,
+									ta_task.real_end_time,
+									ta_task.plan_wastage,
+									IFNULL( real_wastage, TRUNCATE (plan_wastage * percent / 100, 1) ) AS real_wastage,
+									ta_task.percent,
+									to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 AS plan_day,
+									to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 AS real_day,
+									(case when 
+										(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+										 )
+										then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+							        when 
+							        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+										 )
+										then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+							        when 
+							        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+										 ) 
+										then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+							      	else 
+							      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+									ta_task.handler_user_id,
+									handler_user. NAME AS handler_user_name,
+									ta_task.assign_user_id,
+									assign_user. NAME AS assign_user_name
+								FROM
+									ta_task,
+									bs_proj_commons,
+									aos_user AS handler_user,
+									aos_user AS assign_user
+								WHERE
+									ta_task.proj_id = bs_proj_commons.PROJ_ID
+								AND ta_task.handler_user_id = handler_user.id
+								AND ta_task.assign_user_id = assign_user.id
+								AND ta_task.state NOT IN (1001, 1006)
+								<if test="user_id != null and user_id != ''">
+									and ta_task.handler_user_id = #{user_id}
+								</if>
+								<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+					 				AND (
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+									)	
+				 			</if>
+							) AS task
+						)ta
+						GROUP BY ta.proj_id
+					) aaa ON aaa.proj_id = ta_task.proj_id
+		        where state not in (1001, 1006)  
+					<if test="user_id != null and user_id != ''">
+						and ta_task.handler_user_id = #{user_id}
+					</if>
+					<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+	 					AND (
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+								OR
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+								OR
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+								OR
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+							)	
+		 			</if>
+				group by ta_task.proj_id
+			) as task on bs_proj_commons.proj_id = task.proj_id
+		
+		LEFT join (
+				select proj_id, 
+					   count(*) as bug_total_count,
+					   SUM(case when state = '1000' then 1 else 0 end) as bug_wjj_count,
+					   SUM(case when state = '1001' then 1 else 0 end) as bug_yjj_count,
+					   SUM(case when state = '1002' then 1 else 0 end) as bug_yqcl_count,
+					   SUM(case when state = '1003' then 1 else 0 end) as bug_gb_count,
+					   SUM(case when state = '1004' then 1 else 0 end) as bug_jj_count,
+					   SUM(case when state = '1005' then 1 else 0 end) as bug_cxdk_count,
+					   SUM(case when state = '1006' then 1 else 0 end) as bug_wffx_count,
+					   SUM(plan_wastage) bug_plan_wastage,
+					   SUM(real_wastage) bug_real_wastage,
+						 SUM(case when state = '1003' then real_wastage else 0 end) as bug_gb_real_wastage
+				  from qa_bug_manage 
+			     where 1=1
+						<if test="user_id != null and user_id != ''">
+						 and qa_bug_manage.deal_man = #{user_id}
+					    </if>
+						<if test="plan_begin_time != null and plan_begin_time != ''">
+							AND qa_bug_manage.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+						</if>
+						<if test="plan_end_time != null and plan_end_time != ''">
+							AND qa_bug_manage.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+						</if>
+			 group by proj_id
+		) as bug on bs_proj_commons.proj_id = bug.proj_id
+		
+		LEFT join (
+				select a.proj_id, 
+					     count(*) as meeting_total_count,
+					     SUM(case when b.msg_state = '1' then 1 else 0 end) as meeting_yfq_count,
+					     SUM(case when b.msg_state = '2' then 1 else 0 end) as meeting_yzj_count,
+		       	   SUM(a.workload) as meeting_real_wastage,
+		       	   SUM(case when b.msg_state = '2' then a.workload else 0 end) as meeting_yzj_real_wastage
+		      from qa_files_manage a , qa_message b
+				 where a.manage_code = b.mang_id
+					 <if test="user_id != null and user_id != ''">
+						 and b.user_id = #{user_id}
+					 </if>
+					 and a.state_flag in ('2','3')
+					 <if test="plan_begin_time != null and plan_begin_time != ''">
+						AND a.begin_date <![CDATA[  >=  ]]> '${plan_begin_time}'
+					</if>
+					<if test="plan_end_time != null and plan_end_time != ''">
+						AND a.begin_date <![CDATA[  <=  ]]> '${plan_end_time}'
+					</if>
+		  group by a.proj_id
+
+		) as meeting on bs_proj_commons.proj_id = meeting.proj_id
+		
+		LEFT JOIN (
+				select proj_id,
+					   count(*) as demand_total_count,
+					   SUM(case when ad_type = '1' then 1 else 0 end) as demand_ys_count,
+					   SUM(case when ad_type = '2' then 1 else 0 end) as demand_bg_count
+			      from re_demand_action
+			     where state in ('0','1') 
+				 <if test="user_id != null and user_id != ''">
+					and create_user_id = #{user_id}
+				 </if>
+				 <if test="plan_begin_time != null and plan_begin_time != ''">
+				  	AND re_demand_action.AD_PLAN_FINISH_DATE <![CDATA[  >=  ]]> '${plan_begin_time}'
+				 </if>
+				 <if test="plan_end_time != null and plan_end_time != ''">
+				    AND re_demand_action.AD_PLAN_FINISH_DATE <![CDATA[  <=  ]]> '${plan_end_time}'
+				 </if>
+			 group by proj_id
+		) as demand on bs_proj_commons.proj_id = demand.proj_id
+		where bs_proj_commons.STATE != '-1'
+			<if test="user_id != null and user_id != ''">
+				and bs_proj_commons.proj_id in (select DISTINCT proj_id from bs_proj_teams where team_user_id = #{user_id} )
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+				and bs_proj_commons.proj_id in (#{proj_id})
+			</if>
+		    <if test="proj_name != null and proj_name != ''">
+	            and bs_proj_commons.proj_name like '%${proj_name}%'
+	        </if>
+	        <if test="proj_id_state != null and proj_id_state != 0">
+	            and bs_proj_commons.state = #{proj_id_state}
+	        </if>
+		order by bs_proj_commons.CREATE_TIME
+		
+    </select>  
+    
+    <!-- 查询个人工作量统计报表汇总 -->
+    <select id="personWorkloadReportSummary" resultType="Dto" parameterType="Dto">
+    	select 
+			count(*) proj_count,
+			SUM(IFNULL(task.task_total_count, 0)) as sums_task_total_count,
+			SUM(IFNULL(task.task_yfb_count, 0)) as sums_task_yfb_count,
+			SUM(IFNULL(task.task_yjs_count, 0)) as sums_task_yjs_count,
+			SUM(IFNULL(task.task_ywc_count, 0)) as sums_task_ywc_count,
+			SUM(IFNULL(task.task_ygb_count, 0)) as sums_task_ygb_count,
+			SUM(IFNULL(task.task_yzt_count, 0)) as sums_task_yzt_count,
+			SUM(IFNULL(task.task_plan_wastage, 0)) as sums_task_plan_wastage,
+			SUM(IFNULL(task.task_real_wastage, 0)) as sums_task_real_wastage,
+			SUM(IFNULL(task.task_ygb_real_wastage, 0)) as sums_task_ygb_real_wastage,
+			SUM(IFNULL(bug.bug_total_count, 0)) as sums_bug_total_count,
+			SUM(IFNULL(bug.bug_wjj_count, 0)) as sums_bug_wjj_count,
+			SUM(IFNULL(bug.bug_yjj_count, 0)) as sums_bug_yjj_count,
+			SUM(IFNULL(bug.bug_yqcl_count, 0)) as sums_bug_yqcl_count,
+			SUM(IFNULL(bug.bug_gb_count, 0)) as sums_bug_gb_count,
+			SUM(IFNULL(bug.bug_cxdk_count, 0)) as sums_bug_jj_count,
+			SUM(IFNULL(bug.bug_cxdk_count, 0)) as sums_bug_cxdk_count,
+			SUM(IFNULL(bug.bug_wffx_count, 0)) as sums_bug_wffx_count,
+			SUM(IFNULL(bug.bug_plan_wastage, 0)) as sums_bug_plan_wastage,
+			SUM(IFNULL(bug.bug_real_wastage, 0)) as sums_bug_real_wastage,
+			SUM(IFNULL(bug.bug_gb_real_wastage,0)) as sums_bug_gb_real_wastage,
+			SUM(IFNULL(meeting.meeting_total_count, 0)) as sums_meeting_total_count,
+			SUM(IFNULL(meeting.meeting_yfq_count, 0)) as sums_meeting_yfq_count,
+			SUM(IFNULL(meeting.meeting_yzj_count, 0)) as sums_meeting_yzj_count,
+			SUM(IFNULL(meeting.meeting_real_wastage, 0)) as sums_meeting_real_wastage,
+			SUM(IFNULL(meeting.meeting_yzj_real_wastage, 0)) as sums_meeting_yzj_real_wastage,
+			SUM(IFNULL(demand.demand_total_count, 0)) as sums_demand_total_count,
+			SUM(IFNULL(demand.demand_ys_count, 0)) as sums_sums_demand_ys_count,
+			SUM(IFNULL(demand.demand_bg_count, 0)) as sums_demand_bg_count,
+			SUM(IFNULL(task.task_plan_wastage, 0) + IFNULL(bug.bug_plan_wastage, 0)) as sums_total_plan_wastage,
+			SUM(IFNULL(task.task_real_wastage, 0) + IFNULL(bug.bug_real_wastage, 0) + IFNULL(meeting.meeting_real_wastage, 0)) as sums_total_real_wastage
+		  from bs_proj_commons
+			 LEFT JOIN (
+					select ta_task.proj_id,
+						  count(*) as task_total_count,
+						  SUM(case when state = '1002' then 1 else 0 end) as task_yfb_count,
+						  SUM(case when state = '1003' then 1 else 0 end) as task_yjs_count,
+						  SUM(case when state = '1004' then 1 else 0 end) as task_ywc_count,
+						  SUM(case when state = '1005' then 1 else 0 end) as task_ygb_count,
+						  SUM(case when state = '1007' then 1 else 0 end) as task_yzt_count,
+						  aaa.task_plan_wastage as task_plan_wastage,
+					  	  aaa.task_real_wastage task_real_wastage,
+						  SUM(case when state = '1005' then real_wastage else 0 end) as task_ygb_real_wastage
+					 from ta_task
+					 		LEFT JOIN (
+			SELECT
+				ta.proj_id,
+				sum(ta.query_real_wastage) AS task_real_wastage,
+				sum(ta.query_plan_wastage) AS task_plan_wastage
+			FROM
+				(
+					SELECT
+						proj_id,
+						proj_name,
+						group_id,
+						state,
+						task_type,
+						task_code,
+						task_name,
+						grade,
+						plan_begin_time,
+						plan_end_time,
+						real_begin_time,
+						real_end_time,
+						plan_wastage,
+						real_wastage,
+						plan_day,
+						real_day,
+						query_day,
+						handler_user_id,
+						handler_user_name,
+						assign_user_id,
+						assign_user_name,
+						ROUND((plan_wastage / plan_day) * query_day,1) AS query_plan_wastage,
+						ROUND((real_wastage / plan_day) * query_day,1) AS query_real_wastage,
+						percent
+					FROM
+						(
+							SELECT
+								ta_task.proj_id,
+								bs_proj_commons.PROJ_NAME AS proj_name,
+								ta_task.group_id,
+								ta_task.state,
+								ta_task.task_type,
+								ta_task.task_code,
+								ta_task.task_name,
+								ta_task.grade,
+								ta_task.plan_begin_time,
+								ta_task.plan_end_time,
+								ta_task.real_begin_time,
+								ta_task.real_end_time,
+								ta_task.plan_wastage,
+								IFNULL(real_wastage,TRUNCATE (plan_wastage * percent / 100, 1)) AS real_wastage,
+								ta_task.percent,
+								to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 AS plan_day,
+								to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 AS real_day,
+								(case when 
+										(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+										 )
+										then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+							        when 
+							        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+										 )
+										then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+							        when 
+							        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+										 ) 
+										then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+							      	else 
+							      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+								ta_task.handler_user_id,
+								handler_user. NAME AS handler_user_name,
+								ta_task.assign_user_id,
+								assign_user. NAME AS assign_user_name
+							FROM
+								ta_task,
+								bs_proj_commons,
+								aos_user AS handler_user,
+								aos_user AS assign_user
+							WHERE
+								ta_task.proj_id = bs_proj_commons.PROJ_ID
+							AND ta_task.handler_user_id = handler_user.id
+							AND ta_task.assign_user_id = assign_user.id
+							AND ta_task.state NOT IN (1001, 1006)
+							<if test="user_id != null and user_id != ''">
+		 						and ta_task.handler_user_id = #{user_id}
+		 					</if>
+							<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+					 				AND (
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+									)	
+				 			</if>
+						) AS task
+				) ta
+			GROUP BY
+				ta.proj_id
+		) aaa ON aaa.proj_id = ta_task.proj_id
+		        where state not in (1001, 1006)  
+ 					<if test="user_id != null and user_id != ''">
+ 						and ta_task.handler_user_id = #{user_id}
+ 					</if>
+ 					<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+			 				AND (
+										(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+									   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+									  )
+										OR
+										(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+									   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+									  )
+										OR
+										(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+									   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+									  )
+										OR
+										(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+									   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+									  )
+							)	
+		 			</if>
+				group by proj_id
+			) as task on bs_proj_commons.proj_id = task.proj_id
+		
+		LEFT join (
+				select proj_id, 
+					   count(*) as bug_total_count,
+					   SUM(case when state = '1000' then 1 else 0 end) as bug_wjj_count,
+					   SUM(case when state = '1001' then 1 else 0 end) as bug_yjj_count,
+					   SUM(case when state = '1002' then 1 else 0 end) as bug_yqcl_count,
+					   SUM(case when state = '1003' then 1 else 0 end) as bug_gb_count,
+					   SUM(case when state = '1004' then 1 else 0 end) as bug_jj_count,
+					   SUM(case when state = '1005' then 1 else 0 end) as bug_cxdk_count,
+					   SUM(case when state = '1006' then 1 else 0 end) as bug_wffx_count,
+					   SUM(plan_wastage) bug_plan_wastage,
+					   SUM(real_wastage) bug_real_wastage,
+						 SUM(case when state = '1003' then real_wastage else 0 end) as bug_gb_real_wastage
+				  from qa_bug_manage 
+			     where 1=1
+ 						<if test="user_id != null and user_id != ''">
+ 						 and qa_bug_manage.deal_man = #{user_id}
+ 					  </if>
+ 						<if test="plan_begin_time != null and plan_begin_time != ''">
+ 							AND qa_bug_manage.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+ 						</if>
+ 						<if test="plan_end_time != null and plan_end_time != ''">
+ 							AND qa_bug_manage.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+ 						</if>
+			 group by proj_id
+		) as bug on bs_proj_commons.proj_id = bug.proj_id
+		
+		LEFT join (
+				select a.proj_id, 
+					     count(*) as meeting_total_count,
+					     SUM(case when b.msg_state = '1' then 1 else 0 end) as meeting_yfq_count,
+					     SUM(case when b.msg_state = '2' then 1 else 0 end) as meeting_yzj_count,
+		       	   SUM(a.workload) as meeting_real_wastage,
+		       	   SUM(case when b.msg_state = '2' then a.workload else 0 end) as meeting_yzj_real_wastage
+		      from qa_files_manage a , qa_message b
+				 where a.manage_code = b.mang_id
+ 					 <if test="user_id != null and user_id != ''">
+ 						 and b.user_id = #{user_id}
+ 					 </if>
+ 					 and a.state_flag in ('2','3')
+ 					 AND b.msg_state NOT IN (3)
+ 					 <if test="plan_begin_time != null and plan_begin_time != ''">
+ 						AND a.begin_date <![CDATA[  >=  ]]> '${plan_begin_time}'
+ 					</if>
+ 					<if test="plan_end_time != null and plan_end_time != ''">
+ 						AND a.begin_date <![CDATA[  <=  ]]> '${plan_end_time}'
+ 					</if>
+		  group by a.proj_id
+
+		) as meeting on bs_proj_commons.proj_id = meeting.proj_id
+		
+		LEFT JOIN (
+				select proj_id,
+					   count(*) as demand_total_count,
+					   SUM(case when ad_type = '1' then 1 else 0 end) as demand_ys_count,
+					   SUM(case when ad_type = '2' then 1 else 0 end) as demand_bg_count
+			      from re_demand_action
+			     where state in ('0','1') 
+ 				 <if test="user_id != null and user_id != ''">
+ 					and create_user_id = #{user_id}
+ 				 </if>
+ 				 <if test="plan_begin_time != null and plan_begin_time != ''">
+ 				  	AND re_demand_action.AD_PLAN_FINISH_DATE <![CDATA[  >=  ]]> '${plan_begin_time}'
+ 				 </if>
+ 				 <if test="plan_end_time != null and plan_end_time != ''">
+ 				    AND re_demand_action.AD_PLAN_FINISH_DATE <![CDATA[  <=  ]]> '${plan_end_time}'
+ 				 </if>
+			 group by proj_id
+		) as demand on bs_proj_commons.proj_id = demand.proj_id
+		where bs_proj_commons.STATE != '-1'
+ 			<if test="user_id != null and user_id != ''">
+ 				and bs_proj_commons.proj_id in (select DISTINCT proj_id from bs_proj_teams where team_user_id = #{user_id} )
+ 			</if>
+ 			<if test="proj_id != null and proj_id != ''">
+ 				and bs_proj_commons.proj_id in (#{proj_id})
+ 			</if>
+ 		    <if test="proj_name != null and proj_name != ''">
+ 	            and bs_proj_commons.proj_name like '%${proj_name}%'
+ 	        </if>
+ 	        <if test="proj_id_state != null and proj_id_state != 0">
+ 	            and bs_proj_commons.state = #{proj_id_state}
+ 	        </if>
+    </select>
+    
+    <select id="taskYfbPage" resultType="dto">  
+     select proj_id,
+			   proj_name,
+			   group_id,
+			   state,
+			   task_type,
+			   task_code,
+			   task_name,
+			   grade,
+			   plan_begin_time,
+			   plan_end_time,
+			   real_begin_time,
+			   real_end_time,
+			   plan_wastage,
+			   real_wastage,
+			   plan_day,
+			   real_day,
+			   query_day,
+			   handler_user_id,
+			   handler_user_name,
+			   assign_user_id,
+			   assign_user_name,
+			   ROUND((plan_wastage / plan_day) * query_day, 1)  as query_plan_wastage,
+			   ROUND((real_wastage / plan_day) * query_day, 1)  as query_real_wastage,
+			   percent
+		  from (
+				select 
+					 ta_task.proj_id,
+					 bs_proj_commons.PROJ_NAME as proj_name,
+					 ta_task.group_id,
+					 ta_task.state,
+					 ta_task.task_type,
+					 ta_task.task_code,
+					 ta_task.task_name,
+					 ta_task.grade,
+					 ta_task.plan_begin_time,
+					 ta_task.plan_end_time,
+					 ta_task.real_begin_time,
+					 ta_task.real_end_time,
+					 ta_task.plan_wastage,
+					 IFNULL(real_wastage, TRUNCATE(plan_wastage * percent / 100, 1)) as real_wastage,
+					 ta_task.percent,
+					 to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 as plan_day,
+					 to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 as real_day,
+					 (case when 
+							(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 ) 
+							then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+				      	else 
+				      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+					 ta_task.handler_user_id,
+					 handler_user.name as handler_user_name,
+					 ta_task.assign_user_id,
+					 assign_user.name as assign_user_name
+					 from ta_task, bs_proj_commons, aos_user as handler_user, aos_user as assign_user
+					where ta_task.proj_id = bs_proj_commons.PROJ_ID
+						and ta_task.handler_user_id = handler_user.id
+						and ta_task.assign_user_id = assign_user.id
+						and ta_task.state = 1002
+		 			<if test="proj_id != null and proj_id != ''">
+	 					and ta_task.proj_id = #{proj_id}
+		 			</if>
+		 			<if test="user_id != null and user_id != ''">
+						and ta_task.handler_user_id = #{user_id}
+					</if>
+		 			<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+		 				AND (
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+							)	
+		 			</if>
+		 	) as task
+    </select> 
+    
+    <select id="taskYjsPage" resultType="dto">  
+     select proj_id,
+			   proj_name,
+			   group_id,
+			   state,
+			   task_type,
+			   task_code,
+			   task_name,
+			   grade,
+			   plan_begin_time,
+			   plan_end_time,
+			   real_begin_time,
+			   real_end_time,
+			   plan_wastage,
+			   real_wastage,
+			   plan_day,
+			   real_day,
+			   query_day,
+			   handler_user_id,
+			   handler_user_name,
+			   assign_user_id,
+			   assign_user_name,
+			   ROUND((plan_wastage / plan_day) * query_day, 1)  as query_plan_wastage,
+			   ROUND((real_wastage / plan_day) * query_day, 1)  as query_real_wastage,
+			   percent
+		  from (
+				select 
+					 ta_task.proj_id,
+					 bs_proj_commons.PROJ_NAME as proj_name,
+					 ta_task.group_id,
+					 ta_task.state,
+					 ta_task.task_type,
+					 ta_task.task_code,
+					 ta_task.task_name,
+					 ta_task.grade,
+					 ta_task.plan_begin_time,
+					 ta_task.plan_end_time,
+					 ta_task.real_begin_time,
+					 ta_task.real_end_time,
+					 ta_task.plan_wastage,
+					 IFNULL(real_wastage, TRUNCATE(plan_wastage * percent / 100, 1)) as real_wastage,
+					 ta_task.percent,
+					 to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 as plan_day,
+					 to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 as real_day,
+					 (case when 
+							(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 ) 
+							then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+				      	else 
+				      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+					 ta_task.handler_user_id,
+					 handler_user.name as handler_user_name,
+					 ta_task.assign_user_id,
+					 assign_user.name as assign_user_name
+					 from ta_task, bs_proj_commons, aos_user as handler_user, aos_user as assign_user
+					where ta_task.proj_id = bs_proj_commons.PROJ_ID
+						and ta_task.handler_user_id = handler_user.id
+						and ta_task.assign_user_id = assign_user.id
+						and ta_task.state = 1003
+		 			<if test="proj_id != null and proj_id != ''">
+	 					and ta_task.proj_id = #{proj_id}
+		 			</if>
+		 			<if test="user_id != null and user_id != ''">
+						and ta_task.handler_user_id = #{user_id}
+					</if>
+		 			<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+		 				AND (
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+							)	
+		 			</if>
+		 	) as task
+    </select> 
+    
+     <select id="taskYwcPage" resultType="dto">  
+     select proj_id,
+			   proj_name,
+			   group_id,
+			   state,
+			   task_type,
+			   task_code,
+			   task_name,
+			   grade,
+			   plan_begin_time,
+			   plan_end_time,
+			   real_begin_time,
+			   real_end_time,
+			   plan_wastage,
+			   real_wastage,
+			   plan_day,
+			   real_day,
+			   query_day,
+			   handler_user_id,
+			   handler_user_name,
+			   assign_user_id,
+			   assign_user_name,
+			   ROUND((plan_wastage / plan_day) * query_day, 1)  as query_plan_wastage,
+			   ROUND((real_wastage / plan_day) * query_day, 1)  as query_real_wastage,
+			   percent
+		  from (
+				select 
+					 ta_task.proj_id,
+					 bs_proj_commons.PROJ_NAME as proj_name,
+					 ta_task.group_id,
+					 ta_task.state,
+					 ta_task.task_type,
+					 ta_task.task_code,
+					 ta_task.task_name,
+					 ta_task.grade,
+					 ta_task.plan_begin_time,
+					 ta_task.plan_end_time,
+					 ta_task.real_begin_time,
+					 ta_task.real_end_time,
+					 ta_task.plan_wastage,
+					 IFNULL(real_wastage, TRUNCATE(plan_wastage * percent / 100, 1)) as real_wastage,
+					 ta_task.percent,
+					 to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 as plan_day,
+					 to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 as real_day,
+					 (case when 
+							(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 ) 
+							then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+				      	else 
+				      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+					 ta_task.handler_user_id,
+					 handler_user.name as handler_user_name,
+					 ta_task.assign_user_id,
+					 assign_user.name as assign_user_name
+					 from ta_task, bs_proj_commons, aos_user as handler_user, aos_user as assign_user
+					where ta_task.proj_id = bs_proj_commons.PROJ_ID
+						and ta_task.handler_user_id = handler_user.id
+						and ta_task.assign_user_id = assign_user.id
+						and ta_task.state = 1004
+		 			<if test="proj_id != null and proj_id != ''">
+	 					and ta_task.proj_id = #{proj_id}
+		 			</if>
+		 			<if test="user_id != null and user_id != ''">
+						and ta_task.handler_user_id = #{user_id}
+					</if>
+		 			<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+		 				AND (
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+							)	
+		 			</if>
+		 	) as task
+    </select> 
+    
+    <select id="taskYgbPage" resultType="dto">  
+     select proj_id,
+			   proj_name,
+			   group_id,
+			   state,
+			   task_type,
+			   task_code,
+			   task_name,
+			   grade,
+			   plan_begin_time,
+			   plan_end_time,
+			   real_begin_time,
+			   real_end_time,
+			   plan_wastage,
+			   real_wastage,
+			   plan_day,
+			   real_day,
+			   query_day,
+			   handler_user_id,
+			   handler_user_name,
+			   assign_user_id,
+			   assign_user_name,
+			   ROUND((plan_wastage / plan_day) * query_day, 1)  as query_plan_wastage,
+			   ROUND((real_wastage / plan_day) * query_day, 1)  as query_real_wastage,
+			   percent
+		  from (
+				select 
+					 ta_task.proj_id,
+					 bs_proj_commons.PROJ_NAME as proj_name,
+					 ta_task.group_id,
+					 ta_task.state,
+					 ta_task.task_type,
+					 ta_task.task_code,
+					 ta_task.task_name,
+					 ta_task.grade,
+					 ta_task.plan_begin_time,
+					 ta_task.plan_end_time,
+					 ta_task.real_begin_time,
+					 ta_task.real_end_time,
+					 ta_task.plan_wastage,
+					 IFNULL(real_wastage, TRUNCATE(plan_wastage * percent / 100, 1)) as real_wastage,
+					 ta_task.percent,
+					 to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 as plan_day,
+					 to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 as real_day,
+					 (case when 
+							(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 ) 
+							then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+				      	else 
+				      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+					 ta_task.handler_user_id,
+					 handler_user.name as handler_user_name,
+					 ta_task.assign_user_id,
+					 assign_user.name as assign_user_name
+					 from ta_task, bs_proj_commons, aos_user as handler_user, aos_user as assign_user
+					where ta_task.proj_id = bs_proj_commons.PROJ_ID
+						and ta_task.handler_user_id = handler_user.id
+						and ta_task.assign_user_id = assign_user.id
+						and ta_task.state = 1005
+		 			<if test="proj_id != null and proj_id != ''">
+	 					and ta_task.proj_id = #{proj_id}
+		 			</if>
+		 			<if test="user_id != null and user_id != ''">
+						and ta_task.handler_user_id = #{user_id}
+					</if>
+		 			<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+		 				AND (
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+							)	
+		 			</if>
+		 	) as task
+    </select> 
+    
+    <select id="taskYztPage" resultType="dto">  
+     select proj_id,
+			   proj_name,
+			   group_id,
+			   state,
+			   task_type,
+			   task_code,
+			   task_name,
+			   grade,
+			   plan_begin_time,
+			   plan_end_time,
+			   real_begin_time,
+			   real_end_time,
+			   plan_wastage,
+			   real_wastage,
+			   plan_day,
+			   real_day,
+			   query_day,
+			   handler_user_id,
+			   handler_user_name,
+			   assign_user_id,
+			   assign_user_name,
+			   ROUND((plan_wastage / plan_day) * query_day, 1)  as query_plan_wastage,
+			   ROUND((real_wastage / plan_day) * query_day, 1)  as query_real_wastage,
+			   percent
+		  from (
+				select 
+					 ta_task.proj_id,
+					 bs_proj_commons.PROJ_NAME as proj_name,
+					 ta_task.group_id,
+					 ta_task.state,
+					 ta_task.task_type,
+					 ta_task.task_code,
+					 ta_task.task_name,
+					 ta_task.grade,
+					 ta_task.plan_begin_time,
+					 ta_task.plan_end_time,
+					 ta_task.real_begin_time,
+					 ta_task.real_end_time,
+					 ta_task.plan_wastage,
+					 IFNULL(real_wastage, TRUNCATE(plan_wastage * percent / 100, 1)) as real_wastage,
+					 ta_task.percent,
+					 to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 as plan_day,
+					 to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 as real_day,
+					 (case when 
+							(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 ) 
+							then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+				      	else 
+				      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+					 ta_task.handler_user_id,
+					 handler_user.name as handler_user_name,
+					 ta_task.assign_user_id,
+					 assign_user.name as assign_user_name
+					 from ta_task, bs_proj_commons, aos_user as handler_user, aos_user as assign_user
+					where ta_task.proj_id = bs_proj_commons.PROJ_ID
+						and ta_task.handler_user_id = handler_user.id
+						and ta_task.assign_user_id = assign_user.id
+						and ta_task.state = 1007
+		 			<if test="proj_id != null and proj_id != ''">
+	 					and ta_task.proj_id = #{proj_id}
+		 			</if>
+		 			<if test="user_id != null and user_id != ''">
+						and ta_task.handler_user_id = #{user_id}
+					</if>
+		 			<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+		 				AND (
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+							)	
+		 			</if>
+		 	) as task
+    </select> 
+    
+    <select id="taskTotalPage" resultType="dto">  
+     select proj_id,
+			   proj_name,
+			   group_id,
+			   state,
+			   task_type,
+			   task_code,
+			   task_name,
+			   grade,
+			   plan_begin_time,
+			   plan_end_time,
+			   real_begin_time,
+			   real_end_time,
+			   plan_wastage,
+			   real_wastage,
+			   plan_day,
+			   real_day,
+			   query_day,
+			   handler_user_id,
+			   handler_user_name,
+			   assign_user_id,
+			   assign_user_name,
+			   ROUND((plan_wastage / plan_day) * query_day, 1)  as query_plan_wastage,
+			   ROUND((real_wastage / plan_day) * query_day, 1)  as query_real_wastage,
+			   percent
+		  from (
+				select 
+					 ta_task.proj_id,
+					 bs_proj_commons.PROJ_NAME as proj_name,
+					 ta_task.group_id,
+					 ta_task.state,
+					 ta_task.task_type,
+					 ta_task.task_code,
+					 ta_task.task_name,
+					 ta_task.grade,
+					 ta_task.plan_begin_time,
+					 ta_task.plan_end_time,
+					 ta_task.real_begin_time,
+					 ta_task.real_end_time,
+					 ta_task.plan_wastage,
+					 IFNULL(real_wastage, TRUNCATE(plan_wastage * percent / 100, 1)) as real_wastage,
+					 ta_task.percent,
+					 to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 as plan_day,
+					 to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 as real_day,
+					 (case when 
+							(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 ) 
+							then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+				      	else 
+				      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+					 ta_task.handler_user_id,
+					 handler_user.name as handler_user_name,
+					 ta_task.assign_user_id,
+					 assign_user.name as assign_user_name
+					 from ta_task, bs_proj_commons, aos_user as handler_user, aos_user as assign_user
+					where ta_task.proj_id = bs_proj_commons.PROJ_ID
+						and ta_task.handler_user_id = handler_user.id
+						and ta_task.assign_user_id = assign_user.id
+						and ta_task.state not in (1001, 1006)
+		 			<if test="proj_id != null and proj_id != ''">
+	 					and ta_task.proj_id = #{proj_id}
+		 			</if>
+		 			<if test="user_id != null and user_id != ''">
+						and ta_task.handler_user_id = #{user_id}
+					</if>
+		 			<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+		 				AND (
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+							)	
+		 			</if>
+		 	) as task
+    </select> 
+    
+    <select id="bugWjjPage" resultType="dto">  
+		SELECT  
+			ac.`name` create_name,
+			re.dm_name,
+			ua.name deal_man,
+			qa.* ,
+			pa.proj_name
+		FROM
+			`qa_bug_manage` qa 
+			LEFT JOIN( 
+				SELECT 
+					p.proj_id,
+					p.proj_name 
+				FROM
+					`bs_proj_commons` p) pa ON pa.proj_id = qa.`proj_id` 
+			left join ( 
+				select 
+					dm_code,
+					dm_name 
+				from 
+					re_module_divide ) re on re.dm_code=qa.stand_id
+			left join(
+				SELECT 
+					a.name,
+					a.id 
+				FROM
+					`aos_user` a) ua ON ua.id = qa.`deal_man` 
+			LEFT JOIN  `aos_user` ac ON ac.`id`=qa.`create_name`
+		where 1=1
+			and qa.state = '1000'
+			<if test="proj_id != null and proj_id != ''">
+				and qa.proj_id = #{proj_id}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and qa.deal_man = #{user_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qa.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qa.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="bugYjjPage" resultType="dto">  
+		SELECT  
+			ac.`name` create_name,
+			re.dm_name,
+			ua.name deal_man,
+			qa.* ,
+			pa.proj_name
+		FROM
+			`qa_bug_manage` qa 
+			LEFT JOIN( 
+				SELECT 
+					p.proj_id,
+					p.proj_name 
+				FROM
+					`bs_proj_commons` p) pa ON pa.proj_id = qa.`proj_id` 
+			left join ( 
+				select 
+					dm_code,
+					dm_name 
+				from 
+					re_module_divide ) re on re.dm_code=qa.stand_id
+			left join(
+				SELECT 
+					a.name,
+					a.id 
+				FROM
+					`aos_user` a) ua ON ua.id = qa.`deal_man` 
+			LEFT JOIN  `aos_user` ac ON ac.`id`=qa.`create_name`
+		where 1=1
+			and qa.state = '1001'
+			<if test="proj_id != null and proj_id != ''">
+				and qa.proj_id = #{proj_id}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and qa.deal_man = #{user_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qa.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qa.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="bugYqclPage" resultType="dto">  
+		SELECT  
+			ac.`name` create_name,
+			re.dm_name,
+			ua.name deal_man,
+			qa.* ,
+			pa.proj_name
+		FROM
+			`qa_bug_manage` qa 
+			LEFT JOIN( 
+				SELECT 
+					p.proj_id,
+					p.proj_name 
+				FROM
+					`bs_proj_commons` p) pa ON pa.proj_id = qa.`proj_id` 
+			left join ( 
+				select 
+					dm_code,
+					dm_name 
+				from 
+					re_module_divide ) re on re.dm_code=qa.stand_id
+			left join(
+				SELECT 
+					a.name,
+					a.id 
+				FROM
+					`aos_user` a) ua ON ua.id = qa.`deal_man` 
+			LEFT JOIN  `aos_user` ac ON ac.`id`=qa.`create_name`
+		where 1=1
+			and qa.state = '1002'
+			<if test="proj_id != null and proj_id != ''">
+				and qa.proj_id = #{proj_id}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and qa.deal_man = #{user_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qa.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qa.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="bugGbPage" resultType="dto">  
+		SELECT  
+			ac.`name` create_name,
+			re.dm_name,
+			ua.name deal_man,
+			qa.* ,
+			pa.proj_name
+		FROM
+			`qa_bug_manage` qa 
+			LEFT JOIN( 
+				SELECT 
+					p.proj_id,
+					p.proj_name 
+				FROM
+					`bs_proj_commons` p) pa ON pa.proj_id = qa.`proj_id` 
+			left join ( 
+				select 
+					dm_code,
+					dm_name 
+				from 
+					re_module_divide ) re on re.dm_code=qa.stand_id
+			left join(
+				SELECT 
+					a.name,
+					a.id 
+				FROM
+					`aos_user` a) ua ON ua.id = qa.`deal_man` 
+			LEFT JOIN  `aos_user` ac ON ac.`id`=qa.`create_name`
+		where 1=1
+			and qa.state = '1003'
+			<if test="proj_id != null and proj_id != ''">
+				and qa.proj_id = #{proj_id}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and qa.deal_man = #{user_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qa.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qa.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="bugJjPage" resultType="dto">  
+		SELECT  
+			ac.`name` create_name,
+			re.dm_name,
+			ua.name deal_man,
+			qa.* ,
+			pa.proj_name
+		FROM
+			`qa_bug_manage` qa 
+			LEFT JOIN( 
+				SELECT 
+					p.proj_id,
+					p.proj_name 
+				FROM
+					`bs_proj_commons` p) pa ON pa.proj_id = qa.`proj_id` 
+			left join ( 
+				select 
+					dm_code,
+					dm_name 
+				from 
+					re_module_divide ) re on re.dm_code=qa.stand_id
+			left join(
+				SELECT 
+					a.name,
+					a.id 
+				FROM
+					`aos_user` a) ua ON ua.id = qa.`deal_man` 
+			LEFT JOIN  `aos_user` ac ON ac.`id`=qa.`create_name`
+		where 1=1
+			and qa.state = '1004'
+			<if test="proj_id != null and proj_id != ''">
+				and qa.proj_id = #{proj_id}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and qa.deal_man = #{user_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qa.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qa.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="bugCxdkPage" resultType="dto">  
+		SELECT  
+			ac.`name` create_name,
+			re.dm_name,
+			ua.name deal_man,
+			qa.* ,
+			pa.proj_name
+		FROM
+			`qa_bug_manage` qa 
+			LEFT JOIN( 
+				SELECT 
+					p.proj_id,
+					p.proj_name 
+				FROM
+					`bs_proj_commons` p) pa ON pa.proj_id = qa.`proj_id` 
+			left join ( 
+				select 
+					dm_code,
+					dm_name 
+				from 
+					re_module_divide ) re on re.dm_code=qa.stand_id
+			left join(
+				SELECT 
+					a.name,
+					a.id 
+				FROM
+					`aos_user` a) ua ON ua.id = qa.`deal_man` 
+			LEFT JOIN  `aos_user` ac ON ac.`id`=qa.`create_name`
+		where 1=1
+			and qa.state = '1005'
+			<if test="proj_id != null and proj_id != ''">
+				and qa.proj_id = #{proj_id}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and qa.deal_man = #{user_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qa.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qa.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="bugWffxPage" resultType="dto">  
+		SELECT  
+			ac.`name` create_name,
+			re.dm_name,
+			ua.name deal_man,
+			qa.* ,
+			pa.proj_name
+		FROM
+			`qa_bug_manage` qa 
+			LEFT JOIN( 
+				SELECT 
+					p.proj_id,
+					p.proj_name 
+				FROM
+					`bs_proj_commons` p) pa ON pa.proj_id = qa.`proj_id` 
+			left join ( 
+				select 
+					dm_code,
+					dm_name 
+				from 
+					re_module_divide ) re on re.dm_code=qa.stand_id
+			left join(
+				SELECT 
+					a.name,
+					a.id 
+				FROM
+					`aos_user` a) ua ON ua.id = qa.`deal_man` 
+			LEFT JOIN  `aos_user` ac ON ac.`id`=qa.`create_name`
+		where 1=1
+			and qa.state = '1006'
+			<if test="proj_id != null and proj_id != ''">
+				and qa.proj_id = #{proj_id}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and qa.deal_man = #{user_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qa.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qa.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="bugTotalPage" resultType="dto">  
+		SELECT  
+			ac.`name` create_name,
+			re.dm_name,
+			ua.name deal_man,
+			qa.* ,
+			pa.proj_name
+		FROM
+			`qa_bug_manage` qa 
+			LEFT JOIN( 
+				SELECT 
+					p.proj_id,
+					p.proj_name 
+				FROM
+					`bs_proj_commons` p) pa ON pa.proj_id = qa.`proj_id` 
+			left join ( 
+				select 
+					dm_code,
+					dm_name 
+				from 
+					re_module_divide ) re on re.dm_code=qa.stand_id
+			left join(
+				SELECT 
+					a.name,
+					a.id 
+				FROM
+					`aos_user` a) ua ON ua.id = qa.`deal_man` 
+			LEFT JOIN  `aos_user` ac ON ac.`id`=qa.`create_name`
+		where 1=1
+			<if test="proj_id != null and proj_id != ''">
+				and qa.proj_id = #{proj_id}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and qa.deal_man = #{user_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qa.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qa.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="meetingYfqPage" resultType="dto">  
+		SELECT
+			qm.workload,
+		  	pa.proj_name,
+			qf.begin_date,
+			qf.end_date,
+			qf.meeting_type,
+			qf.review_type,
+			qf.attende_mans,
+			qf.attende_mans_out,
+			qf.theme,
+			qf.proj_id
+		FROM
+			qa_message qm
+		LEFT JOIN (
+			SELECT
+				p.proj_id,
+				p.proj_name
+			FROM
+				`bs_proj_commons` p
+		) pa ON pa.proj_id = qm.`proj_id`
+		LEFT JOIN (
+			SELECT 
+				q.begin_date,
+				q.end_date,
+				q.proj_id,
+				q.state_flag,
+				q.meeting_type,
+				q.review_type,
+				q.manage_code,
+				q.attende_mans_out,
+				q.attende_mans,
+				q.theme
+			FROM qa_files_manage q
+		) qf ON qf.manage_code = qm.mang_id
+		 where 
+		 	qm.msg_state = 1
+		 	and qf.state_flag in ('2','3')
+			<if test="user_id != null and user_id != ''">
+			 	and qm.user_id = #{user_id}
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+				AND qf.proj_id = #{proj_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qf.begin_date <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qf.begin_date <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="meetingYzjPage" resultType="dto">  
+		SELECT
+			qm.workload,
+		  	pa.proj_name,
+			qf.begin_date,
+			qf.end_date,
+			qf.meeting_type,
+			qf.review_type,
+			qf.attende_mans,
+			qf.attende_mans_out,
+			qf.theme,
+			qf.proj_id
+		FROM
+			qa_message qm
+		LEFT JOIN (
+			SELECT
+				p.proj_id,
+				p.proj_name
+			FROM
+				`bs_proj_commons` p
+		) pa ON pa.proj_id = qm.`proj_id`
+		LEFT JOIN (
+			SELECT 
+				q.begin_date,
+				q.end_date,
+				q.proj_id,
+				q.state_flag,
+				q.meeting_type,
+				q.review_type,
+				q.manage_code,
+				q.attende_mans_out,
+				q.attende_mans,
+				q.theme
+			FROM qa_files_manage q
+		) qf ON qf.manage_code = qm.mang_id
+		 where 
+		 	qm.msg_state = 2
+		 	and qf.state_flag in ('2','3')
+			<if test="user_id != null and user_id != ''">
+			 	and qm.user_id = #{user_id}
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+				AND qf.proj_id = #{proj_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qf.begin_date <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qf.begin_date <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <select id="meetingTotalPage" resultType="dto">  
+		SELECT
+			qm.workload,
+		  	pa.proj_name,
+			qf.begin_date,
+			qf.end_date,
+			qf.meeting_type,
+			qf.review_type,
+			qf.attende_mans,
+			qf.attende_mans_out,
+			qf.theme,
+			qf.proj_id
+		FROM
+			qa_message qm
+		LEFT JOIN (
+			SELECT
+				p.proj_id,
+				p.proj_name
+			FROM
+				`bs_proj_commons` p
+		) pa ON pa.proj_id = qm.`proj_id`
+		LEFT JOIN (
+			SELECT 
+				q.begin_date,
+				q.end_date,
+				q.proj_id,
+				q.state_flag,
+				q.meeting_type,
+				q.review_type,
+				q.manage_code,
+				q.attende_mans_out,
+				q.attende_mans,
+				q.theme
+			FROM qa_files_manage q
+		) qf ON qf.manage_code = qm.mang_id
+		 where 
+		 	qf.state_flag in ('2','3')
+		 	AND b.msg_state NOT IN (3)
+			<if test="user_id != null and user_id != ''">
+			 	and qm.user_id = #{user_id}
+			</if>
+			<if test="proj_id != null and proj_id != ''">
+				AND qf.proj_id = #{proj_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qf.begin_date <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qf.begin_date <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <!-- 根据项目ID查询个人工作量月度报表 -->
+    <select id="personWorkloadReportByProjIdList" resultType="dto">  
+    	select 
+    	    tb_workload.proj_id,
+			tb_workload.handler_user_id,
+			aos_user.name,
+			IFNULL(sum(task_total_count), 0) as task_total_count,
+			IFNULL(sum(task_yfb_count), 0) as task_yfb_count,
+			IFNULL(sum(task_yjs_count), 0) as task_yjs_count,
+			IFNULL(sum(task_ywc_count), 0) as task_ywc_count,
+			IFNULL(sum(task_ygb_count), 0) as task_ygb_count,
+			IFNULL(sum(task_yzt_count), 0) as task_yzt_count,
+			IFNULL(sum(task_plan_wastage), 0) as task_plan_wastage,
+			IFNULL(sum(task_real_wastage), 0) as task_real_wastage,
+			IFNULL(sum(task_ygb_real_wastage), 0) as task_ygb_real_wastage,
+			IFNULL(sum(bug_total_count), 0) as bug_total_count,
+			IFNULL(sum(bug_wjj_count), 0) as bug_wjj_count,
+			IFNULL(sum(bug_yjj_count), 0) as bug_yjj_count,
+			IFNULL(sum(bug_yqcl_count), 0) as bug_yqcl_count,
+			IFNULL(sum(bug_gb_count), 0) as bug_gb_count,
+			IFNULL(sum(bug_cxdk_count), 0) as bug_jj_count,
+			IFNULL(sum(bug_cxdk_count), 0) as bug_cxdk_count,
+			IFNULL(sum(bug_wffx_count), 0) as bug_wffx_count,
+			IFNULL(sum(bug_plan_wastage), 0) as bug_plan_wastage,
+			IFNULL(sum(bug_real_wastage), 0) as bug_real_wastage,
+			IFNULL(sum(bug_gb_real_wastage), 0) as bug_gb_real_wastage,
+			IFNULL(sum(meeting_total_count), 0) as meeting_total_count,
+			IFNULL(sum(meeting_yfq_count), 0) as meeting_yfq_count,
+			IFNULL(sum(meeting_yzj_count), 0) as meeting_yzj_count,
+			IFNULL(sum(meeting_real_wastage), 0) as meeting_real_wastage,
+			IFNULL(sum(meeting_yzj_real_wastage), 0) as meeting_yzj_real_wastage,
+			IFNULL(sum(demand_total_count), 0) as demand_total_count,
+			IFNULL(sum(demand_ys_count), 0) as demand_ys_count,
+			IFNULL(sum(demand_bg_count), 0) as demand_bg_count,
+			sum(IFNULL(task_plan_wastage, 0) + IFNULL(bug_plan_wastage, 0)) as total_plan_wastage,
+			sum(IFNULL(task_real_wastage, 0) + IFNULL(bug_real_wastage, 0) + IFNULL(meeting_real_wastage, 0)) as total_real_wastage
+	  from (
+			select
+				ta_task.proj_id as proj_id,
+				ta_task.handler_user_id handler_user_id,
+				count(*) as task_total_count,
+				SUM(case when ta_task.state = '1002' then 1 else 0 end) as task_yfb_count,
+				SUM(case when ta_task.state = '1003' then 1 else 0 end) as task_yjs_count,
+				SUM(case when ta_task.state = '1004' then 1 else 0 end) as task_ywc_count,
+				SUM(case when ta_task.state = '1005' then 1 else 0 end) as task_ygb_count,
+				SUM(case when ta_task.state = '1007' then 1 else 0 end) as task_yzt_count,
+				aaa.task_plan_wastage AS task_plan_wastage,
+				aaa.task_real_wastage AS task_real_wastage,
+				SUM(case when state = '1005' then real_wastage else 0 end) as task_ygb_real_wastage,
+				0 as bug_total_count,
+				0 as bug_wjj_count,
+				0 as bug_yjj_count,
+				0 as bug_yqcl_count,
+				0 as bug_gb_count,
+				0 as bug_jj_count,
+				0 as bug_cxdk_count,
+				0 as bug_wffx_count,
+				0 as bug_plan_wastage,
+				0 as bug_real_wastage,
+				0 as bug_gb_real_wastage,
+				0 as meeting_total_count,
+				0 as meeting_yfq_count,
+				0 as meeting_yzj_count,
+				0 as meeting_real_wastage,
+				0 as meeting_yzj_real_wastage,
+				0 as demand_total_count,
+				0 as demand_ys_count,
+				0 as demand_bg_count
+			 from ta_task
+			 		LEFT JOIN
+				 		(SELECT
+				 			ta.handler_user_id,
+							sum(ta.query_real_wastage) AS task_real_wastage,
+							sum(ta.query_plan_wastage) AS task_plan_wastage
+						FROM
+						(SELECT
+							proj_id,
+							proj_name,
+							group_id,
+							state,
+							task_type,
+							task_code,
+							task_name,
+							grade,
+							plan_begin_time,
+							plan_end_time,
+							real_begin_time,
+							real_end_time,
+							plan_wastage,
+							real_wastage,
+							plan_day,
+							real_day,
+							query_day,
+							handler_user_id,
+							handler_user_name,
+							assign_user_id,
+							assign_user_name,
+							ROUND(
+								(plan_wastage / plan_day) * query_day,
+								1
+							) AS query_plan_wastage,
+							ROUND(
+								(real_wastage / plan_day) * query_day,
+								1
+							) AS query_real_wastage,
+							percent
+						FROM
+							(
+								SELECT
+									ta_task.proj_id,
+									bs_proj_commons.PROJ_NAME AS proj_name,
+									ta_task.group_id,
+									ta_task.state,
+									ta_task.task_type,
+									ta_task.task_code,
+									ta_task.task_name,
+									ta_task.grade,
+									ta_task.plan_begin_time,
+									ta_task.plan_end_time,
+									ta_task.real_begin_time,
+									ta_task.real_end_time,
+									ta_task.plan_wastage,
+									IFNULL( real_wastage, TRUNCATE (plan_wastage * percent / 100, 1) ) AS real_wastage,
+									ta_task.percent,
+									to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 AS plan_day,
+									to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 AS real_day,
+									(case when 
+										(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+										 )
+										then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+							        when 
+							        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+										 )
+										then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+							        when 
+							        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+										   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+										 ) 
+										then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+							      	else 
+							      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+									ta_task.handler_user_id,
+									handler_user. NAME AS handler_user_name,
+									ta_task.assign_user_id,
+									assign_user. NAME AS assign_user_name
+								FROM
+									ta_task,
+									bs_proj_commons,
+									aos_user AS handler_user,
+									aos_user AS assign_user
+								WHERE
+									ta_task.proj_id = bs_proj_commons.PROJ_ID
+								AND ta_task.handler_user_id = handler_user.id
+								AND ta_task.assign_user_id = assign_user.id
+								AND ta_task.state NOT IN (1001, 1006)
+								<if test="proj_id != null and proj_id != ''">
+								 	and ta_task.proj_id = #{proj_id}
+								</if>
+								<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+					 				AND (
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+												OR
+												(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+											   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+											  )
+									)	
+				 			</if>
+							) AS task
+						)ta
+						GROUP BY ta.handler_user_id
+					)aaa ON aaa.handler_user_id = ta_task.handler_user_id
+	        where ta_task.state not in (1001, 1006)
+	        	<if test="proj_id != null and proj_id != ''">
+					    and ta_task.proj_id = #{proj_id}
+					</if>
+					<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+	 				AND (
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+								OR
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+								OR
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+								OR
+								(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							  )
+					)	
+ 			</if>
+			group by ta_task.proj_id, ta_task.handler_user_id
+			union all
+			select 
+				qa_bug_manage.proj_id as proj_id,
+				deal_man as handler_user_id, 
+				0 as task_total_count, 
+				0 as task_yfb_count, 
+				0 as task_yjs_count, 
+				0 as task_ywc_count, 
+				0 as task_ygb_count, 
+				0 as task_yzt_count, 
+				0 as task_plan_wastage, 
+				0 as task_real_wastage, 
+				0 as task_ygb_real_wastage,
+				count(*) as bug_total_count,
+				SUM(case when state = '1000' then 1 else 0 end) as bug_wjj_count,
+				SUM(case when state = '1001' then 1 else 0 end) as bug_yjj_count,
+				SUM(case when state = '1002' then 1 else 0 end) as bug_yqcl_count,
+				SUM(case when state = '1003' then 1 else 0 end) as bug_gb_count,
+				SUM(case when state = '1004' then 1 else 0 end) as bug_jj_count,
+				SUM(case when state = '1005' then 1 else 0 end) as bug_cxdk_count,
+				SUM(case when state = '1006' then 1 else 0 end) as bug_wffx_count,
+				SUM(plan_wastage) bug_plan_wastage,
+				SUM(real_wastage) bug_real_wastage,
+				SUM(case when state = '1003' then real_wastage else 0 end) as bug_gb_real_wastage,
+				0 as meeting_total_count,
+				0 as meeting_yfq_count,
+				0 as meeting_yzj_count,
+				0 as meeting_real_wastage,
+				0 as meeting_yzj_real_wastage,
+				0 as demand_total_count,
+				0 as demand_ys_count,
+				0 as demand_bg_count
+			from qa_bug_manage 
+		   where 1=1
+			<if test="proj_id != null and proj_id != ''">
+			 and qa_bug_manage.proj_id = #{proj_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+				AND qa_bug_manage.create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+				AND qa_bug_manage.create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+		   group by qa_bug_manage.proj_id, deal_man
+			union all
+			select a.proj_id as proj_id, 
+				b.user_id as hander_user_id,
+				0 as task_total_count, 
+				0 as task_yfb_count, 
+				0 as task_yjs_count, 
+				0 as task_ywc_count, 
+				0 as task_ygb_count, 
+				0 as task_yzt_count, 
+				0 as task_plan_wastage, 
+				0 as task_real_wastage, 
+				0 as task_ygb_real_wastage,
+				0 as bug_total_count,
+				0 as bug_wjj_count,
+				0 as bug_yjj_count,
+				0 as bug_yqcl_count,
+				0 as bug_gb_count,
+				0 as bug_jj_count,
+				0 as bug_cxdk_count,
+				0 as bug_wffx_count,
+				0 as bug_plan_wastage,
+				0 as bug_real_wastage,
+				0 as bug_gb_real_wastage,
+				count(*) as meeting_total_count,
+				SUM(case when b.msg_state = '1' then 1 else 0 end) as meeting_yfq_count,
+				SUM(case when b.msg_state = '2' then 1 else 0 end) as meeting_yzj_count,
+				SUM(a.workload) as meeting_real_wastage,
+				SUM(case when b.msg_state = '2' then a.workload else 0 end) as meeting_yzj_real_wastage,
+				0 as demand_total_count,
+				0 as demand_ys_count,
+				0 as demand_bg_count
+			    from qa_files_manage a , qa_message b
+			   where a.manage_code = b.mang_id
+				<if test="proj_id != null and proj_id != ''">
+				 	and a.proj_id = #{proj_id}
+				</if>
+					AND b.msg_state NOT IN (3)
+					and a.state_flag in ('2','3')
+				<if test="plan_begin_time != null and plan_begin_time != ''">
+					AND a.begin_date <![CDATA[  >=  ]]> '${plan_begin_time}'
+				</if>
+				<if test="plan_end_time != null and plan_end_time != ''">
+					AND a.begin_date <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+			  group by a.proj_id,b.user_id
+	      	union all
+			select
+				proj_id, 
+				CREATE_USER_ID as handler_user_id,
+				0 as task_total_count, 
+				0 as task_yfb_count, 
+				0 as task_yjs_count, 
+				0 as task_ywc_count, 
+				0 as task_ygb_count, 
+				0 as task_yzt_count, 
+				0 as task_plan_wastage, 
+				0 as task_real_wastage, 
+				0 as task_ygb_real_wastage,
+				0 as bug_total_count,
+				0 as bug_wjj_count,
+				0 as bug_yjj_count,
+				0 as bug_yqcl_count,
+				0 as bug_gb_count,
+				0 as bug_jj_count,
+				0 as bug_cxdk_count,
+				0 as bug_wffx_count,
+				0 as bug_plan_wastage,
+				0 as bug_real_wastage,
+				0 as bug_gb_real_wastage,
+				0 as meeting_total_count,
+				0 as meeting_yfq_count,
+				0 as meeting_yzj_count,
+				0 as meeting_real_wastage,
+				0 as meeting_yzj_real_wastage,
+				count(*) as demand_total_count,
+				SUM(case when ad_type = '1' then 1 else 0 end) as demand_ys_count,
+				SUM(case when ad_type = '2' then 1 else 0 end) as demand_bg_count
+			 from re_demand_action
+			where state in ('0','1') 
+			<if test="proj_id != null and proj_id != ''">
+				and PROJ_ID = #{proj_id}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+			 	AND re_demand_action.AD_PLAN_FINISH_DATE <![CDATA[  >=  ]]> '${plan_begin_time}'
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+			   AND re_demand_action.AD_PLAN_FINISH_DATE <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+			 group by PROJ_ID, CREATE_USER_ID
+	  ) tb_workload, aos_user
+	  where tb_workload.handler_user_id = aos_user.id
+	  group by tb_workload.proj_id,
+			   tb_workload.handler_user_id,
+			   aos_user.name
+    
+    </select>
+    
+    <!-- 根据查询条件查询月度任务列表查询 -->
+	<select id="queryMonthTaskList" resultType="dto" parameterType="dto">
+		select proj_id,
+			   proj_name,
+			   group_id,
+			   state,
+			   task_type,
+			   task_code,
+			   task_name,
+			   grade,
+			   plan_begin_time,
+			   plan_end_time,
+			   real_begin_time,
+			   real_end_time,
+			   plan_wastage,
+			   real_wastage,
+			   plan_day,
+			   real_day,
+			   query_day,
+			   handler_user_id,
+			   handler_user_name,
+			   assign_user_id,
+			   assign_user_name,
+			   ROUND((plan_wastage / plan_day) * query_day, 1)  as query_plan_wastage,
+			   ROUND((real_wastage / plan_day) * query_day, 1)  as query_real_wastage,
+			   percent
+		  from (
+				select 
+					 ta_task.proj_id,
+					 bs_proj_commons.PROJ_NAME as proj_name,
+					 ta_task.group_id,
+					 ta_task.state,
+					 ta_task.task_type,
+					 ta_task.task_code,
+					 ta_task.task_name,
+					 ta_task.grade,
+					 ta_task.plan_begin_time,
+					 ta_task.plan_end_time,
+					 ta_task.real_begin_time,
+					 ta_task.real_end_time,
+					 ta_task.plan_wastage,
+					 IFNULL(real_wastage, TRUNCATE(plan_wastage * percent / 100, 1)) as real_wastage,
+					 ta_task.percent,
+					 to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 as plan_day,
+					 to_days(ta_task.real_end_time) - to_days(ta_task.real_end_time) + 1 as real_day,
+					(case when 
+							(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then ( to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							 )
+							then  (to_days(ta_task.plan_end_time) - to_days('${plan_begin_time}') + 1 )
+				        when 
+				        	(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+							   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+							 ) 
+							then  (to_days('${plan_end_time}') - to_days(ta_task.plan_begin_time) + 1 )
+				      	else 
+				      		(to_days(ta_task.plan_end_time) - to_days(ta_task.plan_begin_time) + 1 ) end ) as query_day,
+					 ta_task.handler_user_id,
+					 handler_user.name as handler_user_name,
+					 ta_task.assign_user_id,
+					 assign_user.name as assign_user_name
+					 from ta_task, bs_proj_commons, aos_user as handler_user, aos_user as assign_user
+					where ta_task.proj_id = bs_proj_commons.PROJ_ID
+						and ta_task.handler_user_id = handler_user.id
+						and ta_task.assign_user_id = assign_user.id
+						and ta_task.state not in (1001, 1006)
+		 			<if test="proj_id != null and proj_id != ''">
+		 					and ta_task.proj_id = #{proj_id}
+		 			</if>
+		 			<if test="handler_user_id != null and handler_user_id != ''">
+							and ta_task.handler_user_id = #{handler_user_id}
+					</if>
+					<if test="state != null and state != ''">
+							and ta_task.state = #{state}
+					</if>
+		 			<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+		 				AND (
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  <=  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') BETWEEN str_to_date('${plan_begin_time}','%Y-%m-%d') and str_to_date('${plan_end_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+									OR
+									(str_to_date(ta_task.plan_begin_time,'%Y-%m-%d') <![CDATA[  <  ]]> str_to_date('${plan_begin_time}','%Y-%m-%d')
+								   AND str_to_date(ta_task.plan_end_time,'%Y-%m-%d') <![CDATA[  >  ]]> str_to_date('${plan_end_time}','%Y-%m-%d')
+								  )
+							)	
+		 			</if>
+		 	) as task
+	</select>
+	
+	
+	<!-- 根据查询条件查询月度缺陷列表查询 -->
+	<select id="queryMonthBugList" resultType="dto" parameterType="dto">
+		select  
+			 deal_user.name as deal_name,
+			 bs_proj_commons.PROJ_NAME as proj_name,
+			 re_module_divide.DM_NAME as dm_name,
+			 qa_bug_manage.* 
+		  from qa_bug_manage, bs_proj_commons, aos_user as find_user, aos_user as deal_user, re_module_divide
+		 where qa_bug_manage.proj_id = bs_proj_commons.proj_id
+		   and qa_bug_manage.create_name = find_user.id 
+		   and qa_bug_manage.deal_man = deal_user.id
+		   and qa_bug_manage.stand_id = re_module_divide.DM_CODE
+		   <if test="proj_id != null and proj_id != ''">
+ 					and qa_bug_manage.proj_id = #{proj_id}
+ 			</if>
+ 			<if test="handler_user_id != null and handler_user_id != ''">
+					and qa_bug_manage.deal_man = #{handler_user_id}
+			</if>
+			<if test="state != null and state != ''">
+					and qa_bug_manage.state = #{state}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+			    AND qa_bug_manage.`create_time` <![CDATA[  >=  ]]> '${plan_begin_time}'
+			    AND qa_bug_manage.`create_time` <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+	</select>
+	    
+	 <!-- 根据查询条件查询月度会议陷列表查询 -->
+	<select id="queryMonthMeetingList" resultType="dto" parameterType="dto">  
+		SELECT
+				c.proj_name,
+				qfm.compere as create_user_id,
+			    create_user.name as create_user_name,
+				cy_user.name as cy_user_name,
+				qfm.*
+		  FROM
+				qa_files_manage qfm ,bs_proj_commons c, qa_message qm, aos_user create_user, aos_user cy_user
+	      where qfm.proj_id = c.PROJ_ID
+		    and qfm.manage_code = qm.mang_id
+	        and qfm.compere = create_user.id
+			and qm.user_id = cy_user.id
+			and qfm.state_flag in ('2','3')
+			<if test="proj_id != null and proj_id != ''">
+					and qfm.proj_id = #{proj_id}
+			</if>
+			<if test="handler_user_id != null and handler_user_id != ''">
+					and qm.user_id = #{handler_user_id}
+			</if>
+			<if test="state != null and state != ''">
+					and qm.msg_state = #{state}
+			</if>
+			<if test="plan_begin_time != null and plan_begin_time != '' and plan_end_time != null and plan_end_time != ''">
+					AND qfm.`begin_date` <![CDATA[  >=  ]]> '${plan_begin_time}'
+					AND qfm.`begin_date` <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+			ORDER BY
+				qfm.create_time DESC
+	</select>
+</mapper>

@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_interview_records[InterviewRecords]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-05-02 15:02:41 -->
+<mapper namespace="com.bl3.pm.recruit.dao.InterviewRecordsDao">
+<!--查询面试记录  -->
+	<select id="queryInterviewRecord" resultType="Dto" parameterType="Dto">
+			SELECT
+			b.result_id,
+			b.register_id,
+			a.`name`,
+			date_format(
+				b.interview_date,
+				'%Y-%m-%d'
+			) interview_date,
+			date_format(
+				a.notify_interview_date,
+				'%Y-%m-%d'
+			) notify_interview_date,
+			a.sex,
+			base_situation,
+			b.interview_result,
+			interview_type,
+			written_score,
+			interview_score,
+			interviewer,
+			(select name from aos_user where interviewer=id)interviewer_name,
+			conclusion
+		FROM
+			bs_interview_records b
+		LEFT JOIN bs_recruitment_management a ON b.register_id = a.register_id
+		<where>
+		    <if test="register_id != null and register_id != ''">
+		      AND a.register_id =#{register_id}
+		</if>
+		    <if test="register_date != null and register_date != ''">
+		      AND a.register_date like '${register_date}%'  <!-- 登记日期 -->
+		</if>
+	    <if test="name != null and name != ''">
+		      AND a.name like '%${name}%'  <!-- 姓名 -->
+		</if>
+	    <if test="sex != null and sex != ''">
+		      AND a.sex like '${sex}%'  <!-- 性别 -->
+		</if>
+	    <if test="link_phone != null and link_phone != ''">
+		      AND a.link_phone like '%${link_phone}%'  <!-- 联系方式 -->
+		</if>
+		 <if test="interview_result != null and interview_result != ''">
+		      AND b.interview_result like '%${interview_result}%'  <!-- 面试结论 -->
+		</if>
+		 <if test="notify_interview_date_begin != null and notify_interview_date_begin != ''">
+		      AND (DATE_FORMAT(a.notify_interview_date,'%Y-%m-%d') >= #{notify_interview_date_begin}  <!-- interview_date -->
+		</if>
+		 <if test="notify_interview_date_end != null and notify_interview_date_end != ''">
+		      AND DATE_FORMAT(a.notify_interview_date,'%Y-%m-%d') >= #{notify_interview_date_end})  <!-- interview_date -->
+		</if>
+		 <if test="entry_date_begin != null and entry_date_begin != ''">
+		      AND (DATE_FORMAT(a.entry_date,'%Y-%m-%d') >= #{entry_date_begin}  <!-- entry_date -->
+		</if>
+		 <if test="entry_date_end != null and entry_date_end != ''">
+		      AND DATE_FORMAT(a.entry_date,'%Y-%m-%d') >= #{entry_date_end})  <!-- entry_date -->
+		</if>
+	    <if test="contact_date != null and contact_date != ''">
+		      AND a.contact_date like '${contact_date}%'  <!-- 联系日期 -->
+		</if>
+	    <if test="contact_result != null and contact_result != ''">
+		      AND a.contact_result like '%${contact_result}%'  <!-- 联系结果 -->
+		</if>
+	    <if test="interview_date != null and interview_date != ''">
+		      AND a.interview_date like '${interview_date}%'  <!-- 面试日期 -->
+		</if>
+	    <if test="entry_date != null and entry_date != ''">
+		      AND a.entry_date like '${entry_date}%'  <!-- 入职时间 -->
+		</if>
+		  <if test="state != null and state != ''">
+		      AND a.state = #{state}  <!-- 状态 -->
+		</if>
+		  <if test="entry_type != null and entry_type != ''">
+		      AND a.entry_type = #{entry_type}  <!-- 入职类型 -->
+		</if>
+		 <if test="entry_post != null and entry_post != ''">
+		      AND a.entry_post = #{entry_post}  <!-- 入职岗位 -->
+		</if>
+		</where>	
+		order by b.register_id desc
+	</select>
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="result_id" parameterType="InterviewRecordsPO">
+		INSERT INTO bs_interview_records (
+		<if test="register_id != null">
+	         register_id, <!-- 登记Id -->
+		</if>
+		<if test="base_situation != null and base_situation != ''">
+	         base_situation, <!-- 人员基本情况 -->
+		</if>
+		<if test="interview_type != null and interview_type != ''">
+	         interview_type, <!-- 面试类型 -->
+		</if>
+		<if test="interview_result != null and interview_result != ''">
+	         interview_result, <!-- 面试结论 -->
+		</if>
+		<if test="interview_date != null and interview_date != ''">
+	         interview_date, <!-- 实际面试时间 -->
+		</if>
+		<if test="written_score != null">
+	         written_score, <!-- 笔试分数 -->
+		</if>
+		<if test="interview_score != null">
+	         interview_score, <!-- 面试分数 -->
+		</if>
+		<if test="interviewer != null">
+	         interviewer, <!-- 面试官 -->
+		</if>
+		<if test="conclusion != null and conclusion != ''">
+	         conclusion, <!-- 结论说明 -->
+		</if>
+	          result_id
+		)VALUES(
+		<if test="register_id != null">
+	          #{register_id, jdbcType=INTEGER}, <!-- 登记Id -->
+	    </if>
+		<if test="base_situation != null and base_situation != ''">
+	          #{base_situation, jdbcType=VARCHAR}, <!-- 人员基本情况 -->
+	    </if>
+		<if test="interview_type != null and interview_type != ''">
+	          #{interview_type, jdbcType=VARCHAR}, <!-- 面试类型 -->
+	    </if>
+	    <if test="interview_result != null and interview_result != ''">
+	          #{interview_result, jdbcType=VARCHAR}, <!-- 面试结论 -->
+	    </if>
+	    <if test="interview_date != null and interview_date != ''">
+	          #{interview_date, jdbcType=VARCHAR}, <!-- 实际面试时间 -->
+		</if>
+		<if test="written_score != null">
+	          #{written_score, jdbcType=NUMERIC}, <!-- 笔试分数 -->
+	    </if>
+		<if test="interview_score != null">
+	          #{interview_score, jdbcType=NUMERIC}, <!-- 面试分数 -->
+	    </if>
+		<if test="interviewer != null">
+	          #{interviewer, jdbcType=VARCHAR}, <!-- 面试官 -->
+	    </if>
+		<if test="conclusion != null and conclusion != ''">
+	          #{conclusion, jdbcType=VARCHAR}, <!-- 结论说明 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="result_id" parameterType="InterviewRecordsPO">
+		INSERT INTO bs_interview_records (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{result_id, jdbcType=INTEGER},  <!-- 主键id -->
+		    #{register_id, jdbcType=INTEGER},  <!-- 登记Id -->
+		    #{base_situation, jdbcType=VARCHAR},  <!-- 人员基本情况 -->
+		    #{interview_type, jdbcType=VARCHAR},  <!-- 面试类型 -->
+		    #{interview_date, jdbcType=VARCHAR},  <!-- 实际面试时间 -->
+		    #{written_score, jdbcType=NUMERIC},  <!-- 笔试分数 -->
+		    #{interview_score, jdbcType=NUMERIC},  <!-- 面试分数 -->
+		    #{interviewer, jdbcType=VARCHAR},  <!-- 面试官 -->
+		    #{conclusion, jdbcType=VARCHAR},  <!-- 结论说明 -->
+		    #{interview_result, jdbcType=VARCHAR}  <!-- 面试结论 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="InterviewRecordsPO">
+		UPDATE bs_interview_records
+		<set>
+			<if test="result_id != null">
+		          result_id = #{result_id, jdbcType=INTEGER},  <!-- 主键id -->
+			</if>
+			<if test="register_id != null">
+		          register_id = #{register_id, jdbcType=INTEGER},  <!-- 登记Id -->
+			</if>
+			<if test="base_situation != null">
+		          base_situation = #{base_situation, jdbcType=VARCHAR},  <!-- 人员基本情况 -->
+			</if>
+			<if test="interview_type != null">
+		          interview_type = #{interview_type, jdbcType=VARCHAR},  <!-- 面试类型 -->
+			</if>
+			<if test="interview_date != null">
+		          interview_date = #{interview_date, jdbcType=VARCHAR},  <!-- 实际面试时间-->
+			</if>
+			<if test="written_score != null">
+		          written_score = #{written_score, jdbcType=NUMERIC},  <!-- 笔试分数 -->
+			</if>
+			<if test="interview_score != null">
+		          interview_score = #{interview_score, jdbcType=NUMERIC},  <!-- 面试分数 -->
+			</if>
+			<if test="interviewer != null">
+		          interviewer = #{interviewer, jdbcType=VARCHAR},  <!-- 面试官 -->
+			</if>
+			<if test="conclusion != null">
+		          conclusion = #{conclusion, jdbcType=VARCHAR},  <!-- 结论说明 -->
+			</if>
+			<if test="interview_result != null">
+		          interview_result = #{interview_result, jdbcType=VARCHAR},  <!-- 面试结论 -->
+			</if>
+			
+		</set>
+		WHERE  result_id = #{result_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_interview_records WHERE  result_id = #{result_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="InterviewRecordsPO">
+		SELECT
+		<include refid="column" />
+		FROM bs_interview_records WHERE  result_id = #{result_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="InterviewRecordsPO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_interview_records
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="InterviewRecordsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_interview_records
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="InterviewRecordsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_interview_records
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="InterviewRecordsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_interview_records
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="InterviewRecordsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_interview_records
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="InterviewRecordsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_interview_records
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="InterviewRecordsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_interview_records
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_interview_records
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_interview_records
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  result_id,  <!-- 主键id -->
+		  register_id,  <!-- 登记Id -->
+		  base_situation,  <!-- 人员基本情况 -->
+		  interview_type,  <!-- 面试类型 -->
+		  interview_date,  <!-- 实际面试时间 -->
+		  written_score,  <!-- 笔试分数 -->
+		  interview_score,  <!-- 面试分数 -->
+		  interviewer,  <!-- 面试官 -->
+		  conclusion,
+		  interview_result
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_interview_records.result_id,  <!-- 主键id -->
+		  bs_interview_records.register_id,  <!-- 登记Id -->
+		  bs_interview_records.base_situation,  <!-- 人员基本情况 -->
+		  bs_interview_records.interview_type,  <!-- 面试类型 -->
+		   bs_interview_records.interview_date<!-- 实际面试时间 -->
+		  bs_interview_records.written_score,  <!-- 笔试分数 -->
+		  bs_interview_records.interview_score,  <!-- 面试分数 -->
+		  bs_interview_records.interviewer,  <!-- 面试官 -->
+		  bs_interview_records.conclusion,
+		  bs_interview_records.interview_result
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="result_id != null ">
+		      AND result_id = #{result_id}  <!-- 主键id -->
+		</if>
+	   <if test="register_id != null ">
+		      AND register_id = #{register_id}  <!-- 登记Id -->
+		</if>
+	    <if test="base_situation != null and base_situation != ''">
+		      AND base_situation = #{base_situation}  <!-- 人员基本情况 -->
+		</if>
+	    <if test="interview_type != null and interview_type != ''">
+		      AND interview_type = #{interview_type}  <!-- 面试类型 -->
+		</if>
+	   <if test="written_score != null ">
+		      AND written_score = #{written_score}  <!-- 笔试分数 -->
+		</if>
+	   <if test="interview_score != null ">
+		      AND interview_score = #{interview_score}  <!-- 面试分数 -->
+		</if>
+		 <if test="interview_result != null ">
+		      AND interview_result = #{interview_result}  <!-- 面试结论 -->
+		</if>
+		 <if test="interview_date != null ">
+		      AND interview_date = #{interview_date}  <!-- 实际面试时间 -->
+		</if>
+	   <if test="interviewer != null ">
+		      AND interviewer = #{interviewer}  <!-- 面试官 -->
+		</if>
+	    <if test="conclusion != null and conclusion != ''">
+		      AND conclusion = #{conclusion}  <!-- 结论说明 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="base_situation != null and base_situation != ''">
+		      AND base_situation like '${base_situation}%'  <!-- 人员基本情况 -->
+		</if>
+	    <if test="interview_type != null and interview_type != ''">
+		      AND interview_type like '${interview_type}%'  <!-- 面试类型 -->
+		</if>
+		 <if test="interview_date != null and interview_date != ''">
+		      AND interview_date like '${interview_date}%'  <!-- 实际面试时间 -->
+		</if>
+	    <if test="conclusion != null and conclusion != ''">
+		      AND conclusion like '${conclusion}%'  <!-- 结论说明 -->
+		</if>
+		 <if test="interview_result != null and interview_result != ''">
+		      AND interview_result like '${interview_result}%'  <!-- 面试结论 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="base_situation != null and base_situation != ''">
+		      Or base_situation like '${base_situation}%'  <!-- 人员基本情况 -->
+		</if>
+	    <if test="interview_type != null and interview_type != ''">
+		      Or interview_type like '${interview_type}%'  <!-- 面试类型 -->
+		</if>
+		 <if test="interview_date != null and interview_date != ''">
+		      Or interview_date like '${interview_date}%'  <!-- 实际面试时间 -->
+		</if>
+	    <if test="conclusion != null and conclusion != ''">
+		      Or conclusion like '${conclusion}%'  <!-- 结论说明 -->
+		</if>
+		<if test="interview_result != null and interview_result != ''">
+		      Or interview_result like '${interview_result}%'  <!-- 面试结论-->
+		</if>
+	</sql>
+	
+</mapper>

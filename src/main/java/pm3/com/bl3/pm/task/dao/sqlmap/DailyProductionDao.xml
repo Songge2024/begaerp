@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ta_daily_production[DailyProduction]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2020-03-20 15:32:23 -->
+<mapper namespace="com.bl3.pm.task.dao.DailyProductionDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="daily_id" parameterType="DailyProductionPO">
+		INSERT INTO ta_daily_production (
+		<if test="daily_desc != null and daily_desc != ''">
+	         daily_desc, <!-- 日报描述 -->
+		</if>
+		<if test="daily_type != null and daily_type != ''">
+	         daily_type, <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目id -->
+		</if>
+		<if test="working_percent != null">
+	         working_percent, <!-- 工作百分比 -->
+		</if>
+		<if test="working_workload != null">
+	         working_workload, <!-- 工作量（人天） -->
+		</if>
+		<if test="daily_status != null and daily_status != ''">
+	         daily_status, <!-- 0 草稿 1 提交 2已同步 -->
+		</if>
+		<if test="sync_id != null and sync_id != ''">
+	         sync_id, <!-- 同步ID -->
+		</if>
+		<if test="remark != null and remark != ''">
+	         remark, <!-- 备注 -->
+		</if>
+		<if test="is_del != null">
+	         is_del, <!-- 0 未删除 1 已删除 -->
+		</if>
+		<if test="week_day != null">
+			week_day,
+		</if>
+		<if test="create_id != null">
+	         create_id, <!-- create_id -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- create_time -->
+		</if>
+		<if test="update_id != null">
+	         update_id, <!-- update_id -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- update_time -->
+		</if>
+		<if test="daily_date != null">
+	         daily_date <!-- 日报日期（yyyy-mm-dd格式） -->
+		</if>
+		)VALUES(
+		<if test="daily_desc != null and daily_desc != ''">
+	          #{daily_desc, jdbcType=VARCHAR}, <!-- 日报描述 -->
+	    </if>
+		<if test="daily_type != null and daily_type != ''">
+	          #{daily_type, jdbcType=VARCHAR}, <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目id -->
+	    </if>
+		<if test="working_percent != null">
+	          #{working_percent, jdbcType=NUMERIC}, <!-- 工作百分比 -->
+	    </if>
+		<if test="working_workload != null">
+	          #{working_workload, jdbcType=NUMERIC}, <!-- 工作量（人天） -->
+	    </if>
+		<if test="daily_status != null and daily_status != ''">
+	          #{daily_status, jdbcType=VARCHAR}, <!-- 0 草稿 1 提交 2已同步 -->
+	    </if>
+		<if test="sync_id != null and sync_id != ''">
+	          #{sync_id, jdbcType=VARCHAR}, <!-- 同步ID -->
+	    </if>
+		<if test="remark != null and remark != ''">
+	          #{remark, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+		<if test="is_del != null">
+	          #{is_del, jdbcType=INTEGER}, <!-- 0 未删除 1 已删除 -->
+	    </if>
+	    <if test="week_day != null">
+	          #{week_day, jdbcType=INTEGER}, <!-- create_id -->
+	    </if>
+		<if test="create_id != null">
+	          #{create_id, jdbcType=INTEGER}, <!-- create_id -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- create_time -->
+	    </if>
+		<if test="update_id != null">
+	          #{update_id, jdbcType=INTEGER}, <!-- update_id -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- update_time -->
+	    </if>
+		<if test="daily_date != null">
+	          #{daily_date, jdbcType=DATE} <!-- 日报日期（yyyy-mm-dd格式） -->
+	    </if>
+		)
+	</insert>
+	
+	<select id="conductCount" resultType="Dto">
+		SELECT
+			'2' as type,
+			q.proj_id,
+			IF (
+				p.task_desc IS NULL,
+				"",
+				p.task_desc
+			) task_desc
+			FROM
+				ta_task q,
+				(
+					SELECT
+						o.task_id task_id,
+						o.task_desc task_desc
+					FROM
+						ta_task o
+				) p
+			WHERE
+				q.task_id = p.task_id
+			AND q.real_begin_time <![CDATA[  <  ]]> ADDDATE('${daily_date}',INTERVAL 1 day)
+			AND (
+				q.real_end_time <![CDATA[  >=  ]]>
+				'${daily_date}' or q.real_end_time is null
+			)
+			AND q.handler_user_id = '${update_id}'
+	</select>
+	
+	<select id="handleBug" resultType="Dto">
+	    SELECT
+			'3' as type,
+			b.bug_name,
+			b.proj_id
+		FROM
+			qa_bug_manage b
+		WHERE
+			date_format(b.final_deal_time, '%Y-%m-%d') = '${daily_date}'
+			AND b.deal_man = '${update_id}'
+	</select>
+	
+	<select id="attendMeeting" resultType="Dto">
+		SELECT
+			'4' as type,
+			a.theme,
+			a.attende_id,
+			a.proj_id
+		FROM
+			qa_files_manage a,
+			qa_message qa
+		WHERE
+			a.state_flag <![CDATA[   <>  ]]> '1' 
+			AND a.manage_code = qa.mang_id 
+			AND date_format(a.begin_date, '%Y-%m-%d') <![CDATA[   <=  ]]> '${daily_date}'
+		   	AND date_format(a.end_date, '%Y-%m-%d') <![CDATA[   >=  ]]> '${daily_date}'
+			AND qa.user_id = '${update_id}'
+	</select>
+	
+	<select id="allReport" resultType="Dto">
+		select
+			tap.daily_id,  <!-- 日报id -->
+			tap.daily_date,  <!-- 日报日期（yyyy-mm-dd格式） -->
+			tap.daily_desc,  <!-- 日报描述 -->
+			tap.daily_type,  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+			tap.proj_id,  <!-- 项目id -->
+			tap.working_percent,  <!-- 工作百分比 -->
+			tap.working_workload,  <!-- 工作量（人天） -->
+			tap.daily_status,  <!-- 0 草稿 1 提交 2已同步 -->
+			tap.sync_id,  <!-- 同步ID -->
+			tap.remark,  <!-- 备注 -->
+			tap.create_id,  <!-- create_id -->
+			tap.create_time,  <!-- create_time -->
+			tap.update_id,  <!-- update_id -->
+			tap.update_time,  <!-- update_time -->
+			tap.is_del,  <!-- 0 未删除 1 已删除 -->
+			tap.week_day,
+			bc.proj_name
+		from
+			ta_daily_production tap
+			LEFT JOIN bs_proj_commons bc ON bc.proj_id = tap.proj_id
+		where
+			tap.daily_date = #{daily_date} and tap.create_id= #{update_id}
+	</select>
+
+	<select id="queryProductionDesc" resultType="Dto">
+		select daily_date, concat(bc.proj_name,':','&lt;br&gt;',replace(group_concat(daily_desc), ',', '&lt;br&gt;'), '&lt;br&gt;') descc
+		from ta_daily_production
+		LEFT JOIN bs_proj_commons bc ON bc.proj_id = ta_daily_production.proj_id
+		where ta_daily_production.daily_date = #{daily_date} AND ta_daily_production.create_id = #{update_id}
+		group by ta_daily_production.proj_id
+	</select>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="DailyProductionPO">
+		INSERT INTO ta_daily_production (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{daily_id, jdbcType=INTEGER},  <!-- 日报id -->
+		    #{daily_date, jdbcType=DATE},  <!-- 日报日期（yyyy-mm-dd格式） -->
+		    #{daily_desc, jdbcType=VARCHAR},  <!-- 日报描述 -->
+		    #{daily_type, jdbcType=VARCHAR},  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目id -->
+		    #{working_percent, jdbcType=NUMERIC},  <!-- 工作百分比 -->
+		    #{working_workload, jdbcType=NUMERIC},  <!-- 工作量（人天） -->
+		    #{daily_status, jdbcType=VARCHAR},  <!-- 0 草稿 1 提交 2已同步 -->
+		    #{sync_id, jdbcType=VARCHAR},  <!-- 同步ID -->
+		    #{remark, jdbcType=VARCHAR},  <!-- 备注 -->
+		    #{create_id, jdbcType=INTEGER},  <!-- create_id -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- create_time -->
+		    #{update_id, jdbcType=INTEGER},  <!-- update_id -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- update_time -->
+		    #{is_del, jdbcType=INTEGER}  <!-- 0 未删除 1 已删除 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="DailyProductionPO">
+		UPDATE ta_daily_production
+		<set>
+			<if test="daily_id != null">
+		          daily_id = #{daily_id, jdbcType=INTEGER},  <!-- 日报id -->
+			</if>
+			<if test="daily_date != null">
+		          daily_date = #{daily_date, jdbcType=DATE},  <!-- 日报日期（yyyy-mm-dd格式） -->
+			</if>
+			<if test="daily_desc != null">
+		          daily_desc = #{daily_desc, jdbcType=VARCHAR},  <!-- 日报描述 -->
+			</if>
+			<if test="daily_type != null">
+		          daily_type = #{daily_type, jdbcType=VARCHAR},  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目id -->
+			</if>
+			<if test="working_percent != null">
+		          working_percent = #{working_percent, jdbcType=NUMERIC},  <!-- 工作百分比 -->
+			</if>
+			<if test="working_workload != null">
+		          working_workload = #{working_workload, jdbcType=NUMERIC},  <!-- 工作量（人天） -->
+			</if>
+			<if test="daily_status != null">
+		          daily_status = #{daily_status, jdbcType=VARCHAR},  <!-- 0 草稿 1 提交 2已同步 -->
+			</if>
+			<if test="sync_id != null">
+		          sync_id = #{sync_id, jdbcType=VARCHAR},  <!-- 同步ID -->
+			</if>
+			<if test="remark != null">
+		          remark = #{remark, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+			<if test="week_day != null">
+		          week_day = #{week_day, jdbcType=INTEGER},  <!-- create_id -->
+			</if>
+			<if test="create_id != null">
+		          create_id = #{create_id, jdbcType=INTEGER},  <!-- create_id -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- create_time -->
+			</if>
+			<if test="update_id != null">
+		          update_id = #{update_id, jdbcType=INTEGER},  <!-- update_id -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- update_time -->
+			</if>
+			<if test="is_del != null">
+		          is_del = #{is_del, jdbcType=INTEGER},  <!-- 0 未删除 1 已删除 -->
+			</if>
+		</set>
+		WHERE  daily_id = #{daily_id}
+	</update>
+	
+	<update id="updateIdByKey" parameterType="DailyProductionPO">
+		UPDATE ta_daily_production
+		<set>
+			<if test="daily_status != null">
+		          daily_status = #{daily_status, jdbcType=VARCHAR},  <!-- 0 草稿 1 提交 2已同步 -->
+			</if>
+			<if test="update_id != null">
+		          update_id = #{update_id, jdbcType=INTEGER},  <!-- update_id -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- update_time -->
+			</if>
+		</set>
+		WHERE  daily_id = #{daily_id}
+	</update>
+	
+	<!-- 我的日报 -->
+	<select id="select_my_daily" resultType="Dto">
+		SELECT
+				daily_id,  <!-- 日报id -->
+				daily_date,  <!-- 日报日期（yyyy-mm-dd格式） -->
+				daily_desc,  <!-- 日报描述 -->
+				daily_type,  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+				proj_id,  <!-- 项目id -->
+				working_percent,  <!-- 工作百分比 -->
+				working_workload,  <!-- 工作量（人天） -->
+				daily_status,  <!-- 0 草稿 1 提交 2已同步 -->
+				sync_id,  <!-- 同步ID -->
+				remark,  <!-- 备注 -->
+				create_id,  <!-- create_id -->
+				create_time,  <!-- create_time -->
+				update_id,  <!-- update_id -->
+				update_time,  <!-- update_time -->
+				is_del,  <!-- 0 未删除 1 已删除 -->
+				(
+					CASE week_day
+					WHEN 'Monday' THEN
+						'星期一'
+					WHEN 'Tuesday' THEN
+						'星期二'
+					WHEN 'Wednesday' THEN
+						'星期三'
+					WHEN 'Thursday' THEN
+						'星期四'
+					WHEN 'Friday' THEN
+						'星期五'
+					WHEN 'Saturday' THEN
+						'星期六'
+					WHEN 'Sunday' THEN
+						'星期日'
+					ELSE
+						week_day
+					END
+				) AS week_day,
+				DATE_FORMAT(daily_date, '%Y-%m-%d') AS m_time
+			FROM
+				`ta_daily_production`
+			WHERE DATE_SUB(CURDATE(), INTERVAL 30 DAY) <![CDATA[   <=  ]]> daily_date
+			AND update_id =${user_id}
+	</select>
+	
+	<update id="reportUpdateByKey" parameterType="Dto" > 
+		update ta_daily_production
+		set
+			daily_type = #{daily_type}, 
+			working_percent = #{working_percent},
+			daily_desc = #{daily_desc},
+			update_id = #{update_id}, 
+			update_time = sysdate()
+		where
+			ta_daily_production.daily_id=#{daily_id}
+	</update>
+	
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="listComboBoxUerid" resultType="Dto">
+		SELECT 
+		  bpc.`PROJ_ID` AS value,
+			bpc.PROJ_NAME AS display
+		FROM
+		  `bs_proj_commons` bpc
+		<if test="team_user_id != 'null' and team_user_id != ''">
+		  	,`bs_proj_teams` bpt 
+		</if>
+		WHERE bpc.`STATE` = '1' 
+		<if test="team_user_id != 'null' and team_user_id != ''">
+			and bpt.`state` = '1'
+		  	and bpt.`PROJ_ID` = bpc.`PROJ_ID`
+		  	AND bpt.`TEAM_USER_ID`=${team_user_id}
+		</if>
+		GROUP BY bpc.`PROJ_ID` 
+		order by CREATE_TIME desc
+	</select>
+	
+	<select id="countSum" resultType="Integer">
+		select 	
+			count(*)
+		from 	
+			ta_daily_production
+		where
+			daily_date = #{daily_date}
+			and create_id = #{update_id}
+	</select>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM ta_daily_production WHERE  daily_id = #{daily_id}
+	</delete>
+	
+	<!-- 根据时间删除数据持久化对象 -->
+	<delete id="deleteDateByKey">
+		DELETE FROM ta_daily_production WHERE  daily_date = #{daily_date}
+	</delete>
+	
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="DailyProductionPO">
+		SELECT
+		<include refid="column" />
+		FROM ta_daily_production WHERE  daily_id = #{daily_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="DailyProductionPO">
+		SELECT
+		    <include refid="column" />
+		FROM ta_daily_production
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="DailyProductionPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_daily_production
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="DailyProductionPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_daily_production
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="DailyProductionPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_daily_production
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="DailyProductionPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_daily_production
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="DailyProductionPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_daily_production
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="DailyProductionPO" useCache="false">
+	    SELECT
+			ta_daily_production.daily_id,  <!-- 日报id -->
+			ta_daily_production.daily_date,  <!-- 日报日期（yyyy-mm-dd格式） -->
+			ta_daily_production.daily_desc,  <!-- 日报描述 -->
+			ta_daily_production.daily_type,  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+			ta_daily_production.proj_id,  <!-- 项目id -->
+			ta_daily_production.working_percent,  <!-- 工作百分比 -->
+			ta_daily_production.working_workload,  <!-- 工作量（人天） -->
+			ta_daily_production.daily_status,  <!-- 0 草稿 1 提交 2已同步 -->
+			ta_daily_production.sync_id,  <!-- 同步ID -->
+			ta_daily_production.remark,  <!-- 备注 -->
+			ta_daily_production.create_id,  <!-- create_id -->
+			ta_daily_production.create_time,  <!-- create_time -->
+			ta_daily_production.update_id,  <!-- update_id -->
+			ta_daily_production.update_time,  <!-- update_time -->
+			ta_daily_production.is_del,  <!-- 0 未删除 1 已删除 -->
+			bc.proj_name,
+			ta_daily_production.week_day
+		FRoM 
+			ta_daily_production
+			LEFT JOIN bs_proj_commons bc ON bc.proj_id = ta_daily_production.proj_id
+		<where>
+		    <if test="daily_date != null">
+		      AND daily_date = #{daily_date}  <!-- 日报日期（yyyy-mm-dd格式） -->
+			</if>
+			<if test="create_id != null">
+		      AND create_id = #{create_id}  <!-- create_id -->
+			</if>
+		</where>	
+	</select>
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM ta_daily_production
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM ta_daily_production
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  daily_id,  <!-- 日报id -->
+		  daily_date,  <!-- 日报日期（yyyy-mm-dd格式） -->
+		  daily_desc,  <!-- 日报描述 -->
+		  daily_type,  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+		  proj_id,  <!-- 项目id -->
+		  working_percent,  <!-- 工作百分比 -->
+		  working_workload,  <!-- 工作量（人天） -->
+		  daily_status,  <!-- 0 草稿 1 提交 2已同步 -->
+		  sync_id,  <!-- 同步ID -->
+		  remark,  <!-- 备注 -->
+		  create_id,  <!-- create_id -->
+		  create_time,  <!-- create_time -->
+		  update_id,  <!-- update_id -->
+		  update_time,  <!-- update_time -->
+		  is_del,  <!-- 0 未删除 1 已删除 -->
+		  week_day
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  ta_daily_production.daily_id,  <!-- 日报id -->
+		  ta_daily_production.daily_date,  <!-- 日报日期（yyyy-mm-dd格式） -->
+		  ta_daily_production.daily_desc,  <!-- 日报描述 -->
+		  ta_daily_production.daily_type,  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+		  ta_daily_production.proj_id,  <!-- 项目id -->
+		  ta_daily_production.working_percent,  <!-- 工作百分比 -->
+		  ta_daily_production.working_workload,  <!-- 工作量（人天） -->
+		  ta_daily_production.daily_status,  <!-- 0 草稿 1 提交 2已同步 -->
+		  ta_daily_production.sync_id,  <!-- 同步ID -->
+		  ta_daily_production.remark,  <!-- 备注 -->
+		  ta_daily_production.create_id,  <!-- create_id -->
+		  ta_daily_production.create_time,  <!-- create_time -->
+		  ta_daily_production.update_id,  <!-- update_id -->
+		  ta_daily_production.update_time,  <!-- update_time -->
+		  ta_daily_production.is_del,  <!-- 0 未删除 1 已删除 -->
+		  ta_daily_production.week_day
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="daily_id != null ">
+		      AND daily_id = #{daily_id}  <!-- 日报id -->
+		</if>
+	   <if test="daily_date != null ">
+		      AND daily_date = #{daily_date}  <!-- 日报日期（yyyy-mm-dd格式） -->
+		</if>
+	    <if test="daily_desc != null and daily_desc != ''">
+		      AND daily_desc = #{daily_desc}  <!-- 日报描述 -->
+		</if>
+	    <if test="daily_type != null and daily_type != ''">
+		      AND daily_type = #{daily_type}  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目id -->
+		</if>
+	   <if test="working_percent != null ">
+		      AND working_percent = #{working_percent}  <!-- 工作百分比 -->
+		</if>
+	   <if test="working_workload != null ">
+		      AND working_workload = #{working_workload}  <!-- 工作量（人天） -->
+		</if>
+	    <if test="daily_status != null and daily_status != ''">
+		      AND daily_status = #{daily_status}  <!-- 0 草稿 1 提交 2已同步 -->
+		</if>
+	    <if test="sync_id != null and sync_id != ''">
+		      AND sync_id = #{sync_id}  <!-- 同步ID -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark = #{remark}  <!-- 备注 -->
+		</if>
+	   <if test="create_id != null ">
+		      AND create_id = #{create_id}  <!-- create_id -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- create_time -->
+		</if>
+	   <if test="update_id != null ">
+		      AND update_id = #{update_id}  <!-- update_id -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- update_time -->
+		</if>
+	   <if test="is_del != null ">
+		      AND is_del = #{is_del}  <!-- 0 未删除 1 已删除 -->
+		</if>
+		<if test="week_day != null ">
+		      AND week_day = #{week_day}  <!-- 0 未删除 1 已删除 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="daily_desc != null and daily_desc != ''">
+		      AND daily_desc like '${daily_desc}%'  <!-- 日报描述 -->
+		</if>
+	    <if test="daily_type != null and daily_type != ''">
+		      AND daily_type like '${daily_type}%'  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+		</if>
+	    <if test="daily_status != null and daily_status != ''">
+		      AND daily_status like '${daily_status}%'  <!-- 0 草稿 1 提交 2已同步 -->
+		</if>
+	    <if test="sync_id != null and sync_id != ''">
+		      AND sync_id like '${sync_id}%'  <!-- 同步ID -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark like '${remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- create_time -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- update_time -->
+		</if>
+		<if test="week_day != null and week_day != ''">
+		      AND week_day like '${week_day}%'  <!-- update_time -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="daily_desc != null and daily_desc != ''">
+		      Or daily_desc like '${daily_desc}%'  <!-- 日报描述 -->
+		</if>
+	    <if test="daily_type != null and daily_type != ''">
+		      Or daily_type like '${daily_type}%'  <!-- 1 自定义 2 任务 3 缺陷 4 测试用例 5 会议 -->
+		</if>
+	    <if test="daily_status != null and daily_status != ''">
+		      Or daily_status like '${daily_status}%'  <!-- 0 草稿 1 提交 2已同步 -->
+		</if>
+	    <if test="sync_id != null and sync_id != ''">
+		      Or sync_id like '${sync_id}%'  <!-- 同步ID -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      Or remark like '${remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- create_time -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- update_time -->
+		</if>
+		<if test="week_day != null and week_day != ''">
+		      Or week_day like '${week_day}%'  <!-- update_time -->
+		</if>
+	</sql>
+	
+</mapper>

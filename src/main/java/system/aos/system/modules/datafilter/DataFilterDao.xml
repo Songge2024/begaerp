@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 首页服务使用的SQL语句 -->
+<mapper namespace="DateFilter">
+	<!-- 查询用户过滤条件 -->
+	<select id="queryUserRowsFilter" resultType="Dto" parameterType="Dto">
+		SELECT 
+			aos_data_filter.id,
+			aos_data_filter.sqlid,
+			aos_data_filter.path,
+			aos_role_data_filter.filter
+		 FROM
+			aos_data_filter,aos_role_data_filter 
+		WHERE 
+			aos_data_filter.id = aos_role_data_filter.data_filter_id
+			<if test="sqlid != null and sqlid != ''">
+				and aos_data_filter.sqlid=#{sqlid}
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and role_id in(
+					SELECT role_id FROM aos_user_role WHERE user_id =#{user_id}
+				)
+			</if>
+	</select>
+	<!-- 查询角色过滤条件（ 分页） -->
+	<select id="queryRoleRowsFilterPage" resultType="Dto" parameterType="Dto">
+		SELECT 
+			aos_role_data_filter.id,
+			aos_role_data_filter.role_id,
+			aos_role_data_filter.data_filter_id,
+			aos_data_filter.sqlid,
+			aos_data_filter.path,
+			aos_role_data_filter.filter
+		 FROM
+			aos_data_filter,aos_role_data_filter 
+		WHERE 
+			aos_data_filter.id = aos_role_data_filter.data_filter_id
+			<if test="sqlid != null and sqlid != ''">
+				and aos_data_filter.sqlid=#{sqlid}
+			</if>
+			<if test="role_id != null and role_id != ''">
+				and role_id = #{role_id}
+			</if>
+	</select>
+</mapper>

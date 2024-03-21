@@ -1,0 +1,19 @@
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ include file="/WEB-INF/jsp/common/tags.jsp"%>
+#foreach($columnDto in $columnDtos)
+##生成主键
+#if(${columnDto.isPkey} == "true")
+	<aos:hiddenfield name="${columnDto.name}" fieldLabel="${columnDto.comment}" />
+#else
+##生成其他列
+#if(${columnDto.jdbctype} == 'DATE')
+	<aos:datefield name="${columnDto.name}" fieldLabel="${columnDto.comment}" editable="false" allowBlank="${columnDto.nullAble}"/>
+#elseif(${columnDto.jdbctype} == 'DATETIME')
+	<aos:datefield name="${columnDto.name}" fieldLabel="${columnDto.comment}" allowBlank="${columnDto.nullAble}"/>
+#elseif(${columnDto.jdbctype}=="INT"||${columnDto.jdbctype}=="TINYINT"||${columnDto.jdbctype}=="BIGINT"||${columnDto.jdbctype}=="NUMERIC")
+	<aos:numberfield name="${columnDto.name}" fieldLabel="${columnDto.comment}" allowBlank="${columnDto.nullAble}" minValue="0" maxValue="99999"/>
+#else
+	<aos:textfield name="${columnDto.name}" fieldLabel="${columnDto.comment}" allowBlank="${columnDto.nullAble}" maxLength="${columnDto.length}"/>
+#end				
+#end
+#end

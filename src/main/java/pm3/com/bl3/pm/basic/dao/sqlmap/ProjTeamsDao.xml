@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_proj_teams[ProjTeams]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-11 15:19:57 -->
+<mapper namespace="com.bl3.pm.basic.dao.ProjTeamsDao">
+		<!-- 查询项目基础信息列表 -->
+	<select id="queryProjTeamDataPage" resultType="Dto" parameterType="Dto">
+					SELECT
+			aa.*, (
+				SELECT
+					NAME
+				FROM
+					aos_user a
+				WHERE
+					aa.check_user_id = a.id
+			) check_user_name
+		FROM
+			(
+			 SELECT
+			<include refid="column" />,
+			(select trp_name from bs_proj_role_types 
+			where bs_proj_role_types.trp_code=bs_proj_teams.trp_code )trp_name,
+			(select name from aos_user where id=team_user_id )team_user_name,
+			develop_task_user,
+			(select name from aos_user where id=develop_task_user )develop_task_user_name,
+			(select 
+			proj_name 
+			from bs_proj_commons 
+			where 
+			bs_proj_teams.proj_id=bs_proj_commons.proj_id )proj_name,
+			check_user_id
+		FRoM bs_proj_teams LEFT JOIN aos_user ON TEAM_USER_ID = id
+		<where>
+		     <include refid="equal" />
+		</where>
+		 and  team_user_id !=-1
+		and state ='1'	)aa LEFT JOIN aos_user a ON aa.check_user_id = a.id
+	</select>
+	
+	<select id="projTeamCount" parameterType="Dto" resultType="Integer" useCache="false">
+		SELECT
+			count(*)
+		FROM
+			(
+			 SELECT
+			<include refid="column" />,
+			(select trp_name from bs_proj_role_types 
+			where bs_proj_role_types.trp_code=bs_proj_teams.trp_code )trp_name,
+			(select name from aos_user where id=team_user_id )team_user_name,
+			develop_task_user,
+			(select name from aos_user where id=develop_task_user )develop_task_user_name,
+			(select 
+			proj_name 
+			from bs_proj_commons 
+			where 
+			bs_proj_teams.proj_id=bs_proj_commons.proj_id )proj_name,
+			check_user_id
+		FRoM bs_proj_teams LEFT JOIN aos_user ON TEAM_USER_ID = id
+		<where>
+		     <include refid="equal" />
+		</where>
+		 and  team_user_id !=-1
+		and state ='1'	)aa LEFT JOIN aos_user a ON aa.check_user_id = a.id
+	</select>
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ProjTeamsPO">
+		INSERT INTO bs_proj_teams (
+		<if test="trp_code != null and trp_code != ''">
+	         trp_code, <!-- 角色CODE -->
+		</if>
+		<if test="team_user_id != null">
+	         team_user_id, <!-- 成员 -->
+		</if>
+		<if test="join_date != null">
+	         join_date, <!-- 加入时间 -->
+		</if>
+		<if test="jp_desc != null and jp_desc != ''">
+	         jp_desc, <!-- 成员说明 -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id <!-- 项目ID -->
+		</if>
+		<if test="develop_task_user != null">
+	         develop_task_user <!-- 项目ID -->
+		</if>
+		)VALUES(
+		<if test="trp_code != null and trp_code != ''">
+	          #{trp_code, jdbcType=VARCHAR}, <!-- 角色CODE -->
+	    </if>
+		<if test="team_user_id != null">
+	          #{team_user_id, jdbcType=INTEGER}, <!-- 成员 -->
+	    </if>
+		<if test="join_date != null">
+	          #{join_date, jdbcType=DATE}, <!-- 加入时间 -->
+	    </if>
+		<if test="jp_desc != null and jp_desc != ''">
+	          #{jp_desc, jdbcType=VARCHAR}, <!-- 成员说明 -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER} <!-- 项目ID -->
+	    </if>
+	    <if test="develop_task_user != null">
+	          #{develop_task_user, jdbcType=INTEGER} <!-- 项目ID -->
+	    </if>
+	    
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ProjTeamsPO">
+		INSERT INTO bs_proj_teams (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{team_id, jdbcType=INTEGER},  <!-- 团队ID -->
+		    #{trp_code, jdbcType=VARCHAR},  <!-- 角色CODE -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{team_user_id, jdbcType=INTEGER},  <!-- 成员 -->
+		    #{join_date, jdbcType=DATE},  <!-- 加入时间 -->
+		    #{jp_desc, jdbcType=VARCHAR}  <!-- 成员说明 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProjTeamsPO">
+		UPDATE bs_proj_teams
+		<set>
+			<if test="team_id != null">
+		          team_id = #{team_id, jdbcType=INTEGER},  <!-- 团队ID -->
+			</if>
+			<if test="trp_code != null">
+		          trp_code = #{trp_code, jdbcType=VARCHAR},  <!-- 角色CODE -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="team_user_id != null">
+		          team_user_id = #{team_user_id, jdbcType=INTEGER},  <!-- 成员 -->
+			</if>
+			<if test="join_date != null">
+		          join_date = #{join_date, jdbcType=DATE},  <!-- 加入时间 -->
+			</if>
+			<if test="jp_desc != null">
+		          jp_desc = #{jp_desc, jdbcType=VARCHAR},  <!-- 成员说明 -->
+			</if>
+			<if test="develop_task_user != null">
+		          develop_task_user = #{develop_task_user, jdbcType=INTEGER},  <!-- 成员说明 -->
+			</if>
+		</set>
+		WHERE  team_id = #{team_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<update id="deleteByKey">
+		UPDATE `bs_proj_teams` SET state='0' ,JP_DESC='项目组撤销' , quit_date=NOW() WHERE team_id = #{team_id}
+	</update>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProjTeamsPO">
+		SELECT
+		<include refid="column" />
+		FROM bs_proj_teams WHERE  team_id = #{team_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProjTeamsPO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_proj_teams
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProjTeamsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_teams
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProjTeamsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_teams
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProjTeamsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_teams
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProjTeamsPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_teams
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProjTeamsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_teams
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ProjTeamsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_teams
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_proj_teams
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_proj_teams
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  team_id,  <!-- 团队ID -->
+		  trp_code,  <!-- 角色CODE -->
+		  proj_id,  <!-- 项目ID -->
+		  team_user_id,  <!-- 成员 -->
+		  join_date,  <!-- 加入时间 -->
+		  jp_desc  <!-- 成员说明 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_proj_teams.team_id,  <!-- 团队ID -->
+		  bs_proj_teams.trp_code,  <!-- 角色CODE -->
+		  bs_proj_teams.proj_id,  <!-- 项目ID -->
+		  bs_proj_teams.team_user_id,  <!-- 成员 -->
+		  bs_proj_teams.join_date,  <!-- 加入时间 -->
+		  bs_proj_teams.jp_desc  <!-- 成员说明 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="team_id != null ">
+		      AND team_id = #{team_id}  <!-- 团队ID -->
+		</if>
+	    <if test="trp_code != null and trp_code != ''">
+		      AND trp_code = #{trp_code}  <!-- 角色CODE -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="team_user_id != null ">
+		      AND team_user_id = #{team_user_id}  <!-- 成员 -->
+		</if>
+	   <if test="join_date != null ">
+		      AND join_date = #{join_date}  <!-- 加入时间 -->
+		</if>
+	    <if test="jp_desc != null and jp_desc != ''">
+		      AND jp_desc = #{jp_desc}  <!-- 成员说明 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="trp_code != null and trp_code != ''">
+		      AND trp_code like '${trp_code}%'  <!-- 角色CODE -->
+		</if>
+	    <if test="jp_desc != null and jp_desc != ''">
+		      AND jp_desc like '${jp_desc}%'  <!-- 成员说明 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="trp_code !=null and trp_code != ''">
+		      Or trp_code like '${trp_code}%'  <!-- 角色CODE -->
+		</if>
+	    <if test="jp_desc != null and jp_desc != ''">
+		      Or jp_desc like '${jp_desc}%'  <!-- 成员说明 -->
+		</if>
+	</sql>
+	
+</mapper>

@@ -1,0 +1,77 @@
+<%@ page contentType="text/html; charset=utf-8"%>
+//显示新增或修改窗口
+function ${tableDto.lowclassname}_win_show(type){
+	if(type=="create"){
+		AOS.reset(${tableDto.lowclassname}_create_form);
+		${tableDto.lowclassname}_create_win.show();
+	}else{
+		AOS.reset(${tableDto.lowclassname}_update_form);
+		var record = AOS.selectone(${tableDto.lowclassname}_grid, true);
+		if(AOS.empty(record)){
+			AOS.tip('请选择要修改的记录。');
+			return;
+		}
+		${tableDto.lowclassname}_update_form.loadRecord(record);
+		${tableDto.lowclassname}_update_win.show();
+	}
+}
+//查询
+function ${tableDto.lowclassname}_query() {
+	var params = AOS.getValue('query_form');
+    ${tableDto.lowclassname}_grid_store.getProxy().extraParams = {
+    	//name:params.keyWords,
+    	//ahtor:params.keyWords,
+    	//press:params.keyWords
+    };
+    ${tableDto.lowclassname}_grid_store.loadPage(1);
+}
+//新增
+function ${tableDto.lowclassname}_create() {
+	AOS.ajax({
+		forms : ${tableDto.lowclassname}_create_form,
+		url : '${tableDto.lowclassname}Service.create',
+		ok : function(data) {
+			AOS.tip(data.appmsg);
+			${tableDto.lowclassname}_grid_store.reload();
+			${tableDto.lowclassname}_create_win.hide();
+		}
+	});
+}
+//修改
+function ${tableDto.lowclassname}_update() {
+	AOS.ajax({
+		forms : ${tableDto.lowclassname}_update_form,
+		url : '${tableDto.lowclassname}Service.update',
+		ok : function(data) {
+			AOS.tip(data.appmsg);
+			${tableDto.lowclassname}_grid_store.reload();
+			${tableDto.lowclassname}_update_win.hide();
+		}
+	});
+}
+//删除
+function ${tableDto.lowclassname}_delete(){
+	var selection = AOS.selection(${tableDto.lowclassname}_grid, 'id');
+	if(AOS.empty(selection)){
+		AOS.tip('删除前请先选中数据。');
+		return;
+	}
+	var rows = AOS.rows(${tableDto.lowclassname}_grid);
+	var msg =  AOS.merge('确认要删除选中的{0}条${tableDto.comment}记录吗？', rows);
+	AOS.confirm(msg, function(btn){
+		if(btn === 'cancel'){
+			AOS.tip('删除操作被取消。');
+			return;
+		}
+		AOS.ajax({
+			url : '${tableDto.lowclassname}Service.delete',
+			params:{
+				aos_rows: selection
+			},
+			ok : function(data) {
+				AOS.tip(data.appmsg);
+				${tableDto.lowclassname}_grid_store.reload();
+			}
+		});
+	});
+}

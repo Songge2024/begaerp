@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- qa_weekly_detail[WeeklyDetail]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-07 21:50:42 -->
+<mapper namespace="com.bl3.pm.quality.dao.WeeklyDetailDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="test_id" parameterType="WeeklyDetailPO">
+		INSERT INTO qa_weekly_detail (
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 周报编码 -->
+		</if>
+		<if test="detail != null">
+	         detail, <!-- 序列号 -->
+		</if>
+		<if test="proj_name != null and proj_name != ''">
+	         proj_name, <!-- 项目名称 -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="job_content != null and job_content != ''">
+	         job_content, <!-- 工作内容 -->
+		</if>
+		<if test="input_cond != null">
+	         input_cond, <!-- 本周任务数 -->
+		</if>
+		<if test="accept_cond != null and accept_cond != ''">
+	         accept_cond, <!-- 任务接收情况 -->
+		</if>
+		<if test="finish_cond != null and finish_cond != ''">
+	         finish_cond, <!-- 任务完成情况 -->
+		</if>
+		<if test="charge != null and charge != ''">
+	         charge, <!-- 负责人 -->
+		</if>
+		<if test="add_time != null and add_time != ''">
+	         add_time, <!-- 记录时间 -->
+		</if>
+		<if test="add_name != null and add_name != ''">
+	         add_name, <!-- 记录人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 修改时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+	         update_name, <!-- 修改人 -->
+		</if>
+		<if test="remarks != null and remarks != ''">
+	         remarks, <!-- 备注 -->
+		</if>
+		<if test="trouble_bewrite != null and trouble_bewrite != ''">
+	         trouble_bewrite, <!-- 问题描述 -->
+		</if>
+		<if test="trouble_advise != null and trouble_advise != ''">
+	         trouble_advise, <!-- 建议 -->
+		</if>
+		<if test="job_plan != null and job_plan != ''">
+	         job_plan, <!-- 活动内容 -->
+		</if>
+		<if test="bug_input_num != null">
+	         bug_input_num, <!-- 缺陷总数 -->
+		</if>
+		<if test="bug_add_num != null">
+	         bug_add_num, <!-- 本周新增缺陷数 -->
+		</if>
+		<if test="lately_close_num != null">
+	         lately_close_num, <!-- 本周关闭缺陷数 -->
+		</if>
+		<if test="bug_finish_num != null">
+	         bug_finish_num, <!-- 缺陷已解决总数 -->
+		</if>
+		<if test="bug_unfinish_num != null">
+	         bug_unfinish_num, <!-- 缺陷未解决数 -->
+		</if>
+		<if test="bug_close_num != null">
+	         bug_close_num, <!-- 缺陷关闭数 -->
+		</if>
+	          test_id
+		)VALUES(
+		<if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 周报编码 -->
+	    </if>
+		<if test="detail != null">
+	          #{detail, jdbcType=INTEGER}, <!-- 序列号 -->
+	    </if>
+		<if test="proj_name != null and proj_name != ''">
+	          #{proj_name, jdbcType=VARCHAR}, <!-- 项目名称 -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="job_content != null and job_content != ''">
+	          #{job_content, jdbcType=VARCHAR}, <!-- 工作内容 -->
+	    </if>
+		<if test="input_cond != null">
+	          #{input_cond, jdbcType=INTEGER}, <!-- 本周任务数 -->
+	    </if>
+		<if test="accept_cond != null and accept_cond != ''">
+	          #{accept_cond, jdbcType=VARCHAR}, <!-- 任务接收情况 -->
+	    </if>
+		<if test="finish_cond != null and finish_cond != ''">
+	          #{finish_cond, jdbcType=VARCHAR}, <!-- 任务完成情况 -->
+	    </if>
+		<if test="charge != null and charge != ''">
+	          #{charge, jdbcType=VARCHAR}, <!-- 负责人 -->
+	    </if>
+		<if test="add_time != null and add_time != ''">
+	          #{add_time, jdbcType=VARCHAR}, <!-- 记录时间 -->
+	    </if>
+		<if test="add_name != null and add_name != ''">
+	          #{add_name, jdbcType=VARCHAR}, <!-- 记录人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 修改时间 -->
+	    </if>
+		<if test="update_name != null and update_name != ''">
+	          #{update_name, jdbcType=VARCHAR}, <!-- 修改人 -->
+	    </if>
+		<if test="remarks != null and remarks != ''">
+	          #{remarks, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+		<if test="trouble_bewrite != null and trouble_bewrite != ''">
+	          #{trouble_bewrite, jdbcType=VARCHAR}, <!-- 问题描述 -->
+	    </if>
+		<if test="trouble_advise != null and trouble_advise != ''">
+	          #{trouble_advise, jdbcType=VARCHAR}, <!-- 建议 -->
+	    </if>
+		<if test="job_plan != null and job_plan != ''">
+	          #{job_plan, jdbcType=VARCHAR}, <!-- 活动内容 -->
+	    </if>
+		<if test="bug_input_num != null">
+	          #{bug_input_num, jdbcType=INTEGER}, <!-- 缺陷总数 -->
+	    </if>
+		<if test="bug_add_num != null">
+	          #{bug_add_num, jdbcType=INTEGER}, <!-- 本周新增缺陷数 -->
+	    </if>
+		<if test="lately_close_num != null">
+	          #{lately_close_num, jdbcType=INTEGER}, <!-- 本周关闭缺陷数 -->
+	    </if>
+		<if test="bug_finish_num != null">
+	          #{bug_finish_num, jdbcType=INTEGER}, <!-- 缺陷已解决总数 -->
+	    </if>
+		<if test="bug_unfinish_num != null">
+	          #{bug_unfinish_num, jdbcType=INTEGER}, <!-- 缺陷未解决数 -->
+	    </if>
+		<if test="bug_close_num != null">
+	          #{bug_close_num, jdbcType=INTEGER}, <!-- 缺陷关闭数 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="test_id" parameterType="WeeklyDetailPO">
+		INSERT INTO qa_weekly_detail (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{test_id, jdbcType=INTEGER},  <!-- 周报ID -->
+		    #{test_code, jdbcType=VARCHAR},  <!-- 周报编码 -->
+		    #{detail, jdbcType=INTEGER},  <!-- 序列号 -->
+		    #{proj_name, jdbcType=VARCHAR},  <!-- 项目名称 -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{job_content, jdbcType=VARCHAR},  <!-- 工作内容 -->
+		    #{input_cond, jdbcType=INTEGER},  <!-- 本周任务数 -->
+		    #{accept_cond, jdbcType=VARCHAR},  <!-- 任务接收情况 -->
+		    #{finish_cond, jdbcType=VARCHAR},  <!-- 任务完成情况 -->
+		    #{charge, jdbcType=VARCHAR},  <!-- 负责人 -->
+		    #{add_time, jdbcType=VARCHAR},  <!-- 记录时间 -->
+		    #{add_name, jdbcType=VARCHAR},  <!-- 记录人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+		    #{update_name, jdbcType=VARCHAR},  <!-- 修改人 -->
+		    #{remarks, jdbcType=VARCHAR},  <!-- 备注 -->
+		    #{trouble_bewrite, jdbcType=VARCHAR},  <!-- 问题描述 -->
+		    #{trouble_advise, jdbcType=VARCHAR},  <!-- 建议 -->
+		    #{job_plan, jdbcType=VARCHAR},  <!-- 活动内容 -->
+		    #{bug_input_num, jdbcType=INTEGER},  <!-- 缺陷总数 -->
+		    #{bug_add_num, jdbcType=INTEGER},  <!-- 本周新增缺陷数 -->
+		    #{lately_close_num, jdbcType=INTEGER},  <!-- 本周关闭缺陷数 -->
+		    #{bug_finish_num, jdbcType=INTEGER},  <!-- 缺陷已解决总数 -->
+		    #{bug_unfinish_num, jdbcType=INTEGER},  <!-- 缺陷未解决数 -->
+		    #{bug_close_num, jdbcType=INTEGER}  <!-- 缺陷关闭数 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="WeeklyDetailPO">
+		UPDATE qa_weekly_detail
+		<set>
+			<if test="test_id != null">
+		          test_id = #{test_id, jdbcType=INTEGER},  <!-- 周报ID -->
+			</if>
+			<if test="test_code != null">
+		          test_code = #{test_code, jdbcType=VARCHAR},  <!-- 周报编码 -->
+			</if>
+			<if test="detail != null">
+		          detail = #{detail, jdbcType=INTEGER},  <!-- 序列号 -->
+			</if>
+			<if test="proj_name != null">
+		          proj_name = #{proj_name, jdbcType=VARCHAR},  <!-- 项目名称 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="job_content != null">
+		          job_content = #{job_content, jdbcType=VARCHAR},  <!-- 工作内容 -->
+			</if>
+			<if test="input_cond != null">
+		          input_cond = #{input_cond, jdbcType=INTEGER},  <!-- 本周任务数 -->
+			</if>
+			<if test="accept_cond != null">
+		          accept_cond = #{accept_cond, jdbcType=VARCHAR},  <!-- 任务接收情况 -->
+			</if>
+			<if test="finish_cond != null">
+		          finish_cond = #{finish_cond, jdbcType=VARCHAR},  <!-- 任务完成情况 -->
+			</if>
+			<if test="charge != null">
+		          charge = #{charge, jdbcType=VARCHAR},  <!-- 负责人 -->
+			</if>
+			<if test="add_time != null">
+		          add_time = #{add_time, jdbcType=VARCHAR},  <!-- 记录时间 -->
+			</if>
+			<if test="add_name != null">
+		          add_name = #{add_name, jdbcType=VARCHAR},  <!-- 记录人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+			</if>
+			<if test="update_name != null">
+		          update_name = #{update_name, jdbcType=VARCHAR},  <!-- 修改人 -->
+			</if>
+			<if test="remarks != null">
+		          remarks = #{remarks, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+			<if test="trouble_bewrite != null">
+		          trouble_bewrite = #{trouble_bewrite, jdbcType=VARCHAR},  <!-- 问题描述 -->
+			</if>
+			<if test="trouble_advise != null">
+		          trouble_advise = #{trouble_advise, jdbcType=VARCHAR},  <!-- 建议 -->
+			</if>
+			<if test="job_plan != null">
+		          job_plan = #{job_plan, jdbcType=VARCHAR},  <!-- 活动内容 -->
+			</if>
+			<if test="bug_input_num != null">
+		          bug_input_num = #{bug_input_num, jdbcType=INTEGER},  <!-- 缺陷总数 -->
+			</if>
+			<if test="bug_add_num != null">
+		          bug_add_num = #{bug_add_num, jdbcType=INTEGER},  <!-- 本周新增缺陷数 -->
+			</if>
+			<if test="lately_close_num != null">
+		          lately_close_num = #{lately_close_num, jdbcType=INTEGER},  <!-- 本周关闭缺陷数 -->
+			</if>
+			<if test="bug_finish_num != null">
+		          bug_finish_num = #{bug_finish_num, jdbcType=INTEGER},  <!-- 缺陷已解决总数 -->
+			</if>
+			<if test="bug_unfinish_num != null">
+		          bug_unfinish_num = #{bug_unfinish_num, jdbcType=INTEGER},  <!-- 缺陷未解决数 -->
+			</if>
+			<if test="bug_close_num != null">
+		          bug_close_num = #{bug_close_num, jdbcType=INTEGER},  <!-- 缺陷关闭数 -->
+			</if>
+		</set>
+		WHERE  test_id = #{test_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM qa_weekly_detail WHERE  test_id = #{test_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="WeeklyDetailPO">
+		SELECT
+		<include refid="column" />
+		FROM qa_weekly_detail WHERE  test_id = #{test_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="WeeklyDetailPO">
+		SELECT
+		    <include refid="column" />
+		FROM qa_weekly_detail
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="WeeklyDetailPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_weekly_detail
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="WeeklyDetailPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_weekly_detail
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="WeeklyDetailPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_weekly_detail
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="WeeklyDetailPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_weekly_detail
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="WeeklyDetailPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_weekly_detail
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="WeeklyDetailPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_weekly_detail
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM qa_weekly_detail
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM qa_weekly_detail
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  test_id,  <!-- 周报ID -->
+		  test_code,  <!-- 周报编码 -->
+		  detail,  <!-- 序列号 -->
+		  proj_name,  <!-- 项目名称 -->
+		  proj_id,  <!-- 项目ID -->
+		  job_content,  <!-- 工作内容 -->
+		  input_cond,  <!-- 本周任务数 -->
+		  accept_cond,  <!-- 任务接收情况 -->
+		  finish_cond,  <!-- 任务完成情况 -->
+		  charge,  <!-- 负责人 -->
+		  add_time,  <!-- 记录时间 -->
+		  add_name,  <!-- 记录人 -->
+		  update_time,  <!-- 修改时间 -->
+		  update_name,  <!-- 修改人 -->
+		  remarks,  <!-- 备注 -->
+		  trouble_bewrite,  <!-- 问题描述 -->
+		  trouble_advise,  <!-- 建议 -->
+		  job_plan,  <!-- 活动内容 -->
+		  bug_input_num,  <!-- 缺陷总数 -->
+		  bug_add_num,  <!-- 本周新增缺陷数 -->
+		  lately_close_num,  <!-- 本周关闭缺陷数 -->
+		  bug_finish_num,  <!-- 缺陷已解决总数 -->
+		  bug_unfinish_num,  <!-- 缺陷未解决数 -->
+		  bug_close_num  <!-- 缺陷关闭数 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  qa_weekly_detail.test_id,  <!-- 周报ID -->
+		  qa_weekly_detail.test_code,  <!-- 周报编码 -->
+		  qa_weekly_detail.detail,  <!-- 序列号 -->
+		  qa_weekly_detail.proj_name,  <!-- 项目名称 -->
+		  qa_weekly_detail.proj_id,  <!-- 项目ID -->
+		  qa_weekly_detail.job_content,  <!-- 工作内容 -->
+		  qa_weekly_detail.input_cond,  <!-- 本周任务数 -->
+		  qa_weekly_detail.accept_cond,  <!-- 任务接收情况 -->
+		  qa_weekly_detail.finish_cond,  <!-- 任务完成情况 -->
+		  qa_weekly_detail.charge,  <!-- 负责人 -->
+		  qa_weekly_detail.add_time,  <!-- 记录时间 -->
+		  qa_weekly_detail.add_name,  <!-- 记录人 -->
+		  qa_weekly_detail.update_time,  <!-- 修改时间 -->
+		  qa_weekly_detail.update_name,  <!-- 修改人 -->
+		  qa_weekly_detail.remarks,  <!-- 备注 -->
+		  qa_weekly_detail.trouble_bewrite,  <!-- 问题描述 -->
+		  qa_weekly_detail.trouble_advise,  <!-- 建议 -->
+		  qa_weekly_detail.job_plan,  <!-- 活动内容 -->
+		  qa_weekly_detail.bug_input_num,  <!-- 缺陷总数 -->
+		  qa_weekly_detail.bug_add_num,  <!-- 本周新增缺陷数 -->
+		  qa_weekly_detail.lately_close_num,  <!-- 本周关闭缺陷数 -->
+		  qa_weekly_detail.bug_finish_num,  <!-- 缺陷已解决总数 -->
+		  qa_weekly_detail.bug_unfinish_num,  <!-- 缺陷未解决数 -->
+		  qa_weekly_detail.bug_close_num  <!-- 缺陷关闭数 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="test_id != null ">
+		      AND test_id = #{test_id}  <!-- 周报ID -->
+		</if>
+	    <if test="test_code != null and test_code != ''">
+		      AND test_code = #{test_code}  <!-- 周报编码 -->
+		</if>
+	   <if test="detail != null ">
+		      AND detail = #{detail}  <!-- 序列号 -->
+		</if>
+	    <if test="proj_name != null and proj_name != ''">
+		      AND proj_name = #{proj_name}  <!-- 项目名称 -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="job_content != null and job_content != ''">
+		      AND job_content = #{job_content}  <!-- 工作内容 -->
+		</if>
+	   <if test="input_cond != null ">
+		      AND input_cond = #{input_cond}  <!-- 本周任务数 -->
+		</if>
+	    <if test="accept_cond != null and accept_cond != ''">
+		      AND accept_cond = #{accept_cond}  <!-- 任务接收情况 -->
+		</if>
+	    <if test="finish_cond != null and finish_cond != ''">
+		      AND finish_cond = #{finish_cond}  <!-- 任务完成情况 -->
+		</if>
+	    <if test="charge != null and charge != ''">
+		      AND charge = #{charge}  <!-- 负责人 -->
+		</if>
+	    <if test="add_time != null and add_time != ''">
+		      AND add_time = #{add_time}  <!-- 记录时间 -->
+		</if>
+	    <if test="add_name != null and add_name != ''">
+		      AND add_name = #{add_name}  <!-- 记录人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 修改时间 -->
+		</if>
+	    <if test="update_name != null and update_name != ''">
+		      AND update_name = #{update_name}  <!-- 修改人 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks = #{remarks}  <!-- 备注 -->
+		</if>
+	    <if test="trouble_bewrite != null and trouble_bewrite != ''">
+		      AND trouble_bewrite = #{trouble_bewrite}  <!-- 问题描述 -->
+		</if>
+	    <if test="trouble_advise != null and trouble_advise != ''">
+		      AND trouble_advise = #{trouble_advise}  <!-- 建议 -->
+		</if>
+	    <if test="job_plan != null and job_plan != ''">
+		      AND job_plan = #{job_plan}  <!-- 活动内容 -->
+		</if>
+	   <if test="bug_input_num != null ">
+		      AND bug_input_num = #{bug_input_num}  <!-- 缺陷总数 -->
+		</if>
+	   <if test="bug_add_num != null ">
+		      AND bug_add_num = #{bug_add_num}  <!-- 本周新增缺陷数 -->
+		</if>
+	   <if test="lately_close_num != null ">
+		      AND lately_close_num = #{lately_close_num}  <!-- 本周关闭缺陷数 -->
+		</if>
+	   <if test="bug_finish_num != null ">
+		      AND bug_finish_num = #{bug_finish_num}  <!-- 缺陷已解决总数 -->
+		</if>
+	   <if test="bug_unfinish_num != null ">
+		      AND bug_unfinish_num = #{bug_unfinish_num}  <!-- 缺陷未解决数 -->
+		</if>
+	   <if test="bug_close_num != null ">
+		      AND bug_close_num = #{bug_close_num}  <!-- 缺陷关闭数 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="test_code != null and test_code != ''">
+		      AND test_code like '${test_code}%'  <!-- 周报编码 -->
+		</if>
+	    <if test="proj_name != null and proj_name != ''">
+		      AND proj_name like '${proj_name}%'  <!-- 项目名称 -->
+		</if>
+	    <if test="job_content != null and job_content != ''">
+		      AND job_content like '${job_content}%'  <!-- 工作内容 -->
+		</if>
+	    <if test="accept_cond != null and accept_cond != ''">
+		      AND accept_cond like '${accept_cond}%'  <!-- 任务接收情况 -->
+		</if>
+	    <if test="finish_cond != null and finish_cond != ''">
+		      AND finish_cond like '${finish_cond}%'  <!-- 任务完成情况 -->
+		</if>
+	    <if test="charge != null and charge != ''">
+		      AND charge like '${charge}%'  <!-- 负责人 -->
+		</if>
+	    <if test="add_time != null and add_time != ''">
+		      AND add_time like '${add_time}%'  <!-- 记录时间 -->
+		</if>
+	    <if test="add_name != null and add_name != ''">
+		      AND add_name like '${add_name}%'  <!-- 记录人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="update_name != null and update_name != ''">
+		      AND update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks like '${remarks}%'  <!-- 备注 -->
+		</if>
+	    <if test="trouble_bewrite != null and trouble_bewrite != ''">
+		      AND trouble_bewrite like '${trouble_bewrite}%'  <!-- 问题描述 -->
+		</if>
+	    <if test="trouble_advise != null and trouble_advise != ''">
+		      AND trouble_advise like '${trouble_advise}%'  <!-- 建议 -->
+		</if>
+	    <if test="job_plan != null and job_plan != ''">
+		      AND job_plan like '${job_plan}%'  <!-- 活动内容 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="test_code != null and test_code != ''">
+		      Or test_code like '${test_code}%'  <!-- 周报编码 -->
+		</if>
+	    <if test="proj_name != null and proj_name != ''">
+		      Or proj_name like '${proj_name}%'  <!-- 项目名称 -->
+		</if>
+	    <if test="job_content != null and job_content != ''">
+		      Or job_content like '${job_content}%'  <!-- 工作内容 -->
+		</if>
+	    <if test="accept_cond != null and accept_cond != ''">
+		      Or accept_cond like '${accept_cond}%'  <!-- 任务接收情况 -->
+		</if>
+	    <if test="finish_cond != null and finish_cond != ''">
+		      Or finish_cond like '${finish_cond}%'  <!-- 任务完成情况 -->
+		</if>
+	    <if test="charge != null and charge != ''">
+		      Or charge like '${charge}%'  <!-- 负责人 -->
+		</if>
+	    <if test="add_time != null and add_time != ''">
+		      Or add_time like '${add_time}%'  <!-- 记录时间 -->
+		</if>
+	    <if test="add_name != null and add_name != ''">
+		      Or add_name like '${add_name}%'  <!-- 记录人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="update_name != null and update_name != ''">
+		      Or update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      Or remarks like '${remarks}%'  <!-- 备注 -->
+		</if>
+	    <if test="trouble_bewrite != null and trouble_bewrite != ''">
+		      Or trouble_bewrite like '${trouble_bewrite}%'  <!-- 问题描述 -->
+		</if>
+	    <if test="trouble_advise != null and trouble_advise != ''">
+		      Or trouble_advise like '${trouble_advise}%'  <!-- 建议 -->
+		</if>
+	    <if test="job_plan != null and job_plan != ''">
+		      Or job_plan like '${job_plan}%'  <!-- 活动内容 -->
+		</if>
+	</sql>
+	
+</mapper>

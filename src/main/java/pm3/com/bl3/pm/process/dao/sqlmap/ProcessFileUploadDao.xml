@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_process_file_upload[ProcessFileUpload]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-23 11:02:57 -->
+<mapper namespace="com.bl3.pm.process.dao.ProcessFileUploadDao">
+	<!--查询系统管理员，登陆人员，部门经理  -->
+<select id="queryLoginAdPm" parameterType="Dto" resultType="Dto">
+					SELECT DISTINCT
+			TEAM_USER_ID as id
+		FROM
+			bs_proj_teams
+		WHERE
+			TRP_CODE IN (28, 24)
+		AND state = 1
+	</select>
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ProcessFileUploadPO">
+		INSERT INTO pr_process_file_upload (
+		<if test="process_id != null">
+	         process_id, <!-- 过程ID -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="proc_filetype_id != null">
+	         proc_filetype_id, <!-- 文件类型ID -->
+		</if>
+		<if test="file_code != null and file_code != ''">
+	         file_code, <!-- 文件编码 -->
+		</if>
+		<if test="file_title != null and file_title != ''">
+	         file_title, <!-- 上传文件标题 -->
+		</if>
+		<if test="file_path != null and file_path != ''">
+	         file_path, <!-- 上传文件路径 -->
+		</if>
+		<if test="file_url != null and file_url != ''">
+	         file_url, <!-- 上传文件URL -->
+		</if>
+		<if test="file_size != null and file_size != ''">
+	         file_size, <!-- 上传文件大小 -->
+		</if>
+		<if test="version_num != null and version_num != ''">
+	         version_num, <!-- 版本号 -->
+		</if>
+		<if test="file_remark != null and file_remark != ''">
+	         file_remark, <!-- 上传文件备注 -->
+		</if>
+		<if test="sortno != null">
+	         sortno, <!-- 排序号 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="file_id != null">
+	          file_id  <!-- 文件ID -->
+	   </if>
+		)VALUES(
+		<if test="process_id != null">
+	          #{process_id, jdbcType=INTEGER}, <!-- 过程ID -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="proc_filetype_id != null">
+	          #{proc_filetype_id, jdbcType=INTEGER}, <!-- 文件类型ID -->
+	    </if>
+		<if test="file_code != null and file_code != ''">
+	          #{file_code, jdbcType=VARCHAR}, <!-- 文件编码 -->
+	    </if>
+		<if test="file_title != null and file_title != ''">
+	          #{file_title, jdbcType=VARCHAR}, <!-- 上传文件标题 -->
+	    </if>
+		<if test="file_path != null and file_path != ''">
+	          #{file_path, jdbcType=VARCHAR}, <!-- 上传文件路径 -->
+	    </if>
+		<if test="file_url != null and file_url != ''">
+	          #{file_url, jdbcType=VARCHAR}, <!-- 上传文件URL -->
+	    </if>
+		<if test="file_size != null and file_size != ''">
+	          #{file_size, jdbcType=VARCHAR}, <!-- 上传文件大小 -->
+	    </if>
+		<if test="version_num != null and version_num != ''">
+	          #{version_num, jdbcType=VARCHAR}, <!-- 版本号 -->
+	    </if>
+		<if test="file_remark != null and file_remark != ''">
+	          #{file_remark, jdbcType=VARCHAR}, <!-- 上传文件备注 -->
+	    </if>
+		<if test="sortno != null">
+	          #{sortno, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		<if test="file_id != null">
+		     #{file_id, jdbcType=INTEGER}  <!-- 文件ID -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ProcessFileUploadPO">
+		INSERT INTO pr_process_file_upload (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{file_id, jdbcType=INTEGER},  <!-- 文件ID -->
+		    #{process_id, jdbcType=INTEGER},  <!-- 过程ID -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{proc_filetype_id, jdbcType=INTEGER},  <!-- 文件类型ID -->
+		    #{file_code, jdbcType=VARCHAR},  <!-- 文件编码 -->
+		    #{file_title, jdbcType=VARCHAR},  <!-- 上传文件标题 -->
+		    #{file_path, jdbcType=VARCHAR},  <!-- 上传文件路径 -->
+		    #{file_url, jdbcType=VARCHAR},  <!-- 上传文件URL -->
+		    #{file_size, jdbcType=VARCHAR},  <!-- 上传文件大小 -->
+		    #{version_num, jdbcType=VARCHAR},  <!-- 版本号 -->
+		    #{file_remark, jdbcType=VARCHAR},  <!-- 上传文件备注 -->
+		    #{sortno, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProcessFileUploadPO">
+		UPDATE pr_process_file_upload
+		<set>
+			<if test="file_id != null">
+		          file_id = #{file_id, jdbcType=INTEGER},  <!-- 文件ID -->
+			</if>
+			<if test="process_id != null">
+		          process_id = #{process_id, jdbcType=INTEGER},  <!-- 过程ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="proc_filetype_id != null">
+		          proc_filetype_id = #{proc_filetype_id, jdbcType=INTEGER},  <!-- 文件类型ID -->
+			</if>
+			<if test="file_code != null">
+		          file_code = #{file_code, jdbcType=VARCHAR},  <!-- 文件编码 -->
+			</if>
+			<if test="file_title != null">
+		          file_title = #{file_title, jdbcType=VARCHAR},  <!-- 上传文件标题 -->
+			</if>
+			<if test="file_path != null">
+		          file_path = #{file_path, jdbcType=VARCHAR},  <!-- 上传文件路径 -->
+			</if>
+			<if test="file_url != null">
+		          file_url = #{file_url, jdbcType=VARCHAR},  <!-- 上传文件URL -->
+			</if>
+			<if test="file_size != null">
+		          file_size = #{file_size, jdbcType=VARCHAR},  <!-- 上传文件大小 -->
+			</if>
+			<if test="version_num != null">
+		          version_num = #{version_num, jdbcType=VARCHAR},  <!-- 版本号 -->
+			</if>
+			<if test="file_remark != null">
+		          file_remark = #{file_remark, jdbcType=VARCHAR},  <!-- 上传文件备注 -->
+			</if>
+			<if test="sortno != null">
+		          sortno = #{sortno, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  file_id = #{file_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM pr_process_file_upload WHERE  file_id = #{file_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProcessFileUploadPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_process_file_upload WHERE  file_id = #{file_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProcessFileUploadPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_process_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProcessFileUploadPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_process_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProcessFileUploadPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_process_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProcessFileUploadPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_process_file_upload
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProcessFileUploadPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_process_file_upload
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProcessFileUploadPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_process_file_upload
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ProcessFileUploadPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_process_file_upload
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_process_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_process_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  file_id,  <!-- 文件ID -->
+		  process_id,  <!-- 过程ID -->
+		  proj_id,  <!-- 项目ID -->
+		  proc_filetype_id,  <!-- 文件类型ID -->
+		  file_code,  <!-- 文件编码 -->
+		  file_title,  <!-- 上传文件标题 -->
+		  file_path,  <!-- 上传文件路径 -->
+		  file_url,  <!-- 上传文件URL -->
+		  file_size,  <!-- 上传文件大小 -->
+		  version_num,  <!-- 版本号 -->
+		  file_remark,  <!-- 上传文件备注 -->
+		  sortno,  <!-- 排序号 -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_process_file_upload.file_id,  <!-- 文件ID -->
+		  pr_process_file_upload.process_id,  <!-- 过程ID -->
+		  pr_process_file_upload.proj_id,  <!-- 项目ID -->
+		  pr_process_file_upload.proc_filetype_id,  <!-- 文件类型ID -->
+		  pr_process_file_upload.file_code,  <!-- 文件编码 -->
+		  pr_process_file_upload.file_title,  <!-- 上传文件标题 -->
+		  pr_process_file_upload.file_path,  <!-- 上传文件路径 -->
+		  pr_process_file_upload.file_url,  <!-- 上传文件URL -->
+		  pr_process_file_upload.file_size,  <!-- 上传文件大小 -->
+		  pr_process_file_upload.version_num,  <!-- 版本号 -->
+		  pr_process_file_upload.file_remark,  <!-- 上传文件备注 -->
+		  pr_process_file_upload.sortno,  <!-- 排序号 -->
+		  pr_process_file_upload.create_user_id,  <!-- 创建人 -->
+		  pr_process_file_upload.create_time,  <!-- 创建时间 -->
+		  pr_process_file_upload.update_user_id,  <!-- 更新人 -->
+		  pr_process_file_upload.update_time,  <!-- 更新时间 -->
+		  pr_process_file_upload.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="file_id != null ">
+		      AND file_id = #{file_id}  <!-- 文件ID -->
+		</if>
+	   <if test="process_id != null ">
+		      AND process_id = #{process_id}  <!-- 过程ID -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="proc_filetype_id != null ">
+		      AND proc_filetype_id = #{proc_filetype_id}  <!-- 文件类型ID -->
+		</if>
+	    <if test="file_code != null and file_code != ''">
+		      AND file_code = #{file_code}  <!-- 文件编码 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      AND file_title = #{file_title}  <!-- 上传文件标题 -->
+		</if>
+	    <if test="file_path != null and file_path != ''">
+		      AND file_path = #{file_path}  <!-- 上传文件路径 -->
+		</if>
+	    <if test="file_url != null and file_url != ''">
+		      AND file_url = #{file_url}  <!-- 上传文件URL -->
+		</if>
+	    <if test="file_size != null and file_size != ''">
+		      AND file_size = #{file_size}  <!-- 上传文件大小 -->
+		</if>
+	    <if test="version_num != null and version_num != ''">
+		      AND version_num = #{version_num}  <!-- 版本号 -->
+		</if>
+	    <if test="file_remark != null and file_remark != ''">
+		      AND file_remark = #{file_remark}  <!-- 上传文件备注 -->
+		</if>
+	   <if test="sortno != null ">
+		      AND sortno = #{sortno}  <!-- 排序号 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="file_code != null and file_code != ''">
+		      AND file_code like '${file_code}%'  <!-- 文件编码 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      AND file_title like '${file_title}%'  <!-- 上传文件标题 -->
+		</if>
+	    <if test="file_path != null and file_path != ''">
+		      AND file_path like '${file_path}%'  <!-- 上传文件路径 -->
+		</if>
+	    <if test="file_url != null and file_url != ''">
+		      AND file_url like '${file_url}%'  <!-- 上传文件URL -->
+		</if>
+	    <if test="file_size != null and file_size != ''">
+		      AND file_size like '${file_size}%'  <!-- 上传文件大小 -->
+		</if>
+	    <if test="version_num != null and version_num != ''">
+		      AND version_num like '${version_num}%'  <!-- 版本号 -->
+		</if>
+	    <if test="file_remark != null and file_remark != ''">
+		      AND file_remark like '${file_remark}%'  <!-- 上传文件备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="file_code != null and file_code != ''">
+		      Or file_code like '${file_code}%'  <!-- 文件编码 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      Or file_title like '${file_title}%'  <!-- 上传文件标题 -->
+		</if>
+	    <if test="file_path != null and file_path != ''">
+		      Or file_path like '${file_path}%'  <!-- 上传文件路径 -->
+		</if>
+	    <if test="file_url != null and file_url != ''">
+		      Or file_url like '${file_url}%'  <!-- 上传文件URL -->
+		</if>
+	    <if test="file_size != null and file_size != ''">
+		      Or file_size like '${file_size}%'  <!-- 上传文件大小 -->
+		</if>
+	    <if test="version_num != null and version_num != ''">
+		      Or version_num like '${version_num}%'  <!-- 版本号 -->
+		</if>
+	    <if test="file_remark != null and file_remark != ''">
+		      Or file_remark like '${file_remark}%'  <!-- 上传文件备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="byProcListPage" parameterType="Dto" resultType="ProcessFileUploadPO" useCache="false">
+	    SELECT
+				ppfu.file_id,
+				ppfu.process_id,
+				ppfu.proj_id,
+				ppfu.proc_filetype_id,
+				ppfu.file_code,
+				ppfu.file_title,
+				ppfu.file_path,
+				ppfu.file_url,
+				ppfu.file_size,
+				ppfu.version_num,
+				ppfu.file_remark,
+				ppfu.sortno,
+				ppfu.create_user_id,
+				ppfu.create_time,
+				ppfu.update_user_id,
+				ppfu.update_time,
+				ppfu.state,
+				aur.name as create_user_name
+		  FROM
+				pr_process_file_upload ppfu
+		  LEFT JOIN aos_user aur ON ppfu.create_user_id = aur.id
+		<where>
+		    exists (  
+				select 1 from pr_process_filetype ppf, pr_process pp 
+				 where ppf.proj_id = pp.proj_id
+				   and ppf.process_id = pp.process_id
+				   and ppfu.proj_id = ppf.proj_id
+				   and ppfu.process_id = ppf.process_id
+				   and ppfu.proc_filetype_id = ppf.proc_filetype_id
+				   <if test="rootdir_id != null and rootdir_id != ''">
+			   			and pp.rootdir_id = #{rootdir_id}  
+				   </if>
+				   <if test="process_id != null and process_id != ''">
+				   		and ppf.process_id = #{process_id}  
+				   </if>
+				   <if test="proc_filetype_id != null and proc_filetype_id != ''">
+				   		and ppfu.proc_filetype_id = #{proc_filetype_id}
+				   </if>
+				   <if test="proj_id != null and proj_id != ''">
+						and ppf.proj_id = #{proj_id} 
+				   </if>
+			)
+		</where>	
+	</select>
+	
+	<select id="listCombBoxFiletypeData" resultType="Dto">
+		select proc_filetype_id as value, proc_filetype_name as display
+		  from pr_process_filetype ppf
+		<where>
+			1 = 1
+			<if test="proj_id != null and proj_id != ''">
+			      and proj_id = #{proj_id}
+			</if>
+			<if test="proc_filetype_id != null and proc_filetype_id != ''">
+				and proc_filetype_id = #{proc_filetype_id}
+			</if>
+			<if test="process_id != null and process_id != ''">
+				and process_id = #{process_id}
+			</if>
+		</where>
+		order by proj_id,process_id, sort_no
+	</select>
+</mapper>

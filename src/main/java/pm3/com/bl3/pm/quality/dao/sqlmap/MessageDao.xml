@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- qa_message[Message]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-31 15:43:01 -->
+<mapper namespace="com.bl3.pm.quality.dao.MessageDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="msg_id" parameterType="MessagePO">
+		INSERT INTO qa_message (
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="msg_note != null and msg_note != ''">
+	         msg_note, <!-- 消息内容 -->
+		</if>
+		<if test="begin_date != null and begin_date != ''">
+	         begin_date, <!-- 接收时间(评审开始时间) -->
+		</if>
+		<if test="end_date != null and end_date != ''">
+	         end_date, <!-- 评审结束时间 -->
+		</if>
+		<if test="mang_id != null and mang_id != ''">
+	         mang_id, <!-- 评审入口 -->
+		</if>
+		<if test="user_id != null">
+	         user_id, <!-- 接收人ID -->
+		</if>
+		<if test="user_name != null and user_name != ''">
+	         user_name, <!-- 接收人名称 -->
+		</if>
+		<if test="send_id != null">
+	         send_id, <!-- 发送者ID -->
+		</if>
+		<if test="send_name != null and send_name != ''">
+	         send_name, <!-- 发送者名称 -->
+		</if>
+		<if test="msg_state != null and msg_state != ''">
+	         msg_state, <!-- 消息状态 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="create_id != null">
+	         create_id, <!-- 创建人ID -->
+		</if>
+		<if test="create_name != null and create_name != ''">
+	         create_name, <!-- 创建人名称 -->
+		</if>
+		<if test="opinion_code != null and opinion_code != ''">
+	         opinion_code, <!-- 意见入口 -->
+		</if>
+		<if test="flag != null and flag != ''">
+	         flag, <!-- 有效标志 -->
+		</if>
+		<if test="remarks != null and remarks != ''">
+	         remarks, <!-- 综合信息 -->
+		</if>
+		<if test="state_flag != null and state_flag != ''">
+	         state_flag, <!-- 评审状态 -->
+		</if>
+		<if test="pass_flag != null">
+	         pass_flag, <!-- 是否通过(通过 2，不通过1) -->
+		</if>
+		<if test="ico != null and ico != ''">
+	         ico, <!-- 图标 -->
+		</if>
+		<if test="theme != null and theme != ''">
+	         theme, <!-- 主题 -->
+		</if>
+		<if test="fileload != null and fileload != ''">
+	         fileload, <!-- 附件 -->
+		</if>
+		<if test="workload != null">
+	         workload, <!-- 会议工作量 -->
+		</if>
+	          msg_id
+		)VALUES(
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="msg_note != null and msg_note != ''">
+	          #{msg_note, jdbcType=VARCHAR}, <!-- 消息内容 -->
+	    </if>
+		<if test="begin_date != null and begin_date != ''">
+	          #{begin_date, jdbcType=VARCHAR}, <!-- 接收时间(评审开始时间) -->
+	    </if>
+		<if test="end_date != null and end_date != ''">
+	          #{end_date, jdbcType=VARCHAR}, <!-- 评审结束时间 -->
+	    </if>
+		<if test="mang_id != null and mang_id != ''">
+	          #{mang_id, jdbcType=VARCHAR}, <!-- 评审入口 -->
+	    </if>
+		<if test="user_id != null">
+	          #{user_id, jdbcType=INTEGER}, <!-- 接收人ID -->
+	    </if>
+		<if test="user_name != null and user_name != ''">
+	          #{user_name, jdbcType=VARCHAR}, <!-- 接收人名称 -->
+	    </if>
+		<if test="send_id != null">
+	          #{send_id, jdbcType=INTEGER}, <!-- 发送者ID -->
+	    </if>
+		<if test="send_name != null and send_name != ''">
+	          #{send_name, jdbcType=VARCHAR}, <!-- 发送者名称 -->
+	    </if>
+		<if test="msg_state != null and msg_state != ''">
+	          #{msg_state, jdbcType=VARCHAR}, <!-- 消息状态 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="create_id != null">
+	          #{create_id, jdbcType=INTEGER}, <!-- 创建人ID -->
+	    </if>
+		<if test="create_name != null and create_name != ''">
+	          #{create_name, jdbcType=VARCHAR}, <!-- 创建人名称 -->
+	    </if>
+		<if test="opinion_code != null and opinion_code != ''">
+	          #{opinion_code, jdbcType=VARCHAR}, <!-- 意见入口 -->
+	    </if>
+		<if test="flag != null and flag != ''">
+	          #{flag, jdbcType=VARCHAR}, <!-- 有效标志 -->
+	    </if>
+		<if test="remarks != null and remarks != ''">
+	          #{remarks, jdbcType=VARCHAR}, <!-- 综合信息 -->
+	    </if>
+		<if test="state_flag != null and state_flag != ''">
+	          #{state_flag, jdbcType=VARCHAR}, <!-- 评审状态 -->
+	    </if>
+		<if test="pass_flag != null">
+	          #{pass_flag, jdbcType=INTEGER}, <!-- 是否通过(通过 2，不通过1) -->
+	    </if>
+		<if test="ico != null and ico != ''">
+	          #{ico, jdbcType=VARCHAR}, <!-- 图标 -->
+	    </if>
+		<if test="theme != null and theme != ''">
+	          #{theme, jdbcType=VARCHAR}, <!-- 主题 -->
+	    </if>
+		<if test="fileload != null and fileload != ''">
+	          #{fileload, jdbcType=VARCHAR}, <!-- 附件 -->
+	    </if>
+	    <if test="workload != null">
+	          #{workload, jdbcType=NUMERIC}, <!-- 会议工作量 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="msg_id" parameterType="MessagePO">
+		INSERT INTO qa_message (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{msg_id, jdbcType=INTEGER},  <!-- 消息ID -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{msg_note, jdbcType=VARCHAR},  <!-- 消息内容 -->
+		    #{begin_date, jdbcType=VARCHAR},  <!-- 接收时间(评审开始时间) -->
+		    #{end_date, jdbcType=VARCHAR},  <!-- 评审结束时间 -->
+		    #{mang_id, jdbcType=VARCHAR},  <!-- 评审入口 -->
+		    #{user_id, jdbcType=INTEGER},  <!-- 接收人ID -->
+		    #{user_name, jdbcType=VARCHAR},  <!-- 接收人名称 -->
+		    #{send_id, jdbcType=INTEGER},  <!-- 发送者ID -->
+		    #{send_name, jdbcType=VARCHAR},  <!-- 发送者名称 -->
+		    #{msg_state, jdbcType=VARCHAR},  <!-- 消息状态 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{create_id, jdbcType=INTEGER},  <!-- 创建人ID -->
+		    #{create_name, jdbcType=VARCHAR},  <!-- 创建人名称 -->
+		    #{opinion_code, jdbcType=VARCHAR},  <!-- 意见入口 -->
+		    #{flag, jdbcType=VARCHAR},  <!-- 有效标志 -->
+		    #{remarks, jdbcType=VARCHAR},  <!-- 综合信息 -->
+		    #{state_flag, jdbcType=VARCHAR},  <!-- 评审状态 -->
+		    #{pass_flag, jdbcType=INTEGER},  <!-- 是否通过(通过 2，不通过1) -->
+		    #{ico, jdbcType=VARCHAR},  <!-- 图标 -->
+		    #{theme, jdbcType=VARCHAR},  <!-- 主题 -->
+		    #{fileload, jdbcType=VARCHAR},  <!-- 附件 -->
+		    #{workload, jdbcType=NUMERIC}  <!-- 会议工作量 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="MessagePO">
+		UPDATE qa_message
+		<set>
+			<if test="msg_id != null">
+		          msg_id = #{msg_id, jdbcType=INTEGER},  <!-- 消息ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="msg_note != null">
+		          msg_note = #{msg_note, jdbcType=VARCHAR},  <!-- 消息内容 -->
+			</if>
+			<if test="begin_date != null">
+		          begin_date = #{begin_date, jdbcType=VARCHAR},  <!-- 接收时间(评审开始时间) -->
+			</if>
+			<if test="end_date != null">
+		          end_date = #{end_date, jdbcType=VARCHAR},  <!-- 评审结束时间 -->
+			</if>
+			<if test="mang_id != null">
+		          mang_id = #{mang_id, jdbcType=VARCHAR},  <!-- 评审入口 -->
+			</if>
+			<if test="user_id != null">
+		          user_id = #{user_id, jdbcType=INTEGER},  <!-- 接收人ID -->
+			</if>
+			<if test="user_name != null">
+		          user_name = #{user_name, jdbcType=VARCHAR},  <!-- 接收人名称 -->
+			</if>
+			<if test="send_id != null">
+		          send_id = #{send_id, jdbcType=INTEGER},  <!-- 发送者ID -->
+			</if>
+			<if test="send_name != null">
+		          send_name = #{send_name, jdbcType=VARCHAR},  <!-- 发送者名称 -->
+			</if>
+			<if test="msg_state != null">
+		          msg_state = #{msg_state, jdbcType=VARCHAR},  <!-- 消息状态 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="create_id != null">
+		          create_id = #{create_id, jdbcType=INTEGER},  <!-- 创建人ID -->
+			</if>
+			<if test="create_name != null">
+		          create_name = #{create_name, jdbcType=VARCHAR},  <!-- 创建人名称 -->
+			</if>
+			<if test="opinion_code != null">
+		          opinion_code = #{opinion_code, jdbcType=VARCHAR},  <!-- 意见入口 -->
+			</if>
+			<if test="flag != null">
+		          flag = #{flag, jdbcType=VARCHAR},  <!-- 有效标志 -->
+			</if>
+			<if test="remarks != null">
+		          remarks = #{remarks, jdbcType=VARCHAR},  <!-- 综合信息 -->
+			</if>
+			<if test="state_flag != null">
+		          state_flag = #{state_flag, jdbcType=VARCHAR},  <!-- 评审状态 -->
+			</if>
+			<if test="pass_flag != null">
+		          pass_flag = #{pass_flag, jdbcType=INTEGER},  <!-- 是否通过(通过 2，不通过1) -->
+			</if>
+			<if test="ico != null">
+		          ico = #{ico, jdbcType=VARCHAR},  <!-- 图标 -->
+			</if>
+			<if test="theme != null">
+		          theme = #{theme, jdbcType=VARCHAR},  <!-- 主题 -->
+			</if>
+			<if test="fileload != null">
+		          fileload = #{fileload, jdbcType=VARCHAR},  <!-- 附件 -->
+			</if>
+			<if test="workload != null">
+		          workload = #{workload, jdbcType=NUMERIC},  <!-- 会议工作量 -->
+			</if>
+		</set>
+		WHERE  msg_id = #{msg_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM qa_message WHERE  msg_id = #{msg_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="MessagePO">
+		SELECT
+		<include refid="column" />
+		FROM qa_message WHERE  msg_id = #{msg_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="MessagePO">
+		SELECT
+		    <include refid="column" />
+		FROM qa_message
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="MessagePO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_message
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="MessagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_message
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="MessagePO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_message
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="MessagePO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_message
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="MessagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_message
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="MessagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_message
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM qa_message
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM qa_message
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  msg_id,  <!-- 消息ID -->
+		  proj_id,  <!-- 项目ID -->
+		  msg_note,  <!-- 消息内容 -->
+		  begin_date,  <!-- 接收时间(评审开始时间) -->
+		  end_date,  <!-- 评审结束时间 -->
+		  mang_id,  <!-- 评审入口 -->
+		  user_id,  <!-- 接收人ID -->
+		  user_name,  <!-- 接收人名称 -->
+		  send_id,  <!-- 发送者ID -->
+		  send_name,  <!-- 发送者名称 -->
+		  msg_state,  <!-- 消息状态 -->
+		  create_time,  <!-- 创建时间 -->
+		  create_id,  <!-- 创建人ID -->
+		  create_name,  <!-- 创建人名称 -->
+		  opinion_code,  <!-- 意见入口 -->
+		  flag,  <!-- 有效标志 -->
+		  remarks,  <!-- 综合信息 -->
+		  state_flag,  <!-- 评审状态 -->
+		  pass_flag,  <!-- 是否通过(通过 2，不通过1) -->
+		  ico,  <!-- 图标 -->
+		  theme,  <!-- 主题 -->
+		  fileload,  <!-- 附件 -->
+		  workload  <!-- 会议工作量 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  qa_message.msg_id,  <!-- 消息ID -->
+		  qa_message.proj_id,  <!-- 项目ID -->
+		  qa_message.msg_note,  <!-- 消息内容 -->
+		  qa_message.begin_date,  <!-- 接收时间(评审开始时间) -->
+		  qa_message.end_date,  <!-- 评审结束时间 -->
+		  qa_message.mang_id,  <!-- 评审入口 -->
+		  qa_message.user_id,  <!-- 接收人ID -->
+		  qa_message.user_name,  <!-- 接收人名称 -->
+		  qa_message.send_id,  <!-- 发送者ID -->
+		  qa_message.send_name,  <!-- 发送者名称 -->
+		  qa_message.msg_state,  <!-- 消息状态 -->
+		  qa_message.create_time,  <!-- 创建时间 -->
+		  qa_message.create_id,  <!-- 创建人ID -->
+		  qa_message.create_name,  <!-- 创建人名称 -->
+		  qa_message.opinion_code,  <!-- 意见入口 -->
+		  qa_message.flag,  <!-- 有效标志 -->
+		  qa_message.remarks,  <!-- 综合信息 -->
+		  qa_message.state_flag,  <!-- 评审状态 -->
+		  qa_message.pass_flag,  <!-- 是否通过(通过 2，不通过1) -->
+		  qa_message.ico,  <!-- 图标 -->
+		  qa_message.theme,  <!-- 主题 -->
+		  qa_message.fileload,  <!-- 附件 -->
+		  qa_message.workload  <!-- 会议工作量 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="msg_id != null ">
+		      AND msg_id = #{msg_id}  <!-- 消息ID -->
+		</if>
+		<if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="msg_note != null and msg_note != ''">
+		      AND msg_note = #{msg_note}  <!-- 消息内容 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      AND begin_date = #{begin_date}  <!-- 接收时间(评审开始时间) -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      AND end_date = #{end_date}  <!-- 评审结束时间 -->
+		</if>
+	    <if test="mang_id != null and mang_id != ''">
+		      AND mang_id = #{mang_id}  <!-- 评审入口 -->
+		</if>
+	   <if test="user_id != null ">
+		      AND user_id = #{user_id}  <!-- 接收人ID -->
+		</if>
+	    <if test="user_name != null and user_name != ''">
+		      AND user_name = #{user_name}  <!-- 接收人名称 -->
+		</if>
+	   <if test="send_id != null ">
+		      AND send_id = #{send_id}  <!-- 发送者ID -->
+		</if>
+	    <if test="send_name != null and send_name != ''">
+		      AND send_name = #{send_name}  <!-- 发送者名称 -->
+		</if>
+	    <if test="msg_state != null and msg_state != ''">
+		      AND msg_state = #{msg_state}  <!-- 消息状态 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="create_id != null ">
+		      AND create_id = #{create_id}  <!-- 创建人ID -->
+		</if>
+	    <if test="create_name != null and create_name != ''">
+		      AND create_name = #{create_name}  <!-- 创建人名称 -->
+		</if>
+	    <if test="opinion_code != null and opinion_code != ''">
+		      AND opinion_code = #{opinion_code}  <!-- 意见入口 -->
+		</if>
+	    <if test="flag != null and flag != ''">
+		      AND flag = #{flag}  <!-- 有效标志 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks = #{remarks}  <!-- 综合信息 -->
+		</if>
+	    <if test="state_flag != null and state_flag != ''">
+		      AND state_flag = #{state_flag}  <!-- 评审状态 -->
+		</if>
+	   <if test="pass_flag != null ">
+		      AND pass_flag = #{pass_flag}  <!-- 是否通过(通过 2，不通过1) -->
+		</if>
+	    <if test="ico != null and ico != ''">
+		      AND ico = #{ico}  <!-- 图标 -->
+		</if>
+	    <if test="theme != null and theme != ''">
+		      AND theme = #{theme}  <!-- 主题 -->
+		</if>
+	    <if test="fileload != null and fileload != ''">
+		      AND fileload = #{fileload}  <!-- 附件 -->
+		</if>
+		<if test="workload != null ">
+		      AND workload = #{workload}  <!-- 会议工作量 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="msg_note != null and msg_note != ''">
+		      AND msg_note like '${msg_note}%'  <!-- 消息内容 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      AND begin_date like '${begin_date}%'  <!-- 接收时间(评审开始时间) -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      AND end_date like '${end_date}%'  <!-- 评审结束时间 -->
+		</if>
+	    <if test="mang_id != null and mang_id != ''">
+		      AND mang_id like '${mang_id}%'  <!-- 评审入口 -->
+		</if>
+	    <if test="user_name != null and user_name != ''">
+		      AND user_name like '${user_name}%'  <!-- 接收人名称 -->
+		</if>
+	    <if test="send_name != null and send_name != ''">
+		      AND send_name like '${send_name}%'  <!-- 发送者名称 -->
+		</if>
+	    <if test="msg_state != null and msg_state != ''">
+		      AND msg_state like '${msg_state}%'  <!-- 消息状态 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="create_name != null and create_name != ''">
+		      AND create_name like '${create_name}%'  <!-- 创建人名称 -->
+		</if>
+	    <if test="opinion_code != null and opinion_code != ''">
+		      AND opinion_code like '${opinion_code}%'  <!-- 意见入口 -->
+		</if>
+	    <if test="flag != null and flag != ''">
+		      AND flag like '${flag}%'  <!-- 有效标志 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks like '${remarks}%'  <!-- 综合信息 -->
+		</if>
+	    <if test="state_flag != null and state_flag != ''">
+		      AND state_flag like '${state_flag}%'  <!-- 评审状态 -->
+		</if>
+	    <if test="ico != null and ico != ''">
+		      AND ico like '${ico}%'  <!-- 图标 -->
+		</if>
+	    <if test="theme != null and theme != ''">
+		      AND theme like '${theme}%'  <!-- 主题 -->
+		</if>
+	    <if test="fileload != null and fileload != ''">
+		      AND fileload like '${fileload}%'  <!-- 附件 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="msg_note != null and msg_note != ''">
+		      Or msg_note like '${msg_note}%'  <!-- 消息内容 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      Or begin_date like '${begin_date}%'  <!-- 接收时间(评审开始时间) -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      Or end_date like '${end_date}%'  <!-- 评审结束时间 -->
+		</if>
+	    <if test="mang_id != null and mang_id != ''">
+		      Or mang_id like '${mang_id}%'  <!-- 评审入口 -->
+		</if>
+	    <if test="user_name != null and user_name != ''">
+		      Or user_name like '${user_name}%'  <!-- 接收人名称 -->
+		</if>
+	    <if test="send_name != null and send_name != ''">
+		      Or send_name like '${send_name}%'  <!-- 发送者名称 -->
+		</if>
+	    <if test="msg_state != null and msg_state != ''">
+		      Or msg_state like '${msg_state}%'  <!-- 消息状态 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="create_name != null and create_name != ''">
+		      Or create_name like '${create_name}%'  <!-- 创建人名称 -->
+		</if>
+	    <if test="opinion_code != null and opinion_code != ''">
+		      Or opinion_code like '${opinion_code}%'  <!-- 意见入口 -->
+		</if>
+	    <if test="flag != null and flag != ''">
+		      Or flag like '${flag}%'  <!-- 有效标志 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      Or remarks like '${remarks}%'  <!-- 综合信息 -->
+		</if>
+	    <if test="state_flag != null and state_flag != ''">
+		      Or state_flag like '${state_flag}%'  <!-- 评审状态 -->
+		</if>
+	    <if test="ico != null and ico != ''">
+		      Or ico like '${ico}%'  <!-- 图标 -->
+		</if>
+	    <if test="theme != null and theme != ''">
+		      Or theme like '${theme}%'  <!-- 主题 -->
+		</if>
+	    <if test="fileload != null and fileload != ''">
+		      Or fileload like '${fileload}%'  <!-- 附件 -->
+		</if>
+	</sql>
+	
+</mapper>

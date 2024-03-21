@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Theme">
+	<select id="selectReplys" parameterType="Dto" resultType="Dto">
+		SELECT 
+			<include refid="com.bl3.pm.basic.dao.ReplyDao.column2" />
+			,aos_user.name username
+		FROM bs_reply LEFT JOIN aos_user ON create_user_id=aos_user.id WHERE theme_id =#{theme_id}
+	</select>
+</mapper>

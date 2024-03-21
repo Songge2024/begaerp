@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_proj_situation_count[ProjSituationCount]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-06-15 11:32:07 -->
+<mapper namespace="com.bl3.pm.basic.dao.ProjSituationCountDao">
+	
+	
+<!-- 查询汇总信息 -->
+<select id="selectPage" resultType="Dto" parameterType="Dto"  >
+  select  dep_name,proj_name,state_name,begin_date,plan_completion_time,plan_end_time,emb_time,est_workload ,reali_workload,real_wastage,plan_wastage,round((real_wastage/est_workload),2)real_finish_ratio
+		    ,round((plan_wastage/est_workload),2)plan_finish_ratio,(real_wastage-plan_wastage)sv,round((real_wastage/plan_wastage),2)spi,(real_wastage-reali_workload)cv,round((real_wastage/reali_workload),2)cpi,
+		 date_add(begin_date, interval  (round(((plan_end_time-emb_time* (round((real_wastage/plan_wastage),1)))/(round((real_wastage/plan_wastage),1)))+emb_time)) day) pdd_completion_time,
+		  (round((reali_workload+((est_workload- real_wastage)/round((real_wastage/reali_workload),1))),1))pdd_completion_work,
+			( CASE WHEN round((real_wastage/plan_wastage),1) = 0 THEN '0' WHEN round((real_wastage/plan_wastage),1) &lt; 0 THEN '-1'  ELSE '1' END ) plan_state,
+			( CASE WHEN round((real_wastage/reali_workload),1) = 0 THEN '0' WHEN round((real_wastage/reali_workload),1) &lt; 0 THEN '-1'  ELSE '1' END ) workload_state	
+		 from ( 	select   (
+					select     ao.name   from  aos_user au ,bs_proj_teams bpt,aos_org ao  where  au.id=bpt.team_user_id and ao.id=au.org_id   and proj_id= bpc.proj_id  GROUP BY proj_id
+						) dep_name,
+						proj_id,
+						proj_name,
+						( CASE WHEN state = 0 THEN '未启用' WHEN state = 1 THEN '已启用' WHEN state = 2 THEN '已验收' WHEN state = 3 THEN '已关闭' ELSE '已作废' END ) state_name,
+						begin_date,
+						plan_completion_time,
+						(select TIMESTAMPDIFF(DAY,BEGIN_DATE,plan_completion_time)+1  from bs_proj_commons bpc1 where bpc1.proj_id=bpc.proj_id) plan_end_time, -- 计划工期
+						(select TIMESTAMPDIFF(DAY,BEGIN_DATE,now())e  from bs_proj_commons bpc1 where bpc1.proj_id=bpc.proj_id) emb_time, -- 已实施工期
+						
+						(select  round(plan_jobamount/plan_wastage *100) from (
+						select  sum(bpm.plan_jobamount) plan_jobamount ,proj_id from   bs_proj_milestone bpm  where state=1   GROUP BY proj_id ) a,
+						(select  round(sum(percent*plan_wastage/100),1)plan_wastage,proj_id from ta_task where STATE not in (1001,1006) GROUP BY proj_id ) b
+						where a.proj_id=b.proj_id and a.proj_id=bpc.proj_id )plan_finish_ratio,    -- 计划完工比例
+						(select  round(plan_jobamount/plan_wastage *100) from (
+						select  sum(bpm.plan_jobamount) plan_jobamount ,proj_id from   bs_proj_milestone bpm  where state=1   GROUP BY proj_id ) a,
+						(select  round(sum(real_wastage))plan_wastage,proj_id from ta_task where STATE not in (1001,1006) GROUP BY proj_id ) b
+						where a.proj_id=b.proj_id  and a.proj_id=bpc.proj_id  )real_finish_ratio,    -- 实际完工比例
+						(select sum(plan_jobamount) from bs_proj_milestone bpm where bpm.proj_id=bpc.proj_id  and state=1 )est_workload,  -- 估算工作量
+						(SELECT sum(wh) FROM ( SELECT sum(work_hours) wh, proj_id FROM ta_work_hour WHERE test_code IN ( SELECT DISTINCT test_code FROM ta_week ) GROUP BY proj_id UNION SELECT sum(business_hours) bh, proj_id FROM ta_work_hour WHERE test_code IN ( SELECT DISTINCT test_code FROM ta_week ) GROUP BY proj_id ) w where proj_id=bpc.proj_id GROUP BY proj_id
+						 ) reali_workload,-- 实际已投入工作量  实际工作量
+		(select  round(sum(real_wastage))real_wastage from ta_task  tt where STATE not in (1001,1006)  and tt.proj_id=bpc.proj_id  GROUP BY tt.proj_id ) real_wastage,  -- 预计投入工作量  挣值
+			(select  round(sum(percent*plan_wastage/100),1)plan_wastage from ta_task tt where STATE not in (1001,1006) and tt.proj_id=bpc.proj_id  GROUP BY tt.proj_id ) plan_wastage  -- 计划值
+						from 
+								     bs_proj_commons bpc group by    bpc.proj_id
+		)s
+	</select>
+</mapper>

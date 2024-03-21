@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ta_task_group[TaskGroup]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-22 11:10:34 -->
+<mapper namespace="com.bl3.pm.task.dao.TaskGroupDao">
+	<!-- 查询任务列表(第一级) -->
+	<select id="listComboBoxData" resultType="Dto">
+		SELECT
+		group_id AS value, group_name AS display
+		FROM
+		ta_task_group 
+		where proj_id ='${proj_id}' 
+		and (is_leaf = 0
+		OR (parent_id = 0 AND is_leaf = 1))
+		
+	</select>
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="TaskGroupPO">
+		INSERT INTO ta_task_group (
+		<if test="group_name != null and group_name != ''">
+	         group_name, <!-- 分组名称 -->
+		</if>
+		<if test="cascade_id != null and cascade_id != ''">
+	         cascade_id, <!-- cascade_id -->
+		</if>
+		<if test="parent_id != null">
+	         parent_id, <!-- 父类编码 -->
+		</if>
+		<if test="is_leaf != null and is_leaf != ''">
+	         is_leaf, <!-- 是否叶子节点 -->
+		</if>
+		<if test="is_auto_expand != null and is_auto_expand != ''">
+	         is_auto_expand, <!-- 是否自动展开 -->
+		</if>
+		<if test="icon_name != null and icon_name != ''">
+	         icon_name, <!-- 节点图标文件名称 -->
+		</if>
+		<if test="group_from != null">
+	         group_from, <!-- 任务分组来源 -->
+		</if>
+		<if test="plan_end_time != null and plan_end_time != ''">
+	         plan_end_time, <!-- 计划结束时间 -->
+		</if>
+		<if test="plan_begin_time != null and plan_begin_time != ''">
+	         plan_begin_time, <!-- 计划开始时间 -->
+		</if>
+		<if test="plan_wastage != null">
+	         plan_wastage, <!-- 计划消耗天数 -->
+		</if>
+		<if test="sort_no != null">
+	         sort_no, <!-- 排序号 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建时间 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="remark != null and remark != ''">
+	         remark, <!-- remark -->
+		</if>
+		<if test="proj_id != null and proj_id != ''">
+	         proj_id, <!-- 项目编码 -->
+		</if>
+		<if test="module_id != null and module_id != ''">
+	         module_id, <!-- 模块编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+	         demand_id, <!-- 需求编码 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 分组状态 -->
+		</if>
+		<if test="group_id != null">
+	          group_id  <!-- 分组编码 -->
+	   </if>
+		)VALUES(
+		<if test="group_name != null and group_name != ''">
+	          #{group_name, jdbcType=VARCHAR}, <!-- 分组名称 -->
+	    </if>
+		<if test="cascade_id != null and cascade_id != ''">
+	          #{cascade_id, jdbcType=VARCHAR}, <!-- cascade_id -->
+	    </if>
+		<if test="parent_id != null">
+	          #{parent_id, jdbcType=INTEGER}, <!-- 父类编码 -->
+	    </if>
+		<if test="is_leaf != null and is_leaf != ''">
+	          #{is_leaf, jdbcType=VARCHAR}, <!-- 是否叶子节点 -->
+	    </if>
+		<if test="is_auto_expand != null and is_auto_expand != ''">
+	          #{is_auto_expand, jdbcType=VARCHAR}, <!-- 是否自动展开 -->
+	    </if>
+		<if test="icon_name != null and icon_name != ''">
+	          #{icon_name, jdbcType=VARCHAR}, <!-- 节点图标文件名称 -->
+	    </if>
+		<if test="group_from != null">
+	          #{group_from, jdbcType=INTEGER}, <!-- 任务分组来源 -->
+	    </if>
+		<if test="plan_end_time != null and plan_end_time != ''">
+	          #{plan_end_time, jdbcType=VARCHAR}, <!-- 计划结束时间 -->
+	    </if>
+		<if test="plan_begin_time != null and plan_begin_time != ''">
+	          #{plan_begin_time, jdbcType=VARCHAR}, <!-- 计划开始时间 -->
+	    </if>
+		<if test="plan_wastage != null">
+	          #{plan_wastage, jdbcType=NUMERIC}, <!-- 计划消耗天数 -->
+	    </if>
+		<if test="sort_no != null">
+	          #{sort_no, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建时间 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="remark != null and remark != ''">
+	          #{remark, jdbcType=VARCHAR}, <!-- remark -->
+	    </if>
+		<if test="proj_id != null and proj_id != ''">
+	          #{proj_id, jdbcType=VARCHAR}, <!-- 项目编码 -->
+	    </if>
+		<if test="module_id != null and module_id != ''">
+	          #{module_id, jdbcType=VARCHAR}, <!-- 模块编码 -->
+	    </if>
+		<if test="demand_id != null and demand_id != ''">
+	          #{demand_id, jdbcType=VARCHAR}, <!-- 需求编码 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 分组状态 -->
+	    </if>
+		<if test="group_id != null">
+		     #{group_id, jdbcType=INTEGER}  <!-- 分组编码 -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="TaskGroupPO">
+		INSERT INTO ta_task_group (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{group_id, jdbcType=INTEGER},  <!-- 分组编码 -->
+		    #{group_name, jdbcType=VARCHAR},  <!-- 分组名称 -->
+		    #{cascade_id, jdbcType=VARCHAR},  <!-- cascade_id -->
+		    #{parent_id, jdbcType=INTEGER},  <!-- 父类编码 -->
+		    #{is_leaf, jdbcType=VARCHAR},  <!-- 是否叶子节点 -->
+		    #{is_auto_expand, jdbcType=VARCHAR},  <!-- 是否自动展开 -->
+		    #{icon_name, jdbcType=VARCHAR},  <!-- 节点图标文件名称 -->
+		    #{group_from, jdbcType=INTEGER},  <!-- 任务分组来源 -->
+		    #{plan_end_time, jdbcType=VARCHAR},  <!-- 计划结束时间 -->
+		    #{plan_begin_time, jdbcType=VARCHAR},  <!-- 计划开始时间 -->
+		    #{plan_wastage, jdbcType=NUMERIC},  <!-- 计划消耗天数 -->
+		    #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建时间 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{remark, jdbcType=VARCHAR},  <!-- remark -->
+		    #{proj_id, jdbcType=VARCHAR},  <!-- 项目编码 -->
+		    #{module_id, jdbcType=VARCHAR},  <!-- 模块编码 -->
+		    #{demand_id, jdbcType=VARCHAR},  <!-- 需求编码 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 分组状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="TaskGroupPO">
+		UPDATE ta_task_group
+		<set>
+			<if test="group_id != null">
+		          group_id = #{group_id, jdbcType=INTEGER},  <!-- 分组编码 -->
+			</if>
+			<if test="group_name != null">
+		          group_name = #{group_name, jdbcType=VARCHAR},  <!-- 分组名称 -->
+			</if>
+			<if test="cascade_id != null">
+		          cascade_id = #{cascade_id, jdbcType=VARCHAR},  <!-- cascade_id -->
+			</if>
+			<if test="parent_id != null">
+		          parent_id = #{parent_id, jdbcType=INTEGER},  <!-- 父类编码 -->
+			</if>
+			<if test="is_leaf != null">
+		          is_leaf = #{is_leaf, jdbcType=VARCHAR},  <!-- 是否叶子节点 -->
+			</if>
+			<if test="is_auto_expand != null">
+		          is_auto_expand = #{is_auto_expand, jdbcType=VARCHAR},  <!-- 是否自动展开 -->
+			</if>
+			<if test="icon_name != null">
+		          icon_name = #{icon_name, jdbcType=VARCHAR},  <!-- 节点图标文件名称 -->
+			</if>
+			<if test="group_from != null">
+		          group_from = #{group_from, jdbcType=INTEGER},  <!-- 任务分组来源 -->
+			</if>
+			<if test="plan_end_time != null">
+		          plan_end_time = #{plan_end_time, jdbcType=VARCHAR},  <!-- 计划结束时间 -->
+			</if>
+			<if test="plan_begin_time != null">
+		          plan_begin_time = #{plan_begin_time, jdbcType=VARCHAR},  <!-- 计划开始时间 -->
+			</if>
+			<if test="plan_wastage != null">
+		          plan_wastage = #{plan_wastage, jdbcType=NUMERIC},  <!-- 计划消耗天数 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建时间 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="remark != null">
+		          remark = #{remark, jdbcType=VARCHAR},  <!-- remark -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=VARCHAR},  <!-- 项目编码 -->
+			</if>
+			<if test="module_id != null">
+		          module_id = #{module_id, jdbcType=VARCHAR},  <!-- 模块编码 -->
+			</if>
+			<if test="demand_id != null">
+		          demand_id = #{demand_id, jdbcType=VARCHAR},  <!-- 需求编码 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 分组状态 -->
+			</if>
+		</set>
+		WHERE  group_id = #{group_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM ta_task_group WHERE  group_id = #{group_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="TaskGroupPO">
+		SELECT
+		<include refid="column" />
+		FROM ta_task_group WHERE  group_id = #{group_id}
+	</select>
+	
+	<select id="selectByFirstName" resultType="TaskGroupPO">
+		SELECT
+		<include refid="column" />
+		FROM ta_task_group WHERE  group_name = #{group_name} and proj_id = #{proj_id} and state = 1001
+	</select>
+	
+	<select id="selectFirst_id" resultType="Integer">
+		SELECT
+			group_id
+		FROM ta_task_group WHERE  group_name = #{group_name} and proj_id = #{proj_id} and state = 1001
+	</select>
+	
+	<select id="selectSecond_id" resultType="Integer">
+		SELECT
+			max(group_id)
+		FROM ta_task_group WHERE  parent_id = #{parent_id} and group_name = #{group_name} and state = 1001
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="TaskGroupPO">
+		SELECT
+		    <include refid="column" />
+		FROM ta_task_group
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="TaskGroupPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_task_group
+		<where>
+		    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id = #{proj_id}  <!-- 项目编码 -->
+		</if>
+		 <if test="group_id != null ">
+		      AND group_id = #{group_id}  <!-- 分组编码 -->
+		</if>
+		</where>	
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="listChildrenByParentDto" parameterType="Dto" resultType="TaskGroupPO">
+		SELECT
+			<include refid="column" />	
+		 FROM ta_task_group
+	    where state != '1003'
+	      and parent_id IN
+        <foreach collection="parent_ids" item="parent_id" index="index" open="(" close=")" separator=",">
+				#{parent_id}
+		</foreach>
+	</select>
+	
+		<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="listChildrenByParentId" parameterType="Dto" resultType="Integer">
+		SELECT
+			group_id
+		 FROM ta_task_group
+	    where state != '1003'
+	      and parent_id IN
+        <foreach collection="parent_ids" item="parent_id" index="index" open="(" close=")" separator=",">
+				#{parent_id}
+		</foreach>
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="TaskGroupPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_task_group
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="TaskGroupPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_task_group
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="TaskGroupPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_task_group
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="TaskGroupPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_task_group
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="TaskGroupPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_task_group
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM ta_task_group
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM ta_task_group
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  group_id,  <!-- 分组编码 -->
+		  group_name,  <!-- 分组名称 -->
+		  cascade_id,  <!-- cascade_id -->
+		  parent_id,  <!-- 父类编码 -->
+		  is_leaf,  <!-- 是否叶子节点 -->
+		  is_auto_expand,  <!-- 是否自动展开 -->
+		  icon_name,  <!-- 节点图标文件名称 -->
+		  group_from,  <!-- 任务分组来源 -->
+		  plan_end_time,  <!-- 计划结束时间 -->
+		  plan_begin_time,  <!-- 计划开始时间 -->
+		  plan_wastage,  <!-- 计划消耗天数 -->
+		  sort_no,  <!-- 排序号 -->
+		  create_user_id,  <!-- 创建时间 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  remark,  <!-- remark -->
+		  proj_id,  <!-- 项目编码 -->
+		  module_id,  <!-- 模块编码 -->
+		  demand_id,  <!-- 需求编码 -->
+		  state  <!-- 分组状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  ta_task_group.group_id,  <!-- 分组编码 -->
+		  ta_task_group.group_name,  <!-- 分组名称 -->
+		  ta_task_group.cascade_id,  <!-- cascade_id -->
+		  ta_task_group.parent_id,  <!-- 父类编码 -->
+		  ta_task_group.is_leaf,  <!-- 是否叶子节点 -->
+		  ta_task_group.is_auto_expand,  <!-- 是否自动展开 -->
+		  ta_task_group.icon_name,  <!-- 节点图标文件名称 -->
+		  ta_task_group.group_from,  <!-- 任务分组来源 -->
+		  ta_task_group.plan_end_time,  <!-- 计划结束时间 -->
+		  ta_task_group.plan_begin_time,  <!-- 计划开始时间 -->
+		  ta_task_group.plan_wastage,  <!-- 计划消耗天数 -->
+		  ta_task_group.sort_no,  <!-- 排序号 -->
+		  ta_task_group.create_user_id,  <!-- 创建时间 -->
+		  ta_task_group.create_time,  <!-- 创建时间 -->
+		  ta_task_group.update_user_id,  <!-- 更新人 -->
+		  ta_task_group.update_time,  <!-- 更新时间 -->
+		  ta_task_group.remark,  <!-- remark -->
+		  ta_task_group.proj_id,  <!-- 项目编码 -->
+		  ta_task_group.module_id,  <!-- 模块编码 -->
+		  ta_task_group.demand_id,  <!-- 需求编码 -->
+		  ta_task_group.state  <!-- 分组状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="group_id != null ">
+		      AND group_id = #{group_id}  <!-- 分组编码 -->
+		</if>
+	    <if test="group_name != null and group_name != ''">
+		      AND group_name = #{group_name}  <!-- 分组名称 -->
+		</if>
+	    <if test="cascade_id != null and cascade_id != ''">
+		      AND cascade_id = #{cascade_id}  <!-- cascade_id -->
+		</if>
+	   <if test="parent_id != null ">
+		      AND parent_id = #{parent_id}  <!-- 父类编码 -->
+		</if>
+	    <if test="is_leaf != null and is_leaf != ''">
+		      AND is_leaf = #{is_leaf}  <!-- 是否叶子节点 -->
+		</if>
+	    <if test="is_auto_expand != null and is_auto_expand != ''">
+		      AND is_auto_expand = #{is_auto_expand}  <!-- 是否自动展开 -->
+		</if>
+	    <if test="icon_name != null and icon_name != ''">
+		      AND icon_name = #{icon_name}  <!-- 节点图标文件名称 -->
+		</if>
+	   <if test="group_from != null ">
+		      AND group_from = #{group_from}  <!-- 任务分组来源 -->
+		</if>
+	    <if test="plan_end_time != null and plan_end_time != ''">
+		      AND plan_end_time = #{plan_end_time}  <!-- 计划结束时间 -->
+		</if>
+	    <if test="plan_begin_time != null and plan_begin_time != ''">
+		      AND plan_begin_time = #{plan_begin_time}  <!-- 计划开始时间 -->
+		</if>
+	   <if test="plan_wastage != null ">
+		      AND plan_wastage = #{plan_wastage}  <!-- 计划消耗天数 -->
+		</if>
+	   <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark = #{remark}  <!-- remark -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id = #{proj_id}  <!-- 项目编码 -->
+		</if>
+	    <if test="module_id != null and module_id != ''">
+		      AND module_id = #{module_id}  <!-- 模块编码 -->
+		</if>
+	    <if test="demand_id != null and demand_id != ''">
+		      AND demand_id = #{demand_id}  <!-- 需求编码 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 分组状态 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="group_name != null and group_name != ''">
+		      AND group_name like '${group_name}%'  <!-- 分组名称 -->
+		</if>
+	    <if test="cascade_id != null and cascade_id != ''">
+		      AND cascade_id like '${cascade_id}%'  <!-- cascade_id -->
+		</if>
+	    <if test="is_leaf != null and is_leaf != ''">
+		      AND is_leaf like '${is_leaf}%'  <!-- 是否叶子节点 -->
+		</if>
+	    <if test="is_auto_expand != null and is_auto_expand != ''">
+		      AND is_auto_expand like '${is_auto_expand}%'  <!-- 是否自动展开 -->
+		</if>
+	    <if test="icon_name != null and icon_name != ''">
+		      AND icon_name like '${icon_name}%'  <!-- 节点图标文件名称 -->
+		</if>
+	    <if test="plan_end_time != null and plan_end_time != ''">
+		      AND plan_end_time like '${plan_end_time}%'  <!-- 计划结束时间 -->
+		</if>
+	    <if test="plan_begin_time != null and plan_begin_time != ''">
+		      AND plan_begin_time like '${plan_begin_time}%'  <!-- 计划开始时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark like '${remark}%'  <!-- remark -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id like '${proj_id}%'  <!-- 项目编码 -->
+		</if>
+	    <if test="module_id != null and module_id != ''">
+		      AND module_id like '${module_id}%'  <!-- 模块编码 -->
+		</if>
+	    <if test="demand_id != null and demand_id != ''">
+		      AND demand_id like '${demand_id}%'  <!-- 需求编码 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 分组状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="group_name != null and group_name != ''">
+		      Or group_name like '${group_name}%'  <!-- 分组名称 -->
+		</if>
+	    <if test="cascade_id != null and cascade_id != ''">
+		      Or cascade_id like '${cascade_id}%'  <!-- cascade_id -->
+		</if>
+	    <if test="is_leaf != null and is_leaf != ''">
+		      Or is_leaf like '${is_leaf}%'  <!-- 是否叶子节点 -->
+		</if>
+	    <if test="is_auto_expand != null and is_auto_expand != ''">
+		      Or is_auto_expand like '${is_auto_expand}%'  <!-- 是否自动展开 -->
+		</if>
+	    <if test="icon_name != null and icon_name != ''">
+		      Or icon_name like '${icon_name}%'  <!-- 节点图标文件名称 -->
+		</if>
+	    <if test="plan_end_time != null and plan_end_time != ''">
+		      Or plan_end_time like '${plan_end_time}%'  <!-- 计划结束时间 -->
+		</if>
+	    <if test="plan_begin_time != null and plan_begin_time != ''">
+		      Or plan_begin_time like '${plan_begin_time}%'  <!-- 计划开始时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      Or remark like '${remark}%'  <!-- remark -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      Or proj_id like '${proj_id}%'  <!-- 项目编码 -->
+		</if>
+	    <if test="module_id != null and module_id != ''">
+		      Or module_id like '${module_id}%'  <!-- 模块编码 -->
+		</if>
+	    <if test="demand_id != null and demand_id != ''">
+		      Or demand_id like '${demand_id}%'  <!-- 需求编码 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 分组状态 -->
+		</if>
+	</sql>
+	
+</mapper>

@@ -1,0 +1,280 @@
+a, abbr, body, button, cite, dd, div, dl, dt, h1, h2, h3, h4, h5, h6, iframe, input, li, object, ol, option, p, pre, select, span, ul {
+	    margin: 0;
+	    margin-top: 0px;
+	    padding: 0;
+	    font-weight: 400;
+	    box-sizing: border-box;
+	    -moz-box-sizing: border-box;
+	    -webkit-box-sizing: border-box;
+	}
+	dd, dl, dt, form, li, ol, ul {
+	    list-style: none;
+	    margin: 0;
+	    padding: 0;
+	}
+	a, a:link, a:visited {
+	    color: #4f4f4f;
+	}
+	body {
+	    background-color: #f5f6f7;
+	    line-height: 24px;
+	}
+	main {
+		width: 980px; margin:0 auto;
+	}
+	main article {
+	    background-color: #fff;
+	    padding: 20px 0;
+	}
+	main article .csdn_top {
+	    padding: 0 29px;
+	    color: #2c3033;
+	    font-size: 24px;
+	    font-weight: 700;
+	    line-height: 38px;
+	}
+	main article .article_bar {
+	    padding: 0 29px 8px;
+	    color: #888;
+	    border-bottom: 1px solid #e5e5e5;
+	    font-size: 14px;
+	    line-height: 38px;
+	    margin-top: 5px;
+	    overflow: hidden;
+	}
+	main article .article_bar .artical_tag {
+	    float: left;
+	}
+	main article .article_bar .artical_tag .original {
+	    border: 1px solid #e4ebf4;
+	    padding: 2px 6px;
+	    font-size: 14px;
+	    color: #78909c;
+	    margin-right: 20px;
+	}
+	main article .article_bar .artical_tag .time {
+	    display: inline-block;
+	    color: #bbb;
+	    font-size: 14px;
+	}
+	main .article_tags {
+	    float: left;
+	    margin-left: 26px;
+	    background-color: #fff;
+	    font-size: 14px;
+	}
+	main .article_tags li.tit {
+	    color: #bbb;
+	}
+	main .article_tags li {
+	    float: left;
+	    margin:0 5px;
+	}
+	main article .article_bar ul.right_bar {
+	    float: right;
+	    margin-top: 5px;
+	}
+	main article .article_bar ul.right_bar li {
+	    float: left;
+	    margin-left: 30px;
+	    line-height: 28px;
+	}
+	main article .article_bar ul.right_bar li:first-child button {
+	    cursor: auto;
+	}
+	.btn-noborder {
+	    line-height: 24px;
+	    font-size: 14px;
+	    color: #888;
+	    padding: 0;
+	    border: 0;
+	}	
+	.btn-empty, .btn-noborder, .btn-noborder:active, .btn-noborder:hover {
+	    background: rgba(0,0,0,0);
+	}
+	.btn-empty, .btn-noborder {
+	    display: inline-block;
+	    height: 24px;
+	    text-align: center;
+	}
+	main article .article_bar ul.right_bar li:first-child button i, main article .article_bar ul.right_bar li:first-child button span {
+	    color: #bbb;
+	}
+	main article .article_bar ul.right_bar li .iconfont {
+	    display: inline-block;
+	    vertical-align: middle;
+	    margin-right: 8px;
+	}
+	.article_content {
+	    margin-bottom: 30px;
+	    color: #454545;
+	    padding: 20px 30px 0;
+	}
+	main .comment_box {
+	    margin-top: 20px;
+	    border-bottom: 1px solid #f4f4f4;
+	    padding: 18px 30px 0;
+	    background-color: #fff;
+	    box-shadow: 0 2px 4px 0 rgba(0,0,0,.05);
+	}
+	.guest_link {
+	    margin-bottom: 20px;
+	    clear: both;
+	    overflow: hidden;
+	    height: 80px;
+	    font-family: MicrosoftYaHei;
+	    font-size: 14px;
+	    color: #4f4f4f;
+	    text-align: center;
+	    background: #e7ecf0;
+	}
+.guest_link .log_ico {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    line-height: 40px;
+    margin-top: 20px;
+    margin-right: 20px;
+    text-align: center;
+    background: #afbac3;
+}
+.guest_link .log_ico, .guest_link .txt {
+    display: inline-block;
+    vertical-align: top;
+}
+.guest_link .txt {
+    margin-top: 28px;
+}
+.guest_link .log_ico, .guest_link .txt {
+    display: inline-block;
+    vertical-align: top;
+}
+.guest_link .log_ico i {
+    color: #e2e9ef;
+}
+.iconfont, em, i {
+    font-style: normal;
+}
+.guest_link .txt a:active, .guest_link .txt a:hover, .guest_link .txt a:link, .guest_link .txt a:visited, .login_tip_box a:active, .login_tip_box a:hover, .login_tip_box a:link, .login_tip_box a:visited {
+    color: #e73131;
+    text-decoration: underline;
+}
+main .comment_li_outbox {
+    background-color: #fff;
+    overflow: hidden;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.05);
+}
+main .comment_li_outbox .comment_list {
+    padding: 10px 30px 15px;
+}
+main .comment_li_box {
+    padding-top: 10px;
+    margin-top: -6px;
+    border-bottom: 1px dashed #e5e5e5;
+}
+main .comment_li_box .comment_list {
+    margin-top: 10px;
+    overflow: hidden;
+}
+main .comment_li_box .comment_list dt {
+    float: left;
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+main .comment_li_box .comment_list dt img {
+    width: 30px;
+    height: 30px;
+    display: block;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1px solid #e7e7e7;
+}
+main .comment_li_box .comment_list dd {
+    float: left;
+    width: 95%;
+}
+main .comment_li_box .comment_list dd ul.com_r li {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+main .comment_li_box .comment_list dd ul.com_r li.bot, main .comment_li_box .comment_list dd ul.com_r li.mid {
+    font-size: 14px;
+    color: #434343;
+}
+main .comment_li_box .comment_list dd ul.com_r li {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+main .comment_li_box .comment_list dd ul.com_r li.top h4 {
+    font-weight: 700;
+    color: #4f4f4f;
+    float: left;
+    font-size: 14px;
+    margin-right: 15px;
+}
+main .comment_li_box .comment_list dd ul.com_r li.top h4 a {
+    color: #4093c6;
+}
+main .comment_li_box .comment_list dd ul.com_r li.top .time {
+    display: block;
+    float: left;
+    color: #ccc;
+    font-size: 14px;
+}
+main .comment_li_box .comment_list dd ul.com_r li.top .floor_num {
+    float: right;
+    color: #ccc;
+    font-size: 14px;
+}
+main .comment_li_box .comment_list dd ul.com_r li.bot div, main .comment_li_box .comment_list dd ul.com_r li.mid div {
+    display: block;
+}
+main .comment_li_box .comment_list dd ul.com_r li.mid div {
+    word-wrap: break-word;
+    word-break: break-all;
+}
+main .comment_li_box .comment_list dd ul.com_r li.bot div a.btn-noborder, main .comment_li_box .comment_list dd ul.com_r li.bot div button.btn-noborder, main .comment_li_box .comment_list dd ul.com_r li.mid div a.btn-noborder, main .comment_li_box .comment_list dd ul.com_r li.mid div button.btn-noborder {
+    padding: 0;
+    margin-right: 16px;
+    font-size: 14px;
+    display: inline-block;
+    color: #4093c6;
+}
+main .comment_li_box .child_comment {
+    margin-left: 50px;
+    height: 0;
+    overflow: hidden;
+}
+main .more_comment {
+    background-color: #fff;
+    text-align: center;
+}
+main .more_comment #comment_bar {
+    padding-bottom: 15px;
+}
+main .more_comment #comment_bar .more_comment_btn {
+    text-align: center;
+    color: #78909c;
+    background-color: #fff;
+    cursor: pointer;
+    font-size: 12px;
+}
+.btn-large {
+    font-size: 16px;
+    min-width: 100px;
+}
+.btn {
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    padding: 0 20px;
+    border: 0;
+}
+#theme_list iframe {
+	width: 100%;
+	height: 100%;
+	border: 0;
+}

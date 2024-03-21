@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bl3.pm.queryanalysis.dao.ProjOverviewDao">
+	<!-- 项目总览分页查询 -->
+	<select id="likePage" parameterType="Dto" resultType="Dto">
+SELECT H.* FROM (SELECT G.*,IF(M.plan_END_DATE IS NULL ,'0',M.plan_END_DATE)END_DATE
+		 FROM(
+		SELECT F.* FROM(
+		SELECT E.*,IF(M.plan_begin_date IS NULL,'0',M.plan_begin_date) M_BEGIN_DATE
+		FROM (
+		SELECT D.*,U.NAME AS UPDATE_USER_NAME FROM (
+		SELECT C.*,U.NAME AS CREATE_USER_NAME FROM (
+		SELECT B.*,U.NAME AS PM2_USER_NAME FROM (
+		SELECT A.*,U.NAME AS PM_USER_NAME FROM (SELECT BPC.*
+		FROM bs_proj_commons BPC
+		<where>
+			<if test="proj_name != null and proj_name != ''">
+				AND PROJ_NAME LIKE '${proj_name}%'   <!-- 项目名称 -->
+			</if>
+			<if test="begin_time != null and  begin_time != ''">
+				AND BEGIN_DATE <![CDATA[>=]]> #{begin_time} <!-- 启动开始时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				AND BEGIN_DATE <![CDATA[<=]]> #{end_time} <!-- 启动结束时间 -->
+			</if>
+		</where>
+		ORDER BY CREATE_TIME DESC
+		)A LEFT JOIN aos_user U ON U.id = A.PM_USER_ID)B 
+		LEFT JOIN aos_user U ON U.id = B.PM2_USER_ID)C
+		LEFT JOIN aos_user U ON U.id = C.CREATE_USER_ID)D 
+		LEFT JOIN aos_user U ON U.id = D.UPDATE_USER_ID)E
+		LEFT JOIN bs_proj_milestone M ON M.proj_id = E.proj_id AND M.statE = 1
+		ORDER BY  M.plan_begin_date ASC)F GROUP BY F.proj_id)G
+		LEFT JOIN bs_proj_milestone M ON M.proj_id = G.proj_id AND M.statE = 1
+		ORDER BY M.plan_END_DATE DESC )H GROUP BY H.PROJ_ID
+		
+	</select>
+	<!-- 项目回款分页查询 -->
+	<select id="moneyLikePage" parameterType="Dto" resultType="Dto">
+		select i.pay_name,i.pay_time,i.pay_money
+		from pr_contract_pay_info i
+		where i.proj_id = ${proj_id}
+	</select>
+	<!-- 项目合同分页查询 -->
+	<select id="contractLikePage" parameterType="Dto" resultType="Dto">
+		select c.*
+		from bs_proj_contract c
+		where c.proj_id = ${proj_id}
+	</select>
+	<!-- 项目风险信息分页查询 -->
+	<select id="riskLikePage" parameterType="Dto" resultType="Dto">
+		select b.*,c.risk_cata_name as risk_name from(
+		select a.*,u.name as update_user_name  from (
+		select l.*,u.name as create_user_name
+		from pr_risk_list l,aos_user u
+		where l.proj_id=${proj_id} and l.state='1' and l.create_user_id=u.id)a 
+		left join aos_user u on a.update_user_id=u.id)b
+		left join pr_risk_catalog c on b.risk_cata_id=c.risk_cata_id
+	</select>
+	<!-- 项目风险信息分页查询 -->
+	<select id="fileLikePage" parameterType="Dto" resultType="Dto">
+		select f.*,p.process_name,u.name as create_user_name,t.proc_filetype_name
+		from pr_process_file_upload f,pr_process p,aos_user u,pr_process_filetype t
+		where f.proj_id=${proj_id} and f.process_id=p.process_id and f.create_user_id=u.id and f.proc_filetype_id=t.proc_filetype_id
+	</select>
+	<!-- 项目团队信息分页查询 -->
+	<select id="teamLikePage" parameterType="Dto" resultType="Dto">
+		select t.*,r.TRP_NAME,u.name as TEAM_USER_NAME
+		from bs_proj_teams t,bs_proj_role_types r,aos_user u
+		where t.PROJ_ID = ${proj_id} and t.TRP_CODE=r.TRP_CODE and u.id=t.TEAM_USER_ID		
+	</select>
+</mapper>

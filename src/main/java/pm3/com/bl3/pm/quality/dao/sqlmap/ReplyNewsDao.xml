@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- qa_reply_news[ReplyNews]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-03-26 09:26:55 -->
+<mapper namespace="com.bl3.pm.quality.dao.ReplyNewsDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="ReplyNewsPO">
+		INSERT INTO qa_reply_news (
+		<if test="text_code != null and text_code != ''">
+	         text_code, <!-- 消息编码 -->
+		</if>
+		<if test="text_note != null and text_note != ''">
+	         text_note, <!-- 回复内容 -->
+		</if>
+		<if test="flag_id != null and flag_id != ''">
+	         flag_id, <!-- 有效值 -->
+		</if>
+		<if test="text_name != null and text_name != ''">
+	         text_name, <!-- 回复人 -->
+		</if>
+		<if test="text_date != null and text_date != ''">
+	         text_date, <!-- 回复时间 -->
+		</if>
+		<if test="is_pass != null">
+	         is_pass, <!-- ##索引 -->
+		</if>
+		<if test="text_name_id != null">
+	         text_name_id, <!-- 回复人ID -->
+		</if>
+	          id
+		)VALUES(
+		<if test="text_code != null and text_code != ''">
+	          #{text_code, jdbcType=VARCHAR}, <!-- 消息编码 -->
+	    </if>
+		<if test="text_note != null and text_note != ''">
+	          #{text_note, jdbcType=VARCHAR}, <!-- 回复内容 -->
+	    </if>
+		<if test="flag_id != null and flag_id != ''">
+	          #{flag_id, jdbcType=VARCHAR}, <!-- 有效值 -->
+	    </if>
+		<if test="text_name != null and text_name != ''">
+	          #{text_name, jdbcType=VARCHAR}, <!-- 回复人 -->
+	    </if>
+		<if test="text_date != null and text_date != ''">
+	          #{text_date, jdbcType=VARCHAR}, <!-- 回复时间 -->
+	    </if>
+		<if test="is_pass != null">
+	          #{is_pass, jdbcType=INTEGER}, <!-- ##索引 -->
+	    </if>
+		<if test="text_name_id != null">
+	          #{text_name_id, jdbcType=INTEGER}, <!-- 回复人ID -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="id" parameterType="ReplyNewsPO">
+		INSERT INTO qa_reply_news (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{id, jdbcType=INTEGER},  <!-- 流水号 -->
+		    #{text_code, jdbcType=VARCHAR},  <!-- 消息编码 -->
+		    #{text_note, jdbcType=VARCHAR},  <!-- 回复内容 -->
+		    #{flag_id, jdbcType=VARCHAR},  <!-- 有效值 -->
+		    #{text_name, jdbcType=VARCHAR},  <!-- 回复人 -->
+		    #{text_date, jdbcType=VARCHAR},  <!-- 回复时间 -->
+		    #{is_pass, jdbcType=INTEGER},  <!-- ##索引 -->
+		    #{text_name_id, jdbcType=INTEGER}  <!-- 回复人ID -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ReplyNewsPO">
+		UPDATE qa_reply_news
+		<set>
+			<if test="id != null">
+		          id = #{id, jdbcType=INTEGER},  <!-- 流水号 -->
+			</if>
+			<if test="text_code != null">
+		          text_code = #{text_code, jdbcType=VARCHAR},  <!-- 消息编码 -->
+			</if>
+			<if test="text_note != null">
+		          text_note = #{text_note, jdbcType=VARCHAR},  <!-- 回复内容 -->
+			</if>
+			<if test="flag_id != null">
+		          flag_id = #{flag_id, jdbcType=VARCHAR},  <!-- 有效值 -->
+			</if>
+			<if test="text_name != null">
+		          text_name = #{text_name, jdbcType=VARCHAR},  <!-- 回复人 -->
+			</if>
+			<if test="text_date != null">
+		          text_date = #{text_date, jdbcType=VARCHAR},  <!-- 回复时间 -->
+			</if>
+			<if test="is_pass != null">
+		          is_pass = #{is_pass, jdbcType=INTEGER},  <!-- ##索引 -->
+			</if>
+			<if test="text_name_id != null">
+		          text_name_id = #{text_name_id, jdbcType=INTEGER},  <!-- 回复人ID -->
+			</if>
+		</set>
+		WHERE  id = #{id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM qa_reply_news WHERE  id = #{id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ReplyNewsPO">
+		SELECT
+		<include refid="column" />
+		FROM qa_reply_news WHERE  id = #{id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ReplyNewsPO">
+		SELECT
+		    <include refid="column" />
+		FROM qa_reply_news
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ReplyNewsPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_reply_news
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ReplyNewsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_reply_news
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ReplyNewsPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_reply_news
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ReplyNewsPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_reply_news
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ReplyNewsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_reply_news
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ReplyNewsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_reply_news
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM qa_reply_news
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM qa_reply_news
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  id,  <!-- 流水号 -->
+		  text_code,  <!-- 消息编码 -->
+		  text_note,  <!-- 回复内容 -->
+		  flag_id,  <!-- 有效值 -->
+		  text_name,  <!-- 回复人 -->
+		  text_date,  <!-- 回复时间 -->
+		  is_pass,  <!-- ##索引 -->
+		  text_name_id  <!-- 回复人ID -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  qa_reply_news.id,  <!-- 流水号 -->
+		  qa_reply_news.text_code,  <!-- 消息编码 -->
+		  qa_reply_news.text_note,  <!-- 回复内容 -->
+		  qa_reply_news.flag_id,  <!-- 有效值 -->
+		  qa_reply_news.text_name,  <!-- 回复人 -->
+		  qa_reply_news.text_date,  <!-- 回复时间 -->
+		  qa_reply_news.is_pass,  <!-- ##索引 -->
+		  qa_reply_news.text_name_id  <!-- 回复人ID -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="id != null ">
+		      AND id = #{id}  <!-- 流水号 -->
+		</if>
+	    <if test="text_code != null and text_code != ''">
+		      AND text_code = #{text_code}  <!-- 消息编码 -->
+		</if>
+	    <if test="text_note != null and text_note != ''">
+		      AND text_note = #{text_note}  <!-- 回复内容 -->
+		</if>
+	    <if test="flag_id != null and flag_id != ''">
+		      AND flag_id = #{flag_id}  <!-- 有效值 -->
+		</if>
+	    <if test="text_name != null and text_name != ''">
+		      AND text_name = #{text_name}  <!-- 回复人 -->
+		</if>
+	    <if test="text_date != null and text_date != ''">
+		      AND text_date = #{text_date}  <!-- 回复时间 -->
+		</if>
+	   <if test="is_pass != null ">
+		      AND is_pass = #{is_pass}  <!-- ##索引 -->
+		</if>
+	   <if test="text_name_id != null ">
+		      AND text_name_id = #{text_name_id}  <!-- 回复人ID -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="text_code != null and text_code != ''">
+		      AND text_code like '${text_code}%'  <!-- 消息编码 -->
+		</if>
+	    <if test="text_note != null and text_note != ''">
+		      AND text_note like '${text_note}%'  <!-- 回复内容 -->
+		</if>
+	    <if test="flag_id != null and flag_id != ''">
+		      AND flag_id like '${flag_id}%'  <!-- 有效值 -->
+		</if>
+	    <if test="text_name != null and text_name != ''">
+		      AND text_name like '${text_name}%'  <!-- 回复人 -->
+		</if>
+	    <if test="text_date != null and text_date != ''">
+		      AND text_date like '${text_date}%'  <!-- 回复时间 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="text_code != null and text_code != ''">
+		      Or text_code like '${text_code}%'  <!-- 消息编码 -->
+		</if>
+	    <if test="text_note != null and text_note != ''">
+		      Or text_note like '${text_note}%'  <!-- 回复内容 -->
+		</if>
+	    <if test="flag_id != null and flag_id != ''">
+		      Or flag_id like '${flag_id}%'  <!-- 有效值 -->
+		</if>
+	    <if test="text_name != null and text_name != ''">
+		      Or text_name like '${text_name}%'  <!-- 回复人 -->
+		</if>
+	    <if test="text_date != null and text_date != ''">
+		      Or text_date like '${text_date}%'  <!-- 回复时间 -->
+		</if>
+	</sql>
+	
+</mapper>

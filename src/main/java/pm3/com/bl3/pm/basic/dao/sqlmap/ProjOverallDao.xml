@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bl3.pm.basic.dao.ProjOverallDao">
+	<update id="saveGrid" parameterType="Dto">
+		update ta_task_group
+		<set>
+		<if test="plan_end_time != null">
+	         plan_end_time = #{plan_end_time, jdbcType=VARCHAR}, <!-- 计划结束时间 -->
+	    </if>
+		<if test="plan_begin_time != null">
+	         plan_begin_time = #{plan_begin_time, jdbcType=VARCHAR}, <!-- 计划开始时间 -->
+	    </if>
+		<if test="remark != null">
+	       remark = #{remark, jdbcType=VARCHAR}, <!-- 备注 -->
+		</if>
+		<if test="update_user_id != null">
+          	update_user_id = #{update_user_id, jdbcType=INTEGER}, <!-- 修改人 -->
+	    </if>
+		  	update_time = sysdate()
+		</set>
+		where group_id = #{group_id}
+	</update>
+	
+	<update id="saveCascade" parameterType="Dto">
+		update ta_task_group
+		<set>
+		<if test="plan_end_time != null">
+	         plan_end_time = #{plan_end_time, jdbcType=VARCHAR}, <!-- 计划结束时间 -->
+	    </if>
+		<if test="plan_begin_time != null">
+	         plan_begin_time = #{plan_begin_time, jdbcType=VARCHAR}, <!-- 计划开始时间 -->
+	    </if>
+		<if test="remark != null">
+	       remark = #{remark, jdbcType=VARCHAR}, <!-- 备注 -->
+		</if>
+		<if test="update_user_id != null">
+          	update_user_id = #{update_user_id, jdbcType=INTEGER}, <!-- 修改人 -->
+	    </if>
+		  	update_time = sysdate()
+		</set>
+		where cascade_id = #{cascade_id}
+	</update>
+	
+	<update id="saveparentSecondId" parameterType="Dto">
+		update ta_task_group
+		<set>
+		<if test="plan_end_time != null">
+	         plan_end_time = #{plan_end_time, jdbcType=VARCHAR}, <!-- 计划结束时间 -->
+	    </if>
+		<if test="plan_begin_time != null">
+	         plan_begin_time = #{plan_begin_time, jdbcType=VARCHAR}, <!-- 计划开始时间 -->
+	    </if>
+		<if test="remark != null">
+	       remark = #{remark, jdbcType=VARCHAR}, <!-- 备注 -->
+		</if>
+		<if test="update_user_id != null">
+          	update_user_id = #{update_user_id, jdbcType=INTEGER}, <!-- 修改人 -->
+	    </if>
+		  	update_time = sysdate()
+		</set>
+		where cascade_id = #{cascade_id}
+	</update>
+	
+	<select id="selectParentId" resultType="Dto">
+		SELECT * FROM ta_task_group WHERE parent_id = #{group_id}
+	</select>
+	
+	<select id="selectGroupID" resultType="Dto">
+		SELECT * FROM ta_task_group WHERE group_id = #{parent_id}
+	</select>
+	
+	<select id="selectGroupIDs" resultType="Dto">
+		SELECT * FROM ta_task_group WHERE group_id = #{parent_id}
+	</select>
+	
+	<select id="selectByKey" resultType="ProjOverallPO">
+		SELECT
+		*
+		FROM ta_task_group WHERE  group_id = #{group_id}
+	</select>
+	
+	<select id="listChildrenByParentDto" parameterType="Dto" resultType="ProjOverallPO">
+		SELECT
+			*	
+		 FROM ta_task_group
+	    where state != '1003'
+	      and parent_id IN
+        <foreach collection="parent_ids" item="parent_id" index="index" open="(" close=")" separator=",">
+				#{parent_id}
+		</foreach>
+	</select>
+	
+	<select id="listChildrenByParentId" parameterType="Dto" resultType="Integer">
+		SELECT
+			group_id
+		 FROM ta_task_group
+	    where state != '1003'
+	      and parent_id IN
+        <foreach collection="parent_ids" item="parent_id" index="index" open="(" close=")" separator=",">
+				#{parent_id}
+		</foreach>
+	</select>
+	
+	<select id="groups" parameterType="ProjOverallPO" resultType="ProjOverallPO">
+		SELECT
+			* 
+		FROM
+			ta_task 
+		WHERE
+			group_id != 0 
+			AND state != '1003'
+			AND proj_id = #{proj_id}
+	</select>
+	
+	<select id="getAVGGroupId" resultType="Integer" parameterType="Dto">
+		select 
+			ROUND(sum(IFNULL(percent,0))/count(*)) as task_percent
+ 		from 
+ 			ta_task 
+ 		where 
+ 			state not in ('1001','1006') 
+		   and proj_id = #{proj_id}
+		 <if test="group_ids != null and group_ids != ''">
+		   and group_id in 
+				<foreach collection="group_ids" item="group_id" index="index" open="(" close=")" separator=",">
+				#{group_id}
+				</foreach>
+		</if>
+	</select>
+	
+	<select id="exportALLExcel" resultType="Dto">
+	    SELECT
+			*
+		FROM 
+			ta_task_group
+		<where>
+		 state != 1003
+		 and group_id != 0
+	    <if test="proj_id != null and proj_id != ''">
+	      	AND proj_id = #{proj_id}  <!-- 项目编码 -->
+		</if>
+		<if test="cascade == 'false'">
+		    AND parent_id like '${parent_id}%'
+		</if>
+		<if test="cascade == 'true'">
+		    AND cascade_id like '${cascade_id}%'
+		</if>
+		</where>
+		ORDER BY cascade_id ASC, is_leaf DESC
+	</select>	
+
+	<select id="likePage" parameterType="Dto" resultType="ProjOverallPO" useCache="false">
+	    SELECT
+			*
+		FROM 
+			ta_task_group
+		<where>
+		 state != 1003
+		 and group_id != 0
+	    <if test="proj_id != null and proj_id != ''">
+	      	AND proj_id = #{proj_id}  <!-- 项目编码 -->
+		</if>
+		<if test="cascade == 'false'">
+		    AND parent_id = #{group_id, jdbcType=INTEGER}
+		</if>
+		<if test="cascade == 'true'">
+		    AND cascade_id like '${cascade_id}%'
+		</if>
+		</where>
+		ORDER BY cascade_id ASC, group_id DESC
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProjOverallPO">
+		SELECT
+			group_id,  <!-- 分组编码 -->
+			group_name,  <!-- 分组名称 -->
+			cascade_id,  <!-- cascade_id -->
+			parent_id,  <!-- 父类编码 -->
+			is_leaf,  <!-- 是否叶子节点 -->
+			is_auto_expand,  <!-- 是否自动展开 -->
+			icon_name,  <!-- 节点图标文件名称 -->
+			group_from,  <!-- 任务分组来源 -->
+			plan_end_time,  <!-- 计划结束时间 -->
+			plan_begin_time,  <!-- 计划开始时间 -->
+			plan_wastage,  <!-- 计划消耗天数 -->
+			sort_no,  <!-- 排序号 -->
+			create_user_id,  <!-- 创建时间 -->
+			create_time,  <!-- 创建时间 -->
+			update_user_id,  <!-- 更新人 -->
+			update_time,  <!-- 更新时间 -->
+			remark,  <!-- remark -->
+			proj_id,  <!-- 项目编码 -->
+			module_id,  <!-- 模块编码 -->
+			demand_id,  <!-- 需求编码 -->
+			state  <!-- 分组状态 -->	
+		FROM ta_task_group
+		<where>
+		    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id = #{proj_id}  <!-- 项目编码 -->
+		</if>
+		 <if test="group_id != null ">
+		      AND group_id = #{group_id}  <!-- 分组编码 -->
+		</if>
+		</where>	
+	</select>
+</mapper>

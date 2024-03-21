@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_theme[Theme]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-26 15:42:53 -->
+<mapper namespace="com.bl3.pm.basic.dao.ThemeDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ThemePO">
+		INSERT INTO bs_theme (
+		<if test="tags != null and tags != ''">
+	         tags, <!-- 标签 -->
+		</if>
+		<if test="title != null and title != ''">
+	         title, <!-- 标题 -->
+		</if>
+		<if test="content != null and content != ''">
+	         content, <!-- 内容 -->
+		</if>
+		<if test="reply_num != null">
+	         reply_num, <!-- 回复数量 -->
+		</if>
+		<if test="last_reply_user_id != null">
+	         last_reply_user_id, <!-- 最后回复人编码 -->
+		</if>
+		<if test="last_reply_time != null and last_reply_time != ''">
+	         last_reply_time, <!-- 最后回复时间 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 修改时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 修改人 -->
+		</if>
+		<if test="theme_type != null and theme_type != ''">
+	         theme_type, <!-- 主题类型 -->
+		</if>
+		<if test="top != null">
+	         top, <!-- 是否置顶 -->
+		</if>
+		<if test="fileid != null and fileid != ''">
+	         fileid, <!-- 文件地址编码 -->
+		</if>
+		<if test="file_title != null and file_title != ''">
+	         file_title, <!-- 文件标题 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="refrence_id != null">
+	         refrence_id, <!-- 关联编码 -->
+		</if>
+		<if test="id != null">
+	          id  <!-- 主题编码 -->
+	   </if>
+		)VALUES(
+		<if test="tags != null and tags != ''">
+	          #{tags, jdbcType=VARCHAR}, <!-- 标签 -->
+	    </if>
+		<if test="title != null and title != ''">
+	          #{title, jdbcType=VARCHAR}, <!-- 标题 -->
+	    </if>
+		<if test="content != null and content != ''">
+	          #{content, jdbcType=VARCHAR}, <!-- 内容 -->
+	    </if>
+		<if test="reply_num != null">
+	          #{reply_num, jdbcType=INTEGER}, <!-- 回复数量 -->
+	    </if>
+		<if test="last_reply_user_id != null">
+	          #{last_reply_user_id, jdbcType=INTEGER}, <!-- 最后回复人编码 -->
+	    </if>
+		<if test="last_reply_time != null and last_reply_time != ''">
+	          #{last_reply_time, jdbcType=VARCHAR}, <!-- 最后回复时间 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 修改时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 修改人 -->
+	    </if>
+		<if test="theme_type != null and theme_type != ''">
+	          #{theme_type, jdbcType=VARCHAR}, <!-- 主题类型 -->
+	    </if>
+		<if test="top != null">
+	          #{top, jdbcType=INTEGER}, <!-- 是否置顶 -->
+	    </if>
+		<if test="fileid != null and fileid != ''">
+	          #{fileid, jdbcType=VARCHAR}, <!-- 文件地址编码 -->
+	    </if>
+		<if test="file_title != null and file_title != ''">
+	          #{file_title, jdbcType=VARCHAR}, <!-- 文件标题 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		<if test="refrence_id != null">
+	          #{refrence_id, jdbcType=INTEGER}, <!-- 关联编码 -->
+	    </if>
+		<if test="id != null">
+		     #{id, jdbcType=INTEGER}  <!-- 主题编码 -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ThemePO">
+		INSERT INTO bs_theme (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{id, jdbcType=INTEGER},  <!-- 主题编码 -->
+		    #{tags, jdbcType=VARCHAR},  <!-- 标签 -->
+		    #{title, jdbcType=VARCHAR},  <!-- 标题 -->
+		    #{content, jdbcType=VARCHAR},  <!-- 内容 -->
+		    #{reply_num, jdbcType=INTEGER},  <!-- 回复数量 -->
+		    #{last_reply_user_id, jdbcType=INTEGER},  <!-- 最后回复人编码 -->
+		    #{last_reply_time, jdbcType=VARCHAR},  <!-- 最后回复时间 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 修改人 -->
+		    #{theme_type, jdbcType=VARCHAR},  <!-- 主题类型 -->
+		    #{top, jdbcType=INTEGER},  <!-- 是否置顶 -->
+		    #{fileid, jdbcType=VARCHAR},  <!-- 文件地址编码 -->
+		    #{file_title, jdbcType=VARCHAR},  <!-- 文件标题 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+		    #{refrence_id, jdbcType=INTEGER}  <!-- 关联编码 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ThemePO">
+		UPDATE bs_theme
+		<set>
+			<if test="id != null">
+		          id = #{id, jdbcType=INTEGER},  <!-- 主题编码 -->
+			</if>
+			<if test="tags != null">
+		          tags = #{tags, jdbcType=VARCHAR},  <!-- 标签 -->
+			</if>
+			<if test="title != null">
+		          title = #{title, jdbcType=VARCHAR},  <!-- 标题 -->
+			</if>
+			<if test="content != null">
+		          content = #{content, jdbcType=VARCHAR},  <!-- 内容 -->
+			</if>
+			<if test="reply_num != null">
+		          reply_num = #{reply_num, jdbcType=INTEGER},  <!-- 回复数量 -->
+			</if>
+			<if test="last_reply_user_id != null">
+		          last_reply_user_id = #{last_reply_user_id, jdbcType=INTEGER},  <!-- 最后回复人编码 -->
+			</if>
+			<if test="last_reply_time != null">
+		          last_reply_time = #{last_reply_time, jdbcType=VARCHAR},  <!-- 最后回复时间 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 修改人 -->
+			</if>
+			<if test="theme_type != null">
+		          theme_type = #{theme_type, jdbcType=VARCHAR},  <!-- 主题类型 -->
+			</if>
+			<if test="top != null">
+		          top = #{top, jdbcType=INTEGER},  <!-- 是否置顶 -->
+			</if>
+			<if test="fileid != null">
+		          fileid = #{fileid, jdbcType=VARCHAR},  <!-- 文件地址编码 -->
+			</if>
+			<if test="file_title != null">
+		          file_title = #{file_title, jdbcType=VARCHAR},  <!-- 文件标题 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+			<if test="refrence_id != null">
+		          refrence_id = #{refrence_id, jdbcType=INTEGER},  <!-- 关联编码 -->
+			</if>
+		</set>
+		WHERE  id = #{id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_theme WHERE  id = #{id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ThemePO">
+		SELECT
+		<include refid="column" />
+		FROM bs_theme WHERE  id = #{id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ThemePO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_theme
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ThemePO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_theme
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ThemePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_theme
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ThemePO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_theme
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ThemePO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_theme
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ThemePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_theme
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ThemePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_theme
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_theme
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_theme
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  id,  <!-- 主题编码 -->
+		  tags,  <!-- 标签 -->
+		  title,  <!-- 标题 -->
+		  content,  <!-- 内容 -->
+		  reply_num,  <!-- 回复数量 -->
+		  last_reply_user_id,  <!-- 最后回复人编码 -->
+		  last_reply_time,  <!-- 最后回复时间 -->
+		  create_time,  <!-- 创建时间 -->
+		  create_user_id,  <!-- 创建人 -->
+		  update_time,  <!-- 修改时间 -->
+		  update_user_id,  <!-- 修改人 -->
+		  theme_type,  <!-- 主题类型 -->
+		  top,  <!-- 是否置顶 -->
+		  fileid,  <!-- 文件地址编码 -->
+		  file_title,  <!-- 文件标题 -->
+		  state,  <!-- 状态 -->
+		  refrence_id  <!-- 关联编码 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_theme.id,  <!-- 主题编码 -->
+		  bs_theme.tags,  <!-- 标签 -->
+		  bs_theme.title,  <!-- 标题 -->
+		  bs_theme.content,  <!-- 内容 -->
+		  bs_theme.reply_num,  <!-- 回复数量 -->
+		  bs_theme.last_reply_user_id,  <!-- 最后回复人编码 -->
+		  bs_theme.last_reply_time,  <!-- 最后回复时间 -->
+		  bs_theme.create_time,  <!-- 创建时间 -->
+		  bs_theme.create_user_id,  <!-- 创建人 -->
+		  bs_theme.update_time,  <!-- 修改时间 -->
+		  bs_theme.update_user_id,  <!-- 修改人 -->
+		  bs_theme.theme_type,  <!-- 主题类型 -->
+		  bs_theme.top,  <!-- 是否置顶 -->
+		  bs_theme.fileid,  <!-- 文件地址编码 -->
+		  bs_theme.file_title,  <!-- 文件标题 -->
+		  bs_theme.state,  <!-- 状态 -->
+		  bs_theme.refrence_id  <!-- 关联编码 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="id != null ">
+		      AND id = #{id}  <!-- 主题编码 -->
+		</if>
+	    <if test="tags != null and tags != ''">
+		      AND tags = #{tags}  <!-- 标签 -->
+		</if>
+	    <if test="title != null and title != ''">
+		      AND title = #{title}  <!-- 标题 -->
+		</if>
+	    <if test="content != null and content != ''">
+		      AND content = #{content}  <!-- 内容 -->
+		</if>
+	   <if test="reply_num != null ">
+		      AND reply_num = #{reply_num}  <!-- 回复数量 -->
+		</if>
+	   <if test="last_reply_user_id != null ">
+		      AND last_reply_user_id = #{last_reply_user_id}  <!-- 最后回复人编码 -->
+		</if>
+	    <if test="last_reply_time != null and last_reply_time != ''">
+		      AND last_reply_time = #{last_reply_time}  <!-- 最后回复时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 修改时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 修改人 -->
+		</if>
+	    <if test="theme_type != null and theme_type != ''">
+		      AND theme_type = #{theme_type}  <!-- 主题类型 -->
+		</if>
+	   <if test="top != null ">
+		      AND top = #{top}  <!-- 是否置顶 -->
+		</if>
+	    <if test="fileid != null and fileid != ''">
+		      AND fileid = #{fileid}  <!-- 文件地址编码 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      AND file_title = #{file_title}  <!-- 文件标题 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	   <if test="refrence_id != null ">
+		      AND refrence_id = #{refrence_id}  <!-- 关联编码 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="tags != null and tags != ''">
+		      AND tags like '${tags}%'  <!-- 标签 -->
+		</if>
+	    <if test="title != null and title != ''">
+		      AND title like '${title}%'  <!-- 标题 -->
+		</if>
+	    <if test="content != null and content != ''">
+		      AND content like '${content}%'  <!-- 内容 -->
+		</if>
+	    <if test="last_reply_time != null and last_reply_time != ''">
+		      AND last_reply_time like '${last_reply_time}%'  <!-- 最后回复时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="theme_type != null and theme_type != ''">
+		      AND theme_type like '${theme_type}%'  <!-- 主题类型 -->
+		</if>
+	    <if test="fileid != null and fileid != ''">
+		      AND fileid like '${fileid}%'  <!-- 文件地址编码 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      AND file_title like '${file_title}%'  <!-- 文件标题 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="tags != null and tags != ''">
+		      Or tags like '${tags}%'  <!-- 标签 -->
+		</if>
+	    <if test="title != null and title != ''">
+		      Or title like '${title}%'  <!-- 标题 -->
+		</if>
+	    <if test="content != null and content != ''">
+		      Or content like '${content}%'  <!-- 内容 -->
+		</if>
+	    <if test="last_reply_time != null and last_reply_time != ''">
+		      Or last_reply_time like '${last_reply_time}%'  <!-- 最后回复时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="theme_type != null and theme_type != ''">
+		      Or theme_type like '${theme_type}%'  <!-- 主题类型 -->
+		</if>
+	    <if test="fileid != null and fileid != ''">
+		      Or fileid like '${fileid}%'  <!-- 文件地址编码 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      Or file_title like '${file_title}%'  <!-- 文件标题 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+</mapper>

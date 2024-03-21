@@ -1,0 +1,2472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- qa_bug_manage[BugManage]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-08 11:13:48 -->
+<mapper namespace="com.bl3.pm.quality.dao.BugManageDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="BugManagePO">
+		INSERT INTO qa_bug_manage (
+		<if test="log_id != null and log_id != ''">
+	         log_id, <!-- 消息记录ID -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+	         demand_id, <!-- 需求id -->
+		</if>
+		<if test="proj_id != null and proj_id != ''">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="stand_id != null and stand_id != ''">
+	         stand_id, <!-- 模块ID -->
+		</if>
+		<if test="bug_name != null and bug_name != ''">
+	         bug_name, <!-- 缺陷名称 -->
+		</if>
+		<if test="bug_detail != null and bug_detail != ''">
+	         bug_detail, <!-- 缺陷详情 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 当前状态 -->
+		</if>
+		<if test="priority != null">
+	         priority, <!-- 优先级 -->
+		</if>
+		<if test="severity != null">
+	         severity, <!-- 严重程度 -->
+		</if>
+		<if test="bug_addr != null">
+	         bug_addr, <!-- bug位置(问题类别) -->
+		</if>
+		<if test="rate != null">
+	         rate, <!-- 出现频率 -->
+		</if>
+		<if test="source != null">
+	         source, <!-- 来源方 -->
+		</if>
+		<if test="find_time != null and find_time != ''">
+	         find_time, <!-- 发现时间 -->
+		</if>
+		<if test="bug_type != null and bug_type != ''">
+	         bug_type, <!-- 类型(是否缺陷) -->
+		</if>
+		<if test="create_name != null and create_name != ''">
+	         create_name, <!-- 新增人 -->
+		</if>
+		
+		<if test="close_name != null and close_name != ''">
+	         close_name, <!-- 问题关闭人 -->
+		</if>
+		<if test="close_time != null and close_time != ''">
+	         close_time, <!-- 关闭时间 -->
+		</if>
+		<if test=" final_deal_man != null and  final_deal_man != ''">
+	          final_deal_man, <!-- 问题关闭人 -->
+		</if>
+		<if test="final_deal_time != null and final_deal_time != ''">
+	         final_deal_time, <!-- 关闭时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+	         update_name, <!-- 修改人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 修改时间 -->
+		</if>
+		<if test="deal_man != null and deal_man != ''">
+	         deal_man, <!-- 当前处置人 -->
+		</if>
+		<if test="deal_time != null and deal_time != ''">
+	         deal_time, <!-- 处理时间 -->
+		</if>
+		<if test="standard_id != null and standard_id != ''">
+	         standard_id, <!-- 测试用例id -->
+		</if>
+		<if test="find_name != null and find_name != ''">
+	         find_name, <!-- find_name -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 新增时间 -->
+		</if>
+		<if test="version_id != null">
+	         version_id, <!-- 版本号id -->
+		</if>
+		<if test="code_version_id != null">
+	         code_version_id, <!-- 代码版本号id -->
+		</if>
+		<if test="test_version_id != null">
+			test_version_id, <!-- 测试版本号id -->
+		</if>
+		<if test="relate_bug_code != null and relate_bug_code != ''">
+			relate_bug_code, <!-- 相关缺陷编码 -->
+		</if>
+		<if test="plan_wastage != null">
+	         plan_wastage, <!-- 计划消耗天数 -->
+		</if>
+		<if test="real_wastage != null">
+	         real_wastage, <!-- 实际消耗天数 -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+	         bug_code <!-- 缺陷编码 -->
+		</if>
+	 	<!-- <if test="bug_id != null and bug_id != ''">
+	          bug_id   缺陷ID 
+	   </if> -->
+		)VALUES(
+		<if test="log_id != null and log_id != ''">
+	          #{log_id, jdbcType=VARCHAR}, <!-- 消息记录ID -->
+	    </if>
+	    <if test="demand_id != null and demand_id != ''">
+	          #{demand_id, jdbcType=VARCHAR}, <!-- 需求ID -->
+	    </if>
+		<if test="proj_id != null and proj_id != ''">
+	          #{proj_id, jdbcType=VARCHAR}, <!-- 项目ID -->
+	    </if>
+		<if test="stand_id != null and stand_id != ''">
+	          #{stand_id, jdbcType=VARCHAR}, <!-- 模块ID -->
+	    </if>
+		<if test="bug_name != null and bug_name != ''">
+	          #{bug_name, jdbcType=VARCHAR}, <!-- 缺陷名称 -->
+	    </if>
+		<if test="bug_detail != null and bug_detail != ''">
+	          #{bug_detail, jdbcType=VARCHAR}, <!-- 缺陷详情 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 当前状态 -->
+	    </if>
+		<if test="priority != null">
+	          #{priority, jdbcType=VARCHAR}, <!-- 优先级 -->
+	    </if>
+		<if test="severity != null">
+	          #{severity, jdbcType=VARCHAR}, <!-- 严重程度 -->
+	    </if>
+		<if test="bug_addr != null">
+	          #{bug_addr, jdbcType=VARCHAR}, <!-- bug位置(问题类别) -->
+	    </if>
+		<if test="rate != null">
+	          #{rate, jdbcType=VARCHAR}, <!-- 出现频率 -->
+	    </if>
+		<if test="source != null">
+	          #{source, jdbcType=VARCHAR}, <!-- 来源方 -->
+	    </if>
+		<if test="find_time != null and find_time != ''">
+	          #{find_time, jdbcType=VARCHAR}, <!-- 发现时间 -->
+	    </if>
+		<if test="bug_type != null and bug_type != ''">
+	          #{bug_type, jdbcType=VARCHAR}, <!-- 类型(是否缺陷) -->
+	    </if>
+		<if test="create_name != null and create_name != ''">
+	          #{create_name, jdbcType=VARCHAR}, <!-- 新增人 -->
+	    </if>
+		<if test="close_name != null and close_name != ''">
+	          #{close_name, jdbcType=VARCHAR}, <!-- 问题关闭人 -->
+	    </if>
+		<if test="close_time != null and close_time != ''">
+	          #{close_time, jdbcType=VARCHAR}, <!-- 关闭时间 -->
+	    </if>
+	    <if test="final_deal_man != null and final_deal_man != ''">
+	          #{final_deal_man, jdbcType=VARCHAR}, <!-- 问题关闭人 -->
+	    </if>
+		<if test="final_deal_time != null and final_deal_time != ''">
+	          #{final_deal_time, jdbcType=VARCHAR}, <!-- 关闭时间 -->
+	    </if>
+	    <if test="update_name != null and update_name != ''">
+	          #{update_name, jdbcType=VARCHAR}, <!-- 修改人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 修改时间  -->
+	    </if>
+		<if test="deal_man != null and deal_man != ''">
+	          #{deal_man, jdbcType=VARCHAR}, <!-- 当前处置人 -->
+	    </if>
+	     <if test="deal_time != null and deal_time != ''">
+	          #{deal_time, jdbcType=VARCHAR}, <!-- 处理时间 -->
+	    </if>
+	    <if test="standard_id != null and standard_id != ''">
+	          #{standard_id, jdbcType=VARCHAR}, <!-- 测试用例id -->
+	    </if>
+	    <if test="find_name != null and find_name != ''">
+	          #{find_name, jdbcType=VARCHAR}, <!-- 发现人 -->
+	    </if>
+	    <if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 新增时间 -->
+	    </if>
+	    <if test="version_id != null ">
+	          #{version_id, jdbcType=INTEGER}, <!-- 版本号id -->
+	    </if>
+		<if test="code_version_id != null">
+	          #{code_version_id, jdbcType=INTEGER}, <!-- 代码版本号id -->
+	    </if>
+	    <if test="test_version_id != null">
+	   		  #{test_version_id, jdbcType=INTEGER}, <!-- 测试版本号id -->
+	    </if>
+	    <if test="relate_bug_code != null and relate_bug_code != ''">
+	    	#{relate_bug_code, jdbcType=VARCHAR}, <!-- 相关缺陷编码 -->
+	    </if>
+	    <if test="plan_wastage != null">
+	          #{plan_wastage, jdbcType=NUMERIC}, <!-- 计划消耗天数 -->
+	    </if>
+	    <if test="real_wastage != null">
+	          #{real_wastage, jdbcType=NUMERIC}, <!-- 实际消耗天数 -->
+	    </if>
+	    <if test="bug_code != null and bug_code != ''">
+	          #{bug_code, jdbcType=VARCHAR} <!-- 缺陷编码 -->
+	    </if>
+		<!--<if test="bug_id != null and bug_id != ''">
+		     #{bug_id, jdbcType=VARCHAR}   缺陷ID 
+	    </if>-->
+		)
+	</insert>
+	
+	<select id="bugTypeCountPage" resultType="BugManagePO" useCache="false">
+		select a.dm_name as stard_name, t.* from 
+			(
+			SELECT
+				left(stand_id,7) as stand_id, 
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1000 THEN 1 ELSE 0 END ) as slight,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1001 THEN 1 ELSE 0 END ) as general,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1002 THEN 1 ELSE 0 END ) as severitys,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1003 THEN 1 ELSE 0 END ) as deadly,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) THEN 1 ELSE 0 END ) as subtotal,
+				sum(CASE WHEN state = 1005 THEN 1 ELSE 0 END ) as open,
+				sum(CASE WHEN state = 1002 THEN 1 ELSE 0 END ) as postpone,
+				sum(CASE WHEN state = 1001 THEN 1 ELSE 0 END ) as resolved,
+				sum(CASE WHEN state = 1003 THEN 1 ELSE 0 END ) as close,
+				sum(CASE WHEN state = 1004 THEN 1 ELSE 0 END ) as refuse,
+				sum(CASE WHEN state = 1006 THEN 1 ELSE 0 END ) as reappear
+			FROM
+				qa_bug_manage
+			<where>
+				<if test="proj_id != null and proj_id != ''">
+					and proj_id = #{proj_id}
+				</if>
+				<if test="dm_codes != null and dm_codes != ''">
+					and left(stand_id,7) in 
+					<foreach collection="dm_codes" item="value" index="index" open="(" close=")" separator=",">
+		            	#{value,jdbcType=VARCHAR}
+		        	</foreach>
+				</if>
+				<if test="test_version_id != null and test_version_id != ''">
+				    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+				</if>
+				<if test="find_begin_time !=null and find_begin_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+				</if>
+				<if test="find_end_time !=null and find_end_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+				</if>
+			</where>
+			group by proj_id, left(stand_id,7)
+			) t 
+		left join re_module_divide a on a.dm_code = t.stand_id
+	</select>
+	
+	<select id="bugDealCountPage" resultType="BugManagePO" useCache="false">
+		select a.name as deal_name, t.* from 
+			(
+			SELECT
+				deal_man, 
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1000 THEN 1 ELSE 0 END ) as slight,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1001 THEN 1 ELSE 0 END ) as general,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1002 THEN 1 ELSE 0 END ) as severitys,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1003 THEN 1 ELSE 0 END ) as deadly,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) THEN 1 ELSE 0 END ) as subtotal,
+				sum(CASE WHEN state = 1005 THEN 1 ELSE 0 END ) as open,
+				sum(CASE WHEN state = 1002 THEN 1 ELSE 0 END ) as postpone,
+				sum(CASE WHEN state = 1001 THEN 1 ELSE 0 END ) as resolved,
+				sum(CASE WHEN state = 1003 THEN 1 ELSE 0 END ) as close,
+				sum(CASE WHEN state = 1004 THEN 1 ELSE 0 END ) as refuse,
+				sum(CASE WHEN state = 1006 THEN 1 ELSE 0 END ) as reappear
+			FROM
+				qa_bug_manage
+			<where>
+				<if test="proj_id != null and proj_id != ''">
+					and proj_id = #{proj_id}
+				</if>
+				<if test="stand_id != null and stand_id != ''">
+				      and stand_id like '${stand_id}%'  <!-- 模块ID -->
+				</if>
+				<if test="deal_mans != null and deal_mans != ''">
+					and deal_man in 
+					<foreach collection="deal_mans" item="value" index="index" open="(" close=")" separator=",">
+		            	#{value,jdbcType=VARCHAR}
+		        	</foreach>
+				</if>
+				<if test="test_version_id != null and test_version_id != ''">
+				    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+				</if>
+				<if test="find_begin_time !=null and find_begin_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+				</if>
+				<if test="find_end_time !=null and find_end_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+				</if>
+			</where>
+			group by proj_id, deal_man
+			) t 
+		left join aos_user a on a.id = t.deal_man
+	</select>
+	
+	<select id="bugSolveCountPage" resultType="BugManagePO" useCache="false">
+		SELECT
+			a.dic_descs,
+			a.solve_severitys,
+			count(bug_id) AS bug_total,
+			sum(
+				CASE
+				WHEN state = 1001
+				OR state = 1003 THEN
+					1
+				ELSE
+					0
+				END
+			) AS solved,
+			sum(
+				CASE
+				WHEN state = 1000
+				OR state = 1002
+				OR state = 1005 THEN
+					1
+				ELSE
+					0
+				END
+			) AS tobesolve,
+			sum(
+				CASE
+				WHEN state = 1004
+				OR state = 1006 THEN
+					1
+				ELSE
+					0
+				END
+			) AS other,
+			concat(
+				(
+					round(
+						(
+							sum(
+								CASE
+								WHEN state = 1001
+								OR state = 1003 THEN
+									1
+								ELSE
+									0
+								END
+							) + sum(
+								CASE
+								WHEN state = 1004
+								OR state = 1006 THEN
+									1
+								ELSE
+									0
+								END
+							)
+						) / count(bug_id) * 100,
+						0
+					)
+				),
+				'%'
+			) AS resolution
+		FROM
+			(
+				SELECT
+					qa.*, CASE
+				WHEN severity IN ('1002', '1003') THEN
+					'1002'
+				WHEN severity IN ('1001') THEN
+				'1001'
+				ELSE
+					severity
+				END AS solve_severitys,
+				CASE
+			WHEN aos_dic.dic_desc IN ('严重', '致命') THEN
+				'严重、致命'
+			WHEN aos_dic.dic_desc IN ('一般') THEN
+				'一般、轻微'
+			ELSE
+				aos_dic.dic_desc
+			END AS dic_descs
+			FROM
+				qa_bug_manage qa
+			LEFT JOIN aos_dic ON aos_dic.dic_key = 'bug_severity'
+			AND aos_dic.`code` = severity
+			<where>
+				<if test="proj_id != null and proj_id != ''">
+					and proj_id = #{proj_id}
+				</if>
+				<if test="test_version_id != null and test_version_id != ''">
+				    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+				</if>
+				<if test="find_begin_time !=null and find_begin_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+				</if>
+				<if test="find_end_time !=null and find_end_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+				</if>
+			</where>
+			) a
+		GROUP BY
+			a.solve_severitys
+	</select>
+	
+	<select id="bugTypeCountTotal" resultType="BugManagePO" >
+		select a.dm_name as stard_name, t.* from 
+			(
+			SELECT
+				left(stand_id,7) as stand_id, 
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1000 THEN 1 ELSE 0 END ) as slight,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1001 THEN 1 ELSE 0 END ) as general,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1002 THEN 1 ELSE 0 END ) as severitys,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1003 THEN 1 ELSE 0 END ) as deadly,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) THEN 1 ELSE 0 END ) as subtotal,
+				sum(CASE WHEN state = 1005 THEN 1 ELSE 0 END ) as open,
+				sum(CASE WHEN state = 1002 THEN 1 ELSE 0 END ) as postpone,
+				sum(CASE WHEN state = 1001 THEN 1 ELSE 0 END ) as resolved,
+				sum(CASE WHEN state = 1003 THEN 1 ELSE 0 END ) as close,
+				sum(CASE WHEN state = 1004 THEN 1 ELSE 0 END ) as refuse,
+				sum(CASE WHEN state = 1006 THEN 1 ELSE 0 END ) as reappear
+			FROM
+				qa_bug_manage
+			<where>
+				<if test="proj_id != null and proj_id != ''">
+					and proj_id = #{proj_id}
+				</if>
+				<if test="dm_codes != null and dm_codes != ''">
+					and left(stand_id,7) in 
+					<foreach collection="dm_codes" item="value" index="index" open="(" close=")" separator=",">
+		            	#{value,jdbcType=VARCHAR}
+		        	</foreach>
+				</if>
+				<if test="test_version_id != null and test_version_id != ''">
+				    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+				</if>
+				<if test="find_begin_time !=null and find_begin_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+				</if>
+				<if test="find_end_time !=null and find_end_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+				</if>
+			</where>
+			group by proj_id, left(stand_id,7)
+			) t 
+		left join re_module_divide a on a.dm_code = t.stand_id
+	</select>
+	
+	<select id="bugDealCountTotal" resultType="BugManagePO" >
+		select a.name as deal_name, t.* from 
+			(
+			SELECT
+				deal_man, 
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1000 THEN 1 ELSE 0 END ) as slight,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1001 THEN 1 ELSE 0 END ) as general,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1002 THEN 1 ELSE 0 END ) as severitys,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1003 THEN 1 ELSE 0 END ) as deadly,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) THEN 1 ELSE 0 END ) as subtotal,
+				sum(CASE WHEN state = 1005 THEN 1 ELSE 0 END ) as open,
+				sum(CASE WHEN state = 1002 THEN 1 ELSE 0 END ) as postpone,
+				sum(CASE WHEN state = 1001 THEN 1 ELSE 0 END ) as resolved,
+				sum(CASE WHEN state = 1003 THEN 1 ELSE 0 END ) as close,
+				sum(CASE WHEN state = 1004 THEN 1 ELSE 0 END ) as refuse,
+				sum(CASE WHEN state = 1006 THEN 1 ELSE 0 END ) as reappear
+			FROM
+				qa_bug_manage
+			<where>
+				<if test="proj_id != null and proj_id != ''">
+					and proj_id = #{proj_id}
+				</if>
+				<if test="stand_id != null and stand_id != ''">
+				      and stand_id like '${stand_id}%'  <!-- 模块ID -->
+				</if>
+				<if test="deal_mans != null and deal_mans != ''">
+					and deal_man in 
+					<foreach collection="deal_mans" item="value" index="index" open="(" close=")" separator=",">
+		            	#{value,jdbcType=VARCHAR}
+		        	</foreach>
+				</if>
+				<if test="test_version_id != null and test_version_id != ''">
+				    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+				</if>
+				<if test="find_begin_time !=null and find_begin_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+				</if>
+				<if test="find_end_time !=null and find_end_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+				</if>
+			</where>
+			group by proj_id, deal_man
+			) t 
+		left join aos_user a on a.id = t.deal_man
+	</select>
+	
+	<select id="testExampleArrayList" resultType="dto">
+		 SELECT a.bug_code,
+				a.state,
+				a.severity,
+				a.priority,
+				a.bug_type,
+				c.dm_name,
+				a.bug_name,
+				d.version_number,
+				e.code_version_number,
+				h.test_version_number,
+				b.proj_name,
+				a.bug_addr,
+				a.rate,
+				f.name as deal_man_name,
+				a.source,
+				a.find_name,
+				g.name as bug_create_name,
+				a.find_time,
+				a.close_name,a.close_time,
+				a.final_deal_man,
+				a.final_deal_time,
+				a.plan_wastage,
+				a.real_wastage,
+				a.relate_bug_code
+		FROM qa_bug_manage a
+		LEFT JOIN bs_proj_commons b ON a.proj_id = b.proj_id
+		LEFT JOIN re_module_divide c ON a.stand_id = c.dm_code
+		LEFT JOIN bs_proj_version d ON a.version_id = d.version_id
+		LEFT JOIN bs_proj_code_version e ON a.code_version_id = e.code_version_id
+		LEFT JOIN bs_proj_test_version h ON a.test_version_id = h.test_version_id
+		LEFT JOIN aos_user f ON a.deal_man = f.id
+		LEFT JOIN aos_user g ON a.create_name = g.id
+		<where>
+			a.bug_id in
+			<foreach collection="array" item="id" index="index" open="("
+				close=")" separator=",">
+				#{id}
+			</foreach>
+		</where>
+	</select>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="BugManagePO">
+		INSERT INTO qa_bug_manage (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{bug_id, jdbcType=VARCHAR},  <!-- 缺陷ID -->
+		    #{log_id, jdbcType=VARCHAR},  <!-- 消息记录ID -->
+		    #{bug_code, jdbcType=VARCHAR},  <!-- 缺陷编码 -->
+		    #{demand_id, jdbcType=VARCHAR},  <!-- 需求id -->
+		    #{proj_id, jdbcType=VARCHAR},  <!-- 项目ID -->
+		    #{stand_id, jdbcType=VARCHAR},  <!-- 模块ID -->
+		    #{bug_name, jdbcType=VARCHAR},  <!-- 缺陷名称 -->
+		    #{bug_detail, jdbcType=VARCHAR},  <!-- 缺陷详情 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 当前状态 -->
+		    #{priority, jdbcType=VARCHAR},  <!-- 优先级 -->
+		    #{severity, jdbcType=VARCHAR},  <!-- 严重程度 -->
+		    #{bug_addr, jdbcType=VARCHAR},  <!-- bug位置(问题类别) -->
+		    #{rate, jdbcType=VARCHAR},  <!-- 出现频率 -->
+		    #{source, jdbcType=VARCHAR},  <!-- 来源方 -->
+		    #{find_time, jdbcType=VARCHAR},  <!-- 发现时间 -->
+		    #{bug_type, jdbcType=VARCHAR},  <!-- 类型(是否缺陷) -->
+		    #{create_name, jdbcType=VARCHAR},  <!-- 新增人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 新增时间 -->
+		    #{update_name, jdbcType=VARCHAR},  <!-- 修改人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+		    #{close_name, jdbcType=VARCHAR},  <!-- 问题关闭人 -->
+		    #{close_time, jdbcType=VARCHAR},  <!-- 关闭时间 -->
+		    #{final_deal_man, jdbcType=VARCHAR},  <!-- 问题关闭人 -->
+		    #{final_deal_time, jdbcType=VARCHAR},  <!-- 关闭时间 -->
+		    #{standard_id, jdbcType=VARCHAR},  <!-- 测试用例id -->
+		    #{find_name, jdbcType=VARCHAR},  <!-- 发现人 -->
+		    #{deal_man, jdbcType=VARCHAR},  <!-- 当前处置人 -->
+		    #{version_id, jdbcType=INTEGER},  <!-- 版本号id -->
+		    #{code_version_id, jdbcType=INTEGER},  <!-- 代码版本号id -->
+		    #{test_version_id, jdbcType=INTEGER},  <!-- 测试版本号id -->
+		    #{plan_wastage, jdbcType=NUMERIC},  <!-- 计划消耗天数 -->
+		    #{real_wastage, jdbcType=NUMERIC},  <!-- 实际消耗天数 -->
+		    #{deal_time, jdbcType=NUMERIC}  <!-- 处理时间 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="BugManagePO">
+		UPDATE qa_bug_manage
+		<set>
+		update_time=now(),
+			<if test="bug_id != null">
+		          bug_id = #{bug_id, jdbcType=VARCHAR},  <!-- 缺陷ID -->
+			</if>
+			<if test="log_id != null">
+		          log_id = #{log_id, jdbcType=VARCHAR},  <!-- 消息记录ID -->
+			</if>
+			<if test="bug_code != null">
+		          bug_code = #{bug_code, jdbcType=VARCHAR},  <!-- 缺陷编码 -->
+			</if>
+			<if test="demand_id != null">
+		          demand_id = #{demand_id, jdbcType=VARCHAR},  <!-- 需求ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=VARCHAR},  <!-- 项目ID -->
+			</if>
+			<if test="stand_id != null">
+		          stand_id = #{stand_id, jdbcType=VARCHAR},  <!-- 模块ID -->
+			</if>
+			<if test="bug_name != null">
+		          bug_name = #{bug_name, jdbcType=VARCHAR},  <!-- 缺陷名称 -->
+			</if>
+			<if test="bug_detail != null">
+		          bug_detail = #{bug_detail, jdbcType=VARCHAR},  <!-- 缺陷详情 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 当前状态 -->
+			</if>
+			<if test="priority != null">
+		          priority = #{priority, jdbcType=VARCHAR},  <!-- 优先级 -->
+			</if>
+			<if test="severity != null">
+		          severity = #{severity, jdbcType=VARCHAR},  <!-- 严重程度 -->
+			</if>
+			<if test="bug_addr != null">
+		          bug_addr = #{bug_addr, jdbcType=VARCHAR},  <!-- bug位置(问题类别) -->
+			</if>
+			<if test="rate != null">
+		          rate = #{rate, jdbcType=VARCHAR},  <!-- 出现频率 -->
+			</if>
+			<if test="source != null">
+		          source = #{source, jdbcType=VARCHAR},  <!-- 来源方 -->
+			</if>
+			<if test="find_time != null">
+		          find_time = #{find_time, jdbcType=VARCHAR},  <!-- 发现时间 -->
+			</if>
+			<if test="bug_type != null">
+		          bug_type = #{bug_type, jdbcType=VARCHAR},  <!-- 类型(是否缺陷) -->
+			</if>
+			<if test="create_name != null">
+		          create_name = #{create_name, jdbcType=VARCHAR},  <!-- 新增人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 新增时间 -->
+			</if>
+			
+			<if test="update_name != null">
+		          update_name = #{update_name, jdbcType=VARCHAR}, <!-- 修改人 -->
+			</if>
+			<if test="close_name != null">
+		          close_name = #{close_name, jdbcType=VARCHAR},  <!-- 问题关闭人 -->
+			</if>
+			<if test="close_time != null">
+		          close_time = #{close_time, jdbcType=VARCHAR},  <!-- 关闭时间 -->
+			</if>
+			<if test="final_deal_man != null">
+		          final_deal_man = #{final_deal_man, jdbcType=VARCHAR},  <!-- 问题关闭人 -->
+			</if>
+			<if test="final_deal_time != null">
+		          final_deal_time = #{final_deal_time, jdbcType=VARCHAR},  <!-- 关闭时间 -->
+			</if>
+			<if test="standard_id != null">
+		          standard_id = #{standard_id, jdbcType=VARCHAR},  <!-- 测试用例id -->
+			</if>
+			<if test="find_name != null">
+		          find_name = #{find_name, jdbcType=VARCHAR},  <!-- 发现人 -->
+			</if>
+			<if test="deal_man != null">
+		          deal_man = #{deal_man, jdbcType=VARCHAR},  <!-- 当前处置人 -->
+			</if>
+			<if test="deal_time != null">
+		          deal_time = #{deal_time, jdbcType=NUMERIC},  <!-- 处理时间 -->
+			</if>
+			<if test="relate_bug_code != null">
+			   	  relate_bug_code = #{relate_bug_code, jdbcType=VARCHAR}, <!-- 相关缺陷编码 -->
+			</if>
+			<if test="version_id != null">
+		          version_id = #{version_id, jdbcType=INTEGER},  <!-- 版本号id -->
+			</if>
+			<if test="code_version_id != null">
+		          code_version_id = #{code_version_id, jdbcType=INTEGER},  <!-- 代码版本号id-->
+			</if>
+			<if test="test_version_id != null">
+		          test_version_id = #{test_version_id, jdbcType=INTEGER},  <!-- 测试版本号id-->
+			</if>
+			<if test="plan_wastage != null">
+		          plan_wastage = #{plan_wastage, jdbcType=NUMERIC},  <!-- 计划消耗天数 -->
+			</if>
+			<if test="real_wastage != null">
+		          real_wastage = #{real_wastage, jdbcType=NUMERIC},  <!-- 实际消耗天数 -->
+			</if>
+		</set>
+		WHERE  bug_id = #{bug_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<!-- <delete id="deleteByKey">
+		DELETE FROM qa_bug_manage WHERE  bug_id = #{bug_id}
+	</delete> -->
+	<update id="deleteByKey">
+		UPDATE qa_bug_manage SET state = 1007 WHERE  bug_id = #{bug_id}
+	</update>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="BugManagePO">
+	 SELECT
+			a.*,c.proj_name,d.dm_name,re.ad_name as demand_name,te.standard_name
+		FROM qa_bug_manage a LEFT JOIN re_module_divide d ON a.stand_id = d.dm_code LEFT JOIN re_demand_action re ON re.ad_id=a.demand_id LEFT JOIN qa_test_example te ON te.standard_id=a.standard_id, bs_proj_commons c
+		where
+		      a.bug_id = #{bug_id}
+		      and a.proj_id=c.proj_id
+	</select>
+	
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByCopyBugId" resultType="BugManagePO">
+	 SELECT
+		  a.proj_id,
+		  a.bug_name,
+		  a.bug_detail,
+		  a.state,
+		  a.priority,
+		  a.severity,
+		  a.bug_addr,
+		  a.rate,
+		  a.source,
+		  a.bug_type,
+		  a.deal_man,
+		  a.version_id,
+		  a.code_version_id,
+		  a.test_version_id,
+		  a.test_example,
+		  a.demand_id, 
+		  a.standard_id
+	 FROM qa_bug_manage a 
+	 where
+	      a.bug_id = #{bug_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="BugManagePO">
+		SELECT
+		    <include refid="column" />
+		FROM qa_bug_manage
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="BugManagePO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_bug_manage
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<select id="selectRelateBugCode" parameterType="Integer" resultType="String">
+		select relate_bug_code from qa_bug_manage where bug_id = #{from_bug_id}
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="BugManagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_bug_manage
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="BugManagePO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_bug_manage
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="BugManagePO">
+	SELECT
+			<include refid="column" />	
+		FRoM qa_bug_manage
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	
+	
+		
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="BugManagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_bug_manage
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集  分页查询缺陷管理-->
+	<select id="buglikeOrPage" parameterType="Dto" resultType="BugManagePO" useCache="false">
+		SELECT x.*,
+			   u.name as bug_update_name,
+			   bpc.PROJ_NAME proj_name
+		  from 
+		  (
+			 SELECT a.*,
+					u1.NAME AS deal_man_name,
+				    u2.NAME AS bug_create_name,
+				    a.update_name AS update_id,
+		            re.DM_NAME,
+				    re.DM_CODE,
+				    re.DM_PARENT_CODE,
+				    vr.version_number AS version_number,
+		            cvr.code_version_number AS code_version_number,
+		            tvr.test_version_number AS test_version_number,
+		            te.standard_name
+		       from qa_bug_manage a 
+		       LEFT JOIN qa_test_example te ON te.standard_id = a.standard_id
+		       LEFT JOIN re_module_divide re ON a.proj_id = re.PROJ_ID and a.stand_id = re.DM_CODE,
+		      (SELECT max(log_id) log_id, proj_id,bug_id, create_time
+		         from qa_bug_news 
+		        where proj_id = '${proj_id}'
+		        group by proj_id,bug_id 
+		       ) b,
+		      aos_user u1,aos_user u2,bs_proj_version vr,bs_proj_code_version cvr,bs_proj_test_version tvr
+		<where>
+			    a.proj_id = '${proj_id}'
+			and b.proj_id = a.proj_id
+			AND b.bug_id = a.bug_id
+			and a.deal_man = u1.id
+			and a.create_name = u2.id
+			and a.proj_id = vr.proj_id
+			and a.version_id = vr.version_id
+			and a.proj_id = cvr.proj_id
+			and a.code_version_id = cvr.code_version_id
+			and a.test_version_id = tvr.test_version_id
+		<if test="final_deal_begin_time !=null and final_deal_begin_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d %h-%m-%s') &gt;= #{final_deal_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="final_deal_end_time !=null and final_deal_end_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d %h-%m-%s') &lt;= #{final_deal_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="bug_states != null and bug_states != ''">
+			and a.state in 
+			<foreach collection="bug_states" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="severitys != null and severitys != ''">
+			and a.severity in 
+			<foreach collection="severitys" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_addrs != null and bug_addrs != ''">
+			and a.bug_addr in 
+			<foreach collection="bug_addrs" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_types != null and bug_types != ''">
+			and a.bug_type in 
+			<foreach collection="bug_types" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="priority != null and priority != ''">
+			  and a.priority in 
+			  <foreach collection="priority" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_state != null and bug_state != ''">
+		      AND a.state = #{bug_state,jdbcType=VARCHAR}  
+		</if>
+		<if test="bug_addr != null and bug_addr != ''">
+		      AND bug_addr = #{bug_addr,jdbcType=VARCHAR}  bug位置(问题类别)
+		</if>
+		<if test="query_values != null and query_values != ''">
+			and (a.bug_code like '%${query_values}%' or a.bug_name like '%${query_values}%')
+		</if>
+		<!-- <if test = "severity != null and severity != ''">
+			and a.severity = #{severity, jdbcType=VARCHAR}
+		</if> -->
+		<!-- <if test="update_begin_time !=null and update_begin_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &gt;= #{update_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="update_end_time !=null and update_end_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &lt;= #{update_end_time, jdbcType=VARCHAR}
+		</if> -->
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="dealed_state != null and dealed_state != '' and refused_state != null and refused_state != ''">
+		   and  a.state in('${dealed_state}' ,'${refused_state}' )  <!-- 待处理缺陷（已解决 1001、拒绝 1004） -->
+		</if>
+		<if test="unclose_state != null and unclose_state != ''">
+		   and   a.state != '${unclose_state}'  <!-- 项目ID -->
+		</if>
+		<if test="close_state != null and close_state != ''">
+		   and   a.state = '${close_state}'  <!-- 项目ID -->
+		</if>
+		
+		<if test="proj_id != null and proj_id != ''">
+		   and   a.proj_id = '${proj_id}'  <!-- 项目ID -->
+		</if>
+		<if test="bug_id != null and bug_id != ''">
+		      and a.bug_id like '${bug_id}%'  <!-- 缺陷ID -->
+		</if>
+	    <if test="log_id != null and log_id != ''">
+		      and a.log_id like '${log_id}%'  <!-- 消息记录ID -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+		      and a.bug_code like '%${bug_code}%'  <!-- 缺陷编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+		      and a.demand_id like '${demand_id}%'  <!-- 需求ID -->
+		</if>
+	    
+	    <if test="stand_id != null and stand_id != ''">
+		      and a.stand_id like '${stand_id}%'  <!-- 模块ID -->
+		</if>
+	    <if test="bug_name != null and bug_name != ''">
+		      and a.bug_name like '%${bug_name}%'  <!-- 缺陷名称 -->
+		</if>
+	    <if test="bug_detail != null and bug_detail != ''">
+		      and a.bug_detail like '${bug_detail}%'  <!-- 缺陷详情 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      and a.state = '${state}'  <!-- 当前状态 -->
+		</if>
+	    <if test="find_time != null and find_time != ''">
+		      and a.find_time like '${find_time}%'  <!-- 发现时间 -->
+		</if>
+	    <!-- <if test="bug_type != null and bug_type != ''">
+		      and a.bug_type like '${bug_type}%'  类型(是否缺陷)
+		</if> -->
+	    <if test="create_name != null and create_name != ''">
+		      and a.create_name = '${create_name}'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      and a.create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+		      and a.update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      and a.update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="close_name != null and close_name != ''">
+		      and a.close_name = '${close_name}'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="close_time != null and close_time != ''">
+		      and a.close_time like '${close_time}%'  <!-- 关闭时间 -->
+		</if>
+		 <if test="standard_id != null and standard_id != ''">
+		      and a.standard_id like '${standard_id}%'  <!-- 测试用例id -->
+		</if>
+	    <if test="find_name != null and find_name != ''">
+		      and a.find_name = '${find_name}'   <!-- 发现人 -->
+		</if>
+		<if test="condition == 2"><!-- 1 代表并 ，2 代表或 -->
+			and (a.deal_man = '${deal_man}' or a.final_deal_man = '${final_deal_man}')
+		</if>
+		<if test="condition == 1">
+			and (a.deal_man = '${deal_man}' and a.final_deal_man = '${final_deal_man}'
+			)
+		</if>
+	    <if test="condition == null or condition == ''">
+		    <if test="deal_man != null and deal_man != ''">
+			      and a.deal_man = '${deal_man}'  <!-- 当前处置人 -->
+			</if>
+			<if test="final_deal_man != null and final_deal_man != ''">
+				  and a.final_deal_man = '${final_deal_man}'
+			</if>
+		</if>
+		<if test="version_id != null and version_id != ''">
+		      and a.version_id = '${version_id}'  <!-- 版本号id -->
+		</if> 
+		<if test="code_version_id != null and code_version_id != ''">
+		      and a.code_version_id = '${code_version_id}'  <!-- 代码版本号id-->
+		</if>
+		<if test="test_version_id != null and test_version_id != ''">
+		      and a.test_version_id = '${test_version_id}'  <!-- 测试版本号id-->
+		</if>
+		<if test="deal_time != null and deal_time != ''">
+		      and a.deal_time = '${deal_time}'  <!-- 处理时间-->
+		</if>
+		</where>
+		) x
+ 		LEFT JOIN aos_user u on x.update_id = u.id
+ 		LEFT JOIN bs_proj_commons bpc ON bpc.proj_id = x.proj_id
+		ORDER BY x.create_time desc		
+	</select>
+	
+		<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集  分页查询缺陷管理-->
+	<select id="bugVaguePage" parameterType="Dto" resultType="BugManagePO" useCache="false">
+		SELECT x.*,
+			   u.name as bug_update_name,
+			   bpc.PROJ_NAME proj_name
+		  from 
+		  (
+			 SELECT a.*,
+					u1.NAME AS deal_man_name,
+				    u2.NAME AS bug_create_name,
+				    a.update_name AS update_id,
+		            re.DM_NAME,
+				    re.DM_CODE,
+				    re.DM_PARENT_CODE,
+				    vr.version_number AS version_number,
+		            cvr.code_version_number AS code_version_number,
+		            tvr.test_version_number AS test_version_number,
+		            te.standard_name
+		       from qa_bug_manage a 
+		       LEFT JOIN qa_test_example te ON te.standard_id = a.standard_id
+		       LEFT JOIN re_module_divide re ON a.proj_id = re.PROJ_ID and a.stand_id = re.DM_CODE,
+		      aos_user u1,aos_user u2,bs_proj_version vr,bs_proj_code_version cvr,bs_proj_test_version tvr
+		<where>
+		    <if test="proj_id != null and proj_id != ''">
+			   and   a.proj_id = '${proj_id}'  <!-- 项目ID -->
+			</if>
+			and a.deal_man = u1.id
+			and a.create_name = u2.id
+			and a.proj_id = vr.proj_id
+			and a.version_id = vr.version_id
+			and a.proj_id = cvr.proj_id
+			and a.code_version_id = cvr.code_version_id
+			and a.test_version_id = tvr.test_version_id
+		<if test="bug_states != null and bug_states != ''">
+			and a.state in 
+			<foreach collection="bug_states" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="severitys != null and severitys != ''">
+			and a.severity in 
+			<foreach collection="severitys" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_addrs != null and bug_addrs != ''">
+			and a.bug_addr in 
+			<foreach collection="bug_addrs" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_types != null and bug_types != ''">
+			and a.bug_type in 
+			<foreach collection="bug_types" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="priority != null and priority != ''">
+			  and a.priority in 
+			  <foreach collection="priority" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_state != null and bug_state != ''">
+		      AND a.state = #{bug_state,jdbcType=VARCHAR}  
+		</if>
+		<if test="bug_addr != null and bug_addr != ''">
+		      AND bug_addr = #{bug_addr,jdbcType=VARCHAR}  bug位置(问题类别)
+		</if>
+		<if test="query_values != null and query_values != ''">
+			and (a.bug_code like '%${query_values}%' or a.bug_name like '%${query_values}%')
+		</if>
+		<!-- <if test = "severity != null and severity != ''">
+			and a.severity = #{severity, jdbcType=VARCHAR}
+		</if> -->
+		<!-- <if test="update_begin_time !=null and update_begin_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &gt;= #{update_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="update_end_time !=null and update_end_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &lt;= #{update_end_time, jdbcType=VARCHAR}
+		</if> -->
+		<if test="final_deal_begin_time !=null and final_deal_begin_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d %h-%m-%s') &gt;= #{final_deal_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="final_deal_end_time !=null and final_deal_end_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d %h-%m-%s') &lt;= #{final_deal_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="dealed_state != null and dealed_state != '' and refused_state != null and refused_state != ''">
+		   and  a.state in('${dealed_state}' ,'${refused_state}' )  <!-- 待处理缺陷（已解决 1001、拒绝 1004） -->
+		</if>
+		<if test="unclose_state != null and unclose_state != ''">
+		   and   a.state != '${unclose_state}'  <!-- 项目ID -->
+		</if>
+		<if test="close_state != null and close_state != ''">
+		   and   a.state = '${close_state}'  <!-- 项目ID -->
+		</if>
+		
+		<if test="proj_id != null and proj_id != ''">
+		   and   a.proj_id = '${proj_id}'  <!-- 项目ID -->
+		</if>
+		<if test="bug_id != null and bug_id != ''">
+		      and a.bug_id like '${bug_id}%'  <!-- 缺陷ID -->
+		</if>
+	    <if test="log_id != null and log_id != ''">
+		      and a.log_id like '${log_id}%'  <!-- 消息记录ID -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+		      and a.bug_code like '%${bug_code}%'  <!-- 缺陷编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+		      and a.demand_id like '${demand_id}%'  <!-- 需求ID -->
+		</if>
+	    
+	    <if test="stand_id != null and stand_id != ''">
+		      and a.stand_id like '${stand_id}%'  <!-- 模块ID -->
+		</if>
+	    <if test="bug_name != null and bug_name != ''">
+		      and a.bug_name like '%${bug_name}%'  <!-- 缺陷名称 -->
+		</if>
+	    <if test="bug_detail != null and bug_detail != ''">
+		      and a.bug_detail like '${bug_detail}%'  <!-- 缺陷详情 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      and a.state = '${state}'  <!-- 当前状态 -->
+		</if>
+	    <if test="find_time != null and find_time != ''">
+		      and a.find_time like '${find_time}%'  <!-- 发现时间 -->
+		</if>
+	    <!-- <if test="bug_type != null and bug_type != ''">
+		      and a.bug_type like '${bug_type}%'  类型(是否缺陷)
+		</if> -->
+	    <if test="create_name != null and create_name != ''">
+		      and a.create_name = '${create_name}'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      and a.create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+		      and a.update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      and a.update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="close_name != null and close_name != ''">
+		      and a.close_name = '${close_name}'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="close_time != null and close_time != ''">
+		      and a.close_time like '${close_time}%'  <!-- 关闭时间 -->
+		</if>
+		 <if test="standard_id != null and standard_id != ''">
+		      and a.standard_id like '${standard_id}%'  <!-- 测试用例id -->
+		</if>
+	    <if test="find_name != null and find_name != ''">
+		      and a.find_name = '${find_name}'   <!-- 发现人 -->
+		</if>
+	    <if test="condition == 2"><!-- 1 代表并 ，2 代表或 -->
+			and (a.deal_man = '${deal_man}' or a.final_deal_man = '${final_deal_man}')
+		</if>
+		<if test="condition == 1">
+			and (a.deal_man = '${deal_man}' and a.final_deal_man = '${final_deal_man}'
+			)
+		</if>
+	    <if test="condition == null or condition == ''">
+		    <if test="deal_man != null and deal_man != ''">
+			      and a.deal_man = '${deal_man}'  <!-- 当前处置人 -->
+			</if>
+			<if test="final_deal_man != null and final_deal_man != ''">
+				  and a.final_deal_man = '${final_deal_man}'
+			</if>
+		</if>
+		<if test="version_id != null and version_id != ''">
+		      and a.version_id = '${version_id}'  <!-- 版本号id -->
+		</if> 
+		<if test="code_version_id != null and code_version_id != ''">
+		      and a.code_version_id = '${code_version_id}'  <!-- 代码版本号id-->
+		</if>
+		<if test="test_version_id != null and test_version_id != ''">
+		      and a.test_version_id = '${test_version_id}'  <!-- 测试版本号id-->
+		</if>
+		<if test="deal_time != null and deal_time != ''">
+		      and a.deal_time = '${deal_time}'  <!-- 处理时间-->
+		</if>
+		</where>
+		) x
+ 		LEFT JOIN aos_user u on x.update_id = u.id
+ 		LEFT JOIN bs_proj_commons bpc ON bpc.proj_id = x.proj_id
+ 		ORDER BY x.create_time desc		
+	</select>
+	
+	
+	<select id="buglikeOrCount" parameterType="Dto" resultType="Integer" useCache="false">
+	  SELECT count(1)
+		      from qa_bug_manage a 
+		      LEFT JOIN qa_test_example te ON te.standard_id = a.standard_id
+		      LEFT JOIN re_module_divide re ON a.proj_id = re.PROJ_ID and a.stand_id = re.DM_CODE,
+		     (SELECT max(log_id) log_id, proj_id,bug_id, create_time
+		        from qa_bug_news 
+		       where proj_id = '${proj_id}'
+		       group by proj_id,bug_id 
+		      ) b,
+		     aos_user u1,aos_user u2,bs_proj_version vr,bs_proj_code_version cvr,bs_proj_test_version tvr
+		<where>
+			    a.proj_id = '${proj_id}'
+			and b.proj_id = a.proj_id
+			AND b.bug_id = a.bug_id
+			and a.deal_man = u1.id
+			and a.create_name = u2.id
+			and a.proj_id = vr.proj_id
+			and a.version_id = vr.version_id
+			and a.proj_id = cvr.proj_id
+			and a.code_version_id = cvr.code_version_id
+			and a.test_version_id = tvr.test_version_id
+		<if test="final_deal_begin_time !=null and final_deal_begin_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d %h-%m-%s') &gt;= #{final_deal_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="final_deal_end_time !=null and final_deal_end_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d %h-%m-%s') &lt;= #{final_deal_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="bug_states != null and bug_states != ''">
+			and a.state in 
+			<foreach collection="bug_states" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="severitys != null and severitys != ''">
+			and a.severity in 
+			<foreach collection="severitys" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_addrs != null and bug_addrs != ''">
+			and a.bug_addr in 
+			<foreach collection="bug_addrs" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_types != null and bug_types != ''">
+			and a.bug_type in 
+			<foreach collection="bug_types" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="priority != null and priority != ''">
+			  and a.priority in 
+			  <foreach collection="priority" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_state != null and bug_state != ''">
+		      AND a.state = #{bug_state,jdbcType=VARCHAR}  
+		</if>
+		<if test="bug_addr != null and bug_addr != ''">
+		      AND bug_addr = #{bug_addr,jdbcType=VARCHAR}  bug位置(问题类别)
+		</if>
+		<if test="query_values != null and query_values != ''">
+			and (a.bug_code like '%${query_values}%' or a.bug_name like '%${query_values}%')
+		</if>
+		<!-- <if test = "severity != null and severity != ''">
+			and a.severity = #{severity, jdbcType=VARCHAR}
+		</if> -->
+		<!-- <if test="update_begin_time !=null and update_begin_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &gt;= #{update_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="update_end_time !=null and update_end_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &lt;= #{update_end_time, jdbcType=VARCHAR}
+		</if> -->
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="dealed_state != null and dealed_state != '' and refused_state != null and refused_state != ''">
+		   and  a.state in('${dealed_state}' ,'${refused_state}' )  <!-- 待处理缺陷（已解决 1001、拒绝 1004） -->
+		</if>
+		<if test="unclose_state != null and unclose_state != ''">
+		   and   a.state != '${unclose_state}'  <!-- 项目ID -->
+		</if>
+		<if test="close_state != null and close_state != ''">
+		   and   a.state = '${close_state}'  <!-- 项目ID -->
+		</if>
+		
+		<if test="proj_id != null and proj_id != ''">
+		   and   a.proj_id = '${proj_id}'  <!-- 项目ID -->
+		</if>
+		<if test="bug_id != null and bug_id != ''">
+		      and a.bug_id like '${bug_id}%'  <!-- 缺陷ID -->
+		</if>
+	    <if test="log_id != null and log_id != ''">
+		      and a.log_id like '${log_id}%'  <!-- 消息记录ID -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+		      and a.bug_code like '%${bug_code}%'  <!-- 缺陷编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+		      and a.demand_id like '${demand_id}%'  <!-- 需求ID -->
+		</if>
+	    
+	    <if test="stand_id != null and stand_id != ''">
+		      and a.stand_id like '${stand_id}%'  <!-- 模块ID -->
+		</if>
+	    <if test="bug_name != null and bug_name != ''">
+		      and a.bug_name like '%${bug_name}%'  <!-- 缺陷名称 -->
+		</if>
+	    <if test="bug_detail != null and bug_detail != ''">
+		      and a.bug_detail like '${bug_detail}%'  <!-- 缺陷详情 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      and a.state = '${state}'  <!-- 当前状态 -->
+		</if>
+	    <if test="find_time != null and find_time != ''">
+		      and a.find_time like '${find_time}%'  <!-- 发现时间 -->
+		</if>
+	    <!-- <if test="bug_type != null and bug_type != ''">
+		      and a.bug_type like '${bug_type}%'  类型(是否缺陷)
+		</if> -->
+	    <if test="create_name != null and create_name != ''">
+		      and a.create_name = '${create_name}'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      and a.create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+		      and a.update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      and a.update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="close_name != null and close_name != ''">
+		      and a.close_name = '${close_name}'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="close_time != null and close_time != ''">
+		      and a.close_time like '${close_time}%'  <!-- 关闭时间 -->
+		</if>
+		 <if test="standard_id != null and standard_id != ''">
+		      and a.standard_id like '${standard_id}%'  <!-- 测试用例id -->
+		</if>
+	    <if test="find_name != null and find_name != ''">
+		      and a.find_name = '${find_name}'   <!-- 发现人 -->
+		</if>
+	    <if test="condition == 2"><!-- 1 代表并 ，2 代表或 -->
+			and (a.deal_man = '${deal_man}' or a.final_deal_man = '${final_deal_man}')
+		</if>
+		<if test="condition == 1">
+			and (a.deal_man = '${deal_man}' and a.final_deal_man = '${final_deal_man}'
+			)
+		</if>
+	    <if test="condition == null or condition == ''">
+		    <if test="deal_man != null and deal_man != ''">
+			      and a.deal_man = '${deal_man}'  <!-- 当前处置人 -->
+			</if>
+			<if test="final_deal_man != null and final_deal_man != ''">
+				  and a.final_deal_man = '${final_deal_man}'
+			</if>
+		</if>
+		<if test="version_id != null and version_id != ''">
+		      and a.version_id = '${version_id}'  <!-- 版本号id -->
+		</if> 
+		<if test="code_version_id != null and code_version_id != ''">
+		      and a.code_version_id = '${code_version_id}'  <!-- 代码版本号id-->
+		</if>
+		<if test="test_version_id != null and test_version_id != ''">
+		      and a.test_version_id = '${test_version_id}'  <!-- 测试版本号id-->
+		</if>
+		<if test="deal_time != null and deal_time != ''">
+		      and a.deal_time = '${deal_time}'  <!-- 处理时间-->
+		</if>
+		</where>
+	</select>
+	
+	
+	<select id="bugVagueCount" parameterType="Dto" resultType="Integer" useCache="false">
+	  SELECT count(1)
+		      from qa_bug_manage a 
+		      LEFT JOIN qa_test_example te ON te.standard_id = a.standard_id
+		      LEFT JOIN re_module_divide re ON a.proj_id = re.PROJ_ID and a.stand_id = re.DM_CODE,
+		     (SELECT max(log_id) log_id, proj_id,bug_id, create_time
+		        from qa_bug_news 
+		       group by proj_id,bug_id 
+		      ) b,
+		     aos_user u1,aos_user u2,bs_proj_version vr,bs_proj_code_version cvr,bs_proj_test_version tvr
+		<where>
+			<if test="proj_id != null and proj_id != ''">
+				and   a.proj_id = '${proj_id}'  <!-- 项目ID -->
+			</if>
+			and b.proj_id = a.proj_id
+			AND b.bug_id = a.bug_id
+			and a.deal_man = u1.id
+			and a.create_name = u2.id
+			and a.proj_id = vr.proj_id
+			and a.version_id = vr.version_id
+			and a.proj_id = cvr.proj_id
+			and a.code_version_id = cvr.code_version_id
+			and a.test_version_id = tvr.test_version_id
+		<if test="update_begin_time !=null and update_begin_time != ''">
+			and DATE_FORMAT(b.create_time,'%Y-%m-%d') &gt;= #{update_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="update_end_time !=null and update_end_time != ''">
+			and DATE_FORMAT(b.create_time,'%Y-%m-%d') &lt;= #{update_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="bug_states != null and bug_states != ''">
+			and a.state in 
+			<foreach collection="bug_states" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="severitys != null and severitys != ''">
+			and a.severity in 
+			<foreach collection="severitys" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_addrs != null and bug_addrs != ''">
+			and a.bug_addr in 
+			<foreach collection="bug_addrs" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_types != null and bug_types != ''">
+			and a.bug_type in 
+			<foreach collection="bug_types" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="priority != null and priority != ''">
+			  and a.priority in 
+			  <foreach collection="priority" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_state != null and bug_state != ''">
+		      AND a.state = #{bug_state,jdbcType=VARCHAR}  
+		</if>
+		<if test="bug_addr != null and bug_addr != ''">
+		      AND bug_addr = #{bug_addr,jdbcType=VARCHAR}  bug位置(问题类别)
+		</if>
+		<if test="query_values != null and query_values != ''">
+			and (a.bug_code like '%${query_values}%' or a.bug_name like '%${query_values}%')
+		</if>
+		<!-- <if test = "severity != null and severity != ''">
+			and a.severity = #{severity, jdbcType=VARCHAR}
+		</if> -->
+		<!-- <if test="update_begin_time !=null and update_begin_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &gt;= #{update_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="update_end_time !=null and update_end_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &lt;= #{update_end_time, jdbcType=VARCHAR}
+		</if> -->
+		<if test="final_deal_begin_time !=null and final_deal_begin_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d %h-%m-%s') &gt;= #{final_deal_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="final_deal_end_time !=null and final_deal_end_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d %h-%m-%s') &lt;= #{final_deal_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="dealed_state != null and dealed_state != '' and refused_state != null and refused_state != ''">
+		   and  a.state in('${dealed_state}' ,'${refused_state}' )  <!-- 待处理缺陷（已解决 1001、拒绝 1004） -->
+		</if>
+		<if test="unclose_state != null and unclose_state != ''">
+		   and   a.state != '${unclose_state}'  <!-- 项目ID -->
+		</if>
+		<if test="close_state != null and close_state != ''">
+		   and   a.state = '${close_state}'  <!-- 项目ID -->
+		</if>
+		
+		<if test="proj_id != null and proj_id != ''">
+		   and   a.proj_id = '${proj_id}'  <!-- 项目ID -->
+		</if>
+		<if test="bug_id != null and bug_id != ''">
+		      and a.bug_id like '${bug_id}%'  <!-- 缺陷ID -->
+		</if>
+	    <if test="log_id != null and log_id != ''">
+		      and a.log_id like '${log_id}%'  <!-- 消息记录ID -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+		      and a.bug_code like '%${bug_code}%'  <!-- 缺陷编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+		      and a.demand_id like '${demand_id}%'  <!-- 需求ID -->
+		</if>
+	    
+	    <if test="stand_id != null and stand_id != ''">
+		      and a.stand_id like '${stand_id}%'  <!-- 模块ID -->
+		</if>
+	    <if test="bug_name != null and bug_name != ''">
+		      and a.bug_name like '%${bug_name}%'  <!-- 缺陷名称 -->
+		</if>
+	    <if test="bug_detail != null and bug_detail != ''">
+		      and a.bug_detail like '${bug_detail}%'  <!-- 缺陷详情 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      and a.state = '${state}'  <!-- 当前状态 -->
+		</if>
+	    <if test="find_time != null and find_time != ''">
+		      and a.find_time like '${find_time}%'  <!-- 发现时间 -->
+		</if>
+	    <!-- <if test="bug_type != null and bug_type != ''">
+		      and a.bug_type like '${bug_type}%'  类型(是否缺陷)
+		</if> -->
+	    <if test="create_name != null and create_name != ''">
+		      and a.create_name = '${create_name}'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      and a.create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+		      and a.update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      and a.update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="close_name != null and close_name != ''">
+		      and a.close_name = '${close_name}'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="close_time != null and close_time != ''">
+		      and a.close_time like '${close_time}%'  <!-- 关闭时间 -->
+		</if>
+		 <if test="standard_id != null and standard_id != ''">
+		      and a.standard_id like '${standard_id}%'  <!-- 测试用例id -->
+		</if>
+	    <if test="find_name != null and find_name != ''">
+		      and a.find_name = '${find_name}'   <!-- 发现人 -->
+		</if>
+	    <if test="condition == 2"><!-- 1 代表并 ，2 代表或 -->
+			and (a.deal_man = '${deal_man}' or a.final_deal_man = '${final_deal_man}')
+		</if>
+		<if test="condition == 1">
+			and (a.deal_man = '${deal_man}' and a.final_deal_man = '${final_deal_man}'
+			)
+		</if>
+	    <if test="condition == null or condition == ''">
+		    <if test="deal_man != null and deal_man != ''">
+			      and a.deal_man = '${deal_man}'  <!-- 当前处置人 -->
+			</if>
+			<if test="final_deal_man != null and final_deal_man != ''">
+				  and a.final_deal_man = '${final_deal_man}'
+			</if>
+		</if>
+		<if test="version_id != null and version_id != ''">
+		      and a.version_id = '${version_id}'  <!-- 版本号id -->
+		</if> 
+		<if test="code_version_id != null and code_version_id != ''">
+		      and a.code_version_id = '${code_version_id}'  <!-- 代码版本号id-->
+		</if>
+		<if test="test_version_id != null and test_version_id != ''">
+		      and a.test_version_id = '${test_version_id}'  <!-- 测试版本号id-->
+		</if>
+		<if test="deal_time != null and deal_time != ''">
+		      and a.deal_time = '${deal_time}'  <!-- 处理时间-->
+		</if>
+		</where>
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 分页查询我的缺陷-->
+	<select id="likeOrPage" parameterType="Dto" resultType="BugManagePO" useCache="false">
+	    SELECT
+			a.*,c.proj_name,d.dm_name,u.name as deal_man_name,te.standard_name
+		FROM qa_bug_manage a  LEFT JOIN aos_user u ON a.deal_man = u.id LEFT JOIN re_module_divide d ON a.stand_id = d.dm_code LEFT JOIN qa_test_example te ON te.standard_id=a.standard_id, bs_proj_commons c
+		<where>
+		a.proj_id=c.proj_id
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="state != null and state != ''">
+			and a.state in 
+			<foreach collection="state" item="bug_state" index="index" open="(" close=")" separator=",">
+            	#{bug_state,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="severitys != null and severitys != ''">
+			and a.severity in 
+			<foreach collection="severitys" item="severity" index="index" open="(" close=")" separator=",">
+            	#{severity,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_addrs != null and bug_addrs != ''">
+			and a.bug_addr in 
+			<foreach collection="bug_addrs" item="bug_addr" index="index" open="(" close=")" separator=",">
+            	#{bug_addr,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_types != null and bug_types != ''">
+			and a.bug_type in 
+			<foreach collection="bug_types" item="bug_type" index="index" open="(" close=")" separator=",">
+            	#{bug_type,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="query_values != null and query_values != ''">
+			and (a.bug_code like '%${query_values}%' or a.bug_name like '%${query_values}%')
+		</if>
+		<if test="priority != null and priority != ''">
+			and a.priority = #{priority,jdbcType=VARCHAR}
+		</if>
+		<if test="update_begin_time !=null and update_begin_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &gt;= #{update_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="update_end_time !=null and update_end_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &lt;= #{update_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="dealed_state != null and dealed_state != '' and delay_state != null and delay_state != '' and again_state != null and again_state != '' and unable_state != null and unable_state != ''">
+		   and   a.state in('${dealed_state}' ,'${delay_state}','${again_state}' ,'${unable_state}')  <!-- 待处理缺陷（未解决 1000、延期1002、重新打开1005、无法复现1006） -->
+		</if>
+		<if test="unclose_state != null and unclose_state != ''">
+		   and   a.state != '${unclose_state}'  <!-- 未关闭缺陷 -->
+		</if>
+		<if test="close_state != null and close_state != ''">
+		   and   a.state = '${close_state}'  <!-- 关闭的缺陷 -->
+		</if>
+		
+		<if test="proj_id != null and proj_id != ''">
+		   and   a.proj_id = '${proj_id}'  <!-- 项目ID -->
+		</if>
+		<if test="bug_id != null and bug_id != ''">
+		      and a.bug_id like '${bug_id}%'  <!-- 缺陷ID -->
+		</if>
+	    <if test="log_id != null and log_id != ''">
+		      and a.log_id like '${log_id}%'  <!-- 消息记录ID -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+		      and a.bug_code like '%${bug_code}%'  <!-- 缺陷编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+		      and a.demand_id like '${demand_id}%'  <!-- 需求ID -->
+		</if>
+	    
+	    <if test="stand_id != null and stand_id != ''">
+		      and a.stand_id like '${stand_id}%'  <!-- 模块ID -->
+		</if>
+	    <if test="bug_name != null and bug_name != ''">
+		      and a.bug_name like '%${bug_name}%'  <!-- 缺陷名称 -->
+		</if>
+	    <if test="bug_detail != null and bug_detail != ''">
+		      and a.bug_detail like '${bug_detail}%'  <!-- 缺陷详情 -->
+		</if>
+	    <!-- <if test="state != null and state != ''">
+		      and a.state = '${state}'  当前状态
+		</if> -->
+	    <if test="find_time != null and find_time != ''">
+		      and a.find_time like '${find_time}%'  <!-- 发现时间 -->
+		</if>
+	    <if test="create_name != null and create_name != ''">
+		      and a.create_name = '${create_name}'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      and a.create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+		      and a.update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      and a.update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="close_name != null and close_name != ''">
+		      and a.close_name = '${close_name}'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="close_time != null and close_time != ''">
+		      and a.close_time like '${close_time}%'  <!-- 关闭时间 -->
+		</if>
+		 <if test="standard_id != null and standard_id != ''">
+		      and a.standard_id like '${standard_id}%'  <!-- 测试用例id -->
+		</if>
+	    <if test="find_name != null and find_name != ''">
+		      and a.find_name = '${find_name}'   <!-- 发现人 -->
+		</if>
+	    <if test="deal_man != null and deal_man != ''">
+		      and a.deal_man = '${deal_man}'  <!-- 当前处置人 -->
+		</if>
+		<if test="version_id != null and version_id != ''">
+		      and a.version_id = '${version_id}'  <!-- 版本号id -->
+		</if> 
+		<if test="code_version_id != null and code_version_id != ''">
+		      and a.code_version_id = '${code_version_id}'  <!-- 代码版本号id-->
+		</if>
+		<if test="deal_time != null and deal_time != ''">
+		      and a.deal_time = '${deal_time}'  <!-- 处理时间-->
+		</if>
+		</where>
+		ORDER BY create_time desc		
+	</select>	
+	
+	<select id="bugCopyPage" resultType="Dto">
+		SELECT
+			qbc.from_bug_id,
+			qbm.bug_code AS from_bug_code,
+			qbm.bug_name AS from_bug_name,
+			qbm.state AS from_state,
+			bpc.proj_name AS from_proj_name,
+			qbc.to_bug_id,
+			qam.bug_code AS to_bug_code,
+			bsc.proj_name AS to_proj_name,
+			qam.state AS to_state,
+			qam.bug_name AS to_bug_name
+		FROM
+			qa_bug_copy qbc
+			LEFT JOIN bs_proj_commons bpc ON bpc.proj_id = qbc.from_proj_id
+			LEFT JOIN bs_proj_commons bsc ON bsc.proj_id = qbc.to_proj_id
+			LEFT JOIN qa_bug_manage qbm ON qbm.bug_id = qbc.from_bug_id
+			LEFT JOIN qa_bug_manage qam ON qam.bug_id = qbc.to_bug_id
+		WHERE
+			qbc.state = 1
+			<if test="bug_id != null and bug_id != ''">
+				AND (from_bug_id = #{bug_id} OR to_bug_id = #{bug_id})
+			</if>
+	</select>
+
+	<select id="selectCopyBug" resultType="Integer">
+		SELECT count(bug_id) FROM `qa_bug_manage` 
+		WHERE proj_id = #{proj_id} AND stand_id LIKE '${stand_id}%' AND bug_name = #{bug_name};
+	</select>
+
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM qa_bug_manage
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM qa_bug_manage
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  bug_id,  <!-- 缺陷ID -->
+		  log_id,  <!-- 消息记录ID -->
+		  bug_code,  <!-- 缺陷编码 -->
+		  relate_bug_code, <!-- 相关缺陷编码 -->
+		  demand_id,  <!-- 需求ID -->
+		  proj_id,  <!-- 项目ID -->
+		  stand_id,  <!-- 模块ID -->
+		  bug_name,  <!-- 缺陷名称 -->
+		  bug_detail,  <!-- 缺陷详情 -->
+		  state,  <!-- 当前状态 -->
+		  priority,  <!-- 优先级 -->
+		  severity,  <!-- 严重程度 -->
+		  bug_addr,  <!-- bug位置(问题类别) -->
+		  rate,  <!-- 出现频率 -->
+		  source,  <!-- 来源方 -->
+		  find_time,  <!-- 发现时间 -->
+		  bug_type,  <!-- 类型(是否缺陷) -->
+		  create_name,  <!-- 新增人 -->
+		  create_time,  <!-- 新增时间 -->
+		  update_name, <!-- 修改人 -->
+		  update_time,  <!-- 修改时间 -->
+		  close_name,  <!-- 问题关闭人 -->
+		  close_time,  <!-- 关闭时间 -->
+		  final_deal_man,  <!-- 问题关闭人 -->
+		  final_deal_time,  <!-- 关闭时间 -->
+		  standard_id,  <!-- 测试用例id -->
+		  find_name,  <!-- 发现人 -->
+		  deal_man,  <!-- 当前处置人 -->
+		  version_id,  <!-- 版本号id -->
+		  code_version_id,  <!-- 代码版本号id -->
+		  test_version_id,   <!-- 测试版本号id -->
+		  plan_wastage,  <!-- 计划消耗天数 -->
+		  real_wastage,  <!-- 实际消耗天数 -->
+		  deal_time   <!-- 处理时间 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  qa_bug_manage.bug_id,  <!-- 缺陷ID -->
+		  qa_bug_manage.log_id,  <!-- 消息记录ID -->
+		  qa_bug_manage.bug_code,  <!-- 缺陷编码 -->
+		  qa_bug_manage.relate_bug_code, <!-- 相关缺陷编码 -->
+		  qa_bug_manage.demand_id,  <!-- 需求ID -->
+		  qa_bug_manage.proj_id,  <!-- 项目ID -->
+		  qa_bug_manage.stand_id,  <!-- 模块ID -->
+		  qa_bug_manage.bug_name,  <!-- 缺陷名称 -->
+		  qa_bug_manage.bug_detail,  <!-- 缺陷详情 -->
+		  qa_bug_manage.state,  <!-- 当前状态 -->
+		  qa_bug_manage.priority,  <!-- 优先级 -->
+		  qa_bug_manage.severity,  <!-- 严重程度 -->
+		  qa_bug_manage.bug_addr,  <!-- bug位置(问题类别) -->
+		  qa_bug_manage.rate,  <!-- 出现频率 -->
+		  qa_bug_manage.source,  <!-- 来源方 -->
+		  qa_bug_manage.find_time,  <!-- 发现时间 -->
+		  qa_bug_manage.bug_type,  <!-- 类型(是否缺陷) -->
+		  qa_bug_manage.create_name,  <!-- 新增人 -->
+		  qa_bug_manage.create_time,  <!-- 新增时间 -->
+		  qa_bug_manage.update_name,  <!-- 修改人 -->
+		  qa_bug_manage.update_time,  <!-- 修改时间 -->
+		  qa_bug_manage.close_name,  <!-- 问题关闭人 -->
+		  qa_bug_manage.close_time,  <!-- 关闭时间 -->
+		  qa_bug_manage.final_deal_man,  <!-- 问题关闭人 -->
+		  qa_bug_manage.final_deal_time,  <!-- 关闭时间 -->
+		  qa_bug_manage.standard_id,  <!-- 测试用例id -->
+		  qa_bug_manage.find_name,  <!-- 发现人 -->
+		  qa_bug_manage.deal_man,  <!-- 当前处置人 -->
+		  qa_bug_manage.version_id,  <!-- 版本号id -->
+		  qa_bug_manage.code_version_id,  <!-- 代码版本号id -->
+		  qa_bug_manage.test_version_id,  <!-- 测试版本号 -->
+		  qa_bug_manage.plan_wastage,  <!-- 计划消耗天数 -->
+		  qa_bug_manage.real_wastage,  <!-- 实际消耗天数 -->
+		  qa_bug_manage.deal_time <!-- 处理时间 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	    <if test="bug_id != null and bug_id != ''">
+		      AND bug_id = #{bug_id}  <!-- 缺陷ID -->
+		</if>
+	    <if test="log_id != null and log_id != ''">
+		      AND log_id = #{log_id}  <!-- 消息记录ID -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+		      AND bug_code = #{bug_code}  <!-- 缺陷编码 -->
+		</if>
+		<if test="relate_bug_code != null and relate_bug_code != ''">
+			  AND relate_bug_code = #{relate_bug_code} <!-- 相关缺陷编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+		      AND demand_id = #{demand_id}  <!-- 需求ID -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="stand_id != null and stand_id != ''">
+		      AND stand_id = #{stand_id}  <!-- 模块ID -->
+		</if>
+	    <if test="bug_name != null and bug_name != ''">
+		      AND bug_name = #{bug_name}  <!-- 缺陷名称 -->
+		</if>
+	    <if test="bug_detail != null and bug_detail != ''">
+		      AND bug_detail = #{bug_detail}  <!-- 缺陷详情 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 当前状态 -->
+		</if>
+	   <if test="priority != null ">
+		      AND priority = #{priority}  <!-- 优先级 -->
+		</if>
+	   <if test="severity != null ">
+		      AND severity = #{severity}  <!-- 严重程度 -->
+		</if>
+	   <if test="bug_addr != null ">
+		      AND bug_addr = #{bug_addr}  <!-- bug位置(问题类别) -->
+		</if>
+	   <if test="rate != null ">
+		      AND rate = #{rate}  <!-- 出现频率 -->
+		</if>
+	   <if test="source != null ">
+		      AND source = #{source}  <!-- 来源方 -->
+		</if>
+	    <if test="find_time != null and find_time != ''">
+		      AND find_time = #{find_time}  <!-- 发现时间 -->
+		</if>
+	    <if test="bug_type != null and bug_type != ''">
+		      AND bug_type = #{bug_type}  <!-- 类型(是否缺陷) -->
+		</if>
+	    <if test="create_name != null and create_name != ''">
+		      AND create_name = #{create_name}  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 新增时间 -->
+		</if>
+		 <if test="update_name != null and update_name != ''">
+		      AND update_name = #{update_name}  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 修改时间 -->
+		</if>
+	    <if test="close_name != null and close_name != ''">
+		      AND close_name = #{close_name}  <!-- 问题关闭人 -->
+		</if>
+	    <if test="close_time != null and close_time != ''">
+		      AND close_time = #{close_time}  <!-- 关闭时间 -->
+		</if>
+		<if test="deal_time != null and deal_time != ''">
+		      and deal_time = '${deal_time}'  <!-- 处理时间-->
+		</if>
+		<if test="final_deal_man != null and final_deal_man != ''">
+		      AND final_deal_man = #{final_deal_man}  <!-- 问题关闭人 -->
+		</if>
+	    <if test="final_deal_time != null and final_deal_time != ''">
+		      AND final_deal_time = #{final_deal_time}  <!-- 关闭时间 -->
+		</if>
+		<if test="standard_id != null and standard_id != ''">
+		      AND standard_id = #{standard_id}  <!-- 测试用例id -->
+		</if>
+	    <if test="find_name != null and find_name != ''">
+		      AND find_name = #{find_name}  <!-- 发现人 -->
+		</if>
+	    <if test="deal_man != null and deal_man != ''">
+		      AND deal_man = #{deal_man}  <!-- 当前处置人 -->
+		</if>
+		<if test="version_id != null and version_id != ''">
+		      AND version_id = #{version_id}  <!-- 版本号id -->
+		</if>
+	    <if test="code_version_id != null and code_version_id != ''">
+		      AND code_version_id = #{code_version_id}  <!-- 代码版本号id -->
+		</if>
+		<if test="test_version_id != null and test_version_id != ''">
+		      AND test_version_id = #{test_version_id}  <!-- 测试版本号id -->
+		</if>
+		<if test="plan_wastage != null ">
+		      AND plan_wastage = #{plan_wastage}  <!-- 计划消耗天数 -->
+		</if>
+		<if test="real_wastage != null ">
+		      AND real_wastage = #{real_wastage}  <!-- 实际消耗天数 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="bug_id != null and bug_id != ''">
+		      AND bug_id like '${bug_id}%'  <!-- 缺陷ID -->
+		</if>
+	    <if test="log_id != null and log_id != ''">
+		      AND log_id like '${log_id}%'  <!-- 消息记录ID -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+		      AND bug_code like '${bug_code}%'  <!-- 缺陷编码 -->
+		</if>
+		<if test="relate_bug_code != null and relate_bug_code != ''">
+			  AND relate_bug_code like '${relate_bug_code}%'
+		</if> 
+		<if test="demand_id != null and demand_id != ''">
+		      AND demand_id like '${demand_id}%'  <!-- 需求ID -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id like '${proj_id}%'  <!-- 项目ID -->
+		</if>
+	    <if test="stand_id != null and stand_id != ''">
+		      AND stand_id like '${stand_id}%'  <!-- 模块ID -->
+		</if>
+	    <if test="bug_name != null and bug_name != ''">
+		      AND bug_name like '${bug_name}%'  <!-- 缺陷名称 -->
+		</if>
+	    <if test="bug_detail != null and bug_detail != ''">
+		      AND bug_detail like '${bug_detail}%'  <!-- 缺陷详情 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 当前状态 -->
+		</if>
+	    <if test="find_time != null and find_time != ''">
+		      AND find_time like '${find_time}%'  <!-- 发现时间 -->
+		</if>
+	    <if test="bug_type != null and bug_type != ''">
+		      AND bug_type like '${bug_type}%'  <!-- 类型(是否缺陷) -->
+		</if>
+	    <if test="create_name != null and create_name != ''">
+		      AND create_name like '${create_name}%'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+		      AND update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="close_name != null and close_name != ''">
+		      AND close_name like '${close_name}%'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="close_time != null and close_time != ''">
+		      AND close_time like '${close_time}%'  <!-- 关闭时间 -->
+		</if>
+		<if test="deal_time != null and deal_time != ''">
+		      AND deal_time like '${deal_time}%'  <!-- 处理时间-->
+		</if>
+		<if test="final_deal_man != null and final_deal_man != ''">
+		      AND final_deal_man like '${final_deal_man}%'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="final_deal_time != null and final_deal_time != ''">
+		      AND final_deal_time like '${final_deal_time}%'  <!-- 关闭时间 -->
+		</if>
+		<if test="standard_id != null and standard_id != ''">
+		      AND standard_id like '${standard_id}%'  <!-- 测试用例id -->
+		</if>
+	    <if test="find_name != null and find_name != ''">
+		      AND find_name like '${find_name}%'  <!-- 发现人 -->
+		</if>
+	    <if test="deal_man != null and deal_man != ''">
+		      AND deal_man like '${deal_man}%'  <!-- 当前处置人 -->
+		</if>
+		<if test="version_id != null and version_id != ''">
+		      AND version_id like '${version_id}%'  <!-- 版本号id -->
+		</if>
+	    <if test="code_version_id != null and code_version_id != ''">
+		      AND code_version_id like '${code_version_id}%'  <!-- 代码版本号id -->
+		</if>
+		<if test="test_version_id != null and test_version_id != ''">
+		      AND test_version_id like '${test_version_id}%'  <!-- 测试版本号id -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="bug_id != null and bug_id != ''">
+		      Or bug_id like '${bug_id}%'  <!-- 缺陷ID -->
+		</if>
+	    <if test="log_id != null and log_id != ''">
+		      Or log_id like '${log_id}%'  <!-- 消息记录ID -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+		      and bug_code like '${bug_code}%'  <!-- 缺陷编码 -->
+		</if>
+		<if test="relate_bug_code != null and relate_bug_code != ''">
+		      Or relate_bug_code like '${relate_bug_code}%'  <!-- 相关缺陷编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+		      Or demand_id like '${demand_id}%'  <!-- 需求ID -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      Or proj_id = '${proj_id}'  <!-- 项目ID -->
+		</if>
+	    <if test="stand_id != null and stand_id != ''">
+		      and stand_id = '${stand_id}'  <!-- 模块ID -->
+		</if>
+	    <if test="bug_name != null and bug_name != ''">
+		      Or bug_name like '${bug_name}%'  <!-- 缺陷名称 -->
+		</if>
+	    <if test="bug_detail != null and bug_detail != ''">
+		      Or bug_detail like '${bug_detail}%'  <!-- 缺陷详情 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      and state = '${state}'  <!-- 当前状态 -->
+		</if>
+	    <if test="find_time != null and find_time != ''">
+		      Or find_time like '${find_time}%'  <!-- 发现时间 -->
+		</if>
+	    <if test="bug_type != null and bug_type != ''">
+		      Or bug_type like '${bug_type}%'  <!-- 类型(是否缺陷) -->
+		</if>
+	    <if test="create_name != null and create_name != ''">
+		      and create_name = '${create_name}'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+		      Or update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="close_name != null and close_name != ''">
+		      and close_name = '${close_name}'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="deal_time != null and deal_time != ''">
+		      Or deal_time like '${deal_time}%'  <!-- 关闭时间 -->
+		</if>
+		<if test="close_time != null and close_time != ''">
+		      Or close_time like '${close_time}%'  <!-- 关闭时间 -->
+		</if>
+		
+		<if test="final_deal_man != null and final_deal_man != ''">
+		      and final_deal_man = '${final_deal_man}'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="final_deal_time != null and final_deal_time != ''">
+		      Or final_deal_time like '${final_deal_time}%'  <!-- 关闭时间 -->
+		</if>
+		 <if test="standard_id != null and standard_id != ''">
+		      Or standard_id like '${standard_id}%'  <!-- 测试用例id -->
+		</if>
+	    <if test="find_name != null and find_name != ''">
+		      Or find_name like '${find_name}%'   <!-- 发现人 -->
+		</if>
+	    <if test="deal_man != null and deal_man != ''">
+		      and deal_man = '${deal_man}'  <!-- 当前处置人 -->
+		</if>
+		<if test="version_id != null and version_id != ''">
+		      Or version_id like '${version_id}%'  <!-- 版本号id -->
+		</if>
+	    <if test="code_version_id != null and code_version_id != ''">
+		      Or code_version_id like '${code_version_id}%'  <!-- 代码版本号id -->
+		</if>
+		<if test="test_version_id != null and test_version_id != ''">
+		      Or test_version_id like '${test_version_id}%'  <!-- 测试版本号id -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	</sql>
+	 <!-- 内容信息列表 -->
+	<select id="getNewsDate" resultType="Dto" parameterType="Dto" >
+			SELECT *
+			FROM
+			qa_bug_news
+			<where>	
+			<if test="bug_id != null and bug_id != ''">
+		       AND bug_id = #{bug_id}  <!-- 内容code-->
+			</if>
+			</where>
+			order by create_time desc
+	</select>
+	<!-- 当前项目下的项目版本号下拉框 -->
+	<select id="listComboBoxVersionId" resultType="Dto" >
+		SELECT version_id AS value,version_number AS display 
+		FROM bs_proj_version 
+		<where>
+			AND state = 1
+			<if test="proj_id != null and proj_id != ''">
+				and proj_id = ${proj_id}
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+	
+	<!-- 根据项目ID查询开发经理信息 -->
+	<select id="queryDevelopManageByProjId" resultType="Dto" >
+		SELECT 
+			team_id,
+			trp_code,
+			proj_id,
+			team_user_id,
+			join_date,
+			jp_desc,
+			state,
+			develop_task_user,
+			quit_date,
+			au.name as team_user_name
+		FROM 
+			bs_proj_teams 
+			LEFT JOIN aos_user au ON au.id = bs_proj_teams.team_user_id
+		WHERE 
+			TRP_CODE = 10 
+			and state = 1 
+			and proj_id = #{proj_id}
+	</select>
+	
+	<!-- 当前项目和版本号下的代码版本号下拉框 -->
+	<select id="listComboBoxCodeVersionId" resultType="Dto">
+		SELECT code_version_id AS value,code_version_number AS display 
+		FROM bs_proj_code_version 
+		<where>
+			test_version_id = #{test_version_id}
+			AND state = 1
+			<if test="proj_id != null and proj_id != ''">
+				AND proj_id = ${proj_id}
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+	<!-- 当前项目、项目版本号和代码版本号下的测试版本号下拉框 -->
+	<select id="listComboBoxTestVersionId" resultType="Dto">
+		SELECT test_version_id AS value,test_version_number AS display
+		FROM bs_proj_test_version
+		<where>
+			version_id = #{version_id}
+			AND state = 1
+			<if test="proj_id != null and proj_id != ''">
+				and proj_id = ${proj_id}
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+	<!-- 查询界面测试版本号下拉框 -->
+	<select id="listSearchTestVersionId" resultType="Dto">
+		SELECT test_version_id AS value,test_version_number AS display
+		FROM bs_proj_test_version
+		<where>
+			AND state = 1
+			<if test="proj_id != null and proj_id != ''">
+				and proj_id = ${proj_id}
+			</if>
+		</where>
+	</select>
+	<!-- 处理人下拉框 -->
+	<select id="listComboBoxDealman" resultType="Dto">
+		select id as value,`name`as display from aos_user 
+		where exists (
+		select 1 from bs_proj_teams 
+ 		where aos_user.id = bs_proj_teams.TEAM_USER_ID 
+   		and state = '1'
+   		<if test="proj_id != null">
+   			and bs_proj_teams.PROJ_ID = #{proj_id}
+   		</if>
+		)
+	</select>
+	<!-- 发现人下拉框 -->
+	<select id="listComboBoxFindname" resultType="Dto">
+		select name as value,`name`as display from aos_user 
+		where exists (
+		select 1 from bs_proj_teams 
+ 		where aos_user.id = bs_proj_teams.TEAM_USER_ID 
+   		and state = '1'
+   		<if test="proj_id != null">
+   			and bs_proj_teams.PROJ_ID = #{proj_id}
+   		</if>
+   		)
+	</select>
+	
+	<select id="listBugId" resultType="Dto">
+		SELECT 
+			* 
+		FROM 
+			qa_bug_manage 
+		WHERE 
+			bug_id = #{id}
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集  分页查询缺陷管理-->
+	<select id="bugSearch" resultType="Dto">
+		SELECT x.*,
+			   u.name as bug_update_name
+		  from 
+		  (
+			 SELECT a.*,
+					u1.NAME AS deal_man_name,
+				    u2.NAME AS bug_create_name,
+				    a.update_name AS update_id,
+		            re.DM_NAME,
+				    re.DM_CODE,
+				    re.DM_PARENT_CODE,
+				    vr.version_number AS version_number,
+		            cvr.code_version_number AS code_version_number,
+		            tvr.test_version_number AS test_version_number,
+		            te.standard_name
+		       from qa_bug_manage a 
+		       LEFT JOIN qa_test_example te ON te.standard_id = a.standard_id
+		       LEFT JOIN re_module_divide re ON a.proj_id = re.PROJ_ID and a.stand_id = re.DM_CODE,
+		      (SELECT max(log_id) log_id, proj_id,bug_id, create_time
+		         from qa_bug_news 
+		        where proj_id = '${proj_id}'
+		        group by proj_id,bug_id 
+		       ) b,
+		      aos_user u1,aos_user u2,bs_proj_version vr,bs_proj_code_version cvr,bs_proj_test_version tvr
+		<where>
+			    a.proj_id = '${proj_id}'
+			and b.proj_id = a.proj_id
+			AND b.bug_id = a.bug_id
+			and a.deal_man = u1.id
+			and a.create_name = u2.id
+			and a.proj_id = vr.proj_id
+			and a.version_id = vr.version_id
+			and a.proj_id = cvr.proj_id
+			and a.code_version_id = cvr.code_version_id
+			and a.test_version_id = tvr.test_version_id
+		<if test="priority != null and priority != ''">
+			  and a.priority in 
+			  <foreach collection="priority" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="final_deal_begin_time !=null and final_deal_begin_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d') &gt;= #{final_deal_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="final_deal_end_time !=null and final_deal_end_time != ''">
+			and DATE_FORMAT(a.final_deal_time,'%Y-%m-%d') &lt;= #{final_deal_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="bug_states != null and bug_states != ''">
+			and a.state in 
+			<foreach collection="bug_states" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="severitys != null and severitys != ''">
+			and a.severity in 
+			<foreach collection="severitys" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_addrs != null and bug_addrs != ''">
+			and a.bug_addr in 
+			<foreach collection="bug_addrs" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_types != null and bug_types != ''">
+			and a.bug_type in 
+			<foreach collection="bug_types" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		<if test="bug_state != null and bug_state != ''">
+		      AND a.state = #{bug_state,jdbcType=VARCHAR}  
+		</if>
+		<if test="bug_addr != null and bug_addr != ''">
+		      AND bug_addr = #{bug_addr,jdbcType=VARCHAR}  bug位置(问题类别)
+		</if>
+		<if test="query_values != null and query_values != ''">
+			and (a.bug_code like '%${query_values}%' or a.bug_name like '%${query_values}%')
+		</if>
+		<!-- <if test = "severity != null and severity != ''">
+			and a.severity = #{severity, jdbcType=VARCHAR}
+		</if> -->
+		<!-- <if test="update_begin_time !=null and update_begin_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &gt;= #{update_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="update_end_time !=null and update_end_time != ''">
+			and DATE_FORMAT(a.update_time,'%Y-%m-%d') &lt;= #{update_end_time, jdbcType=VARCHAR}
+		</if> -->
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(a.find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="dealed_state != null and dealed_state != '' and refused_state != null and refused_state != ''">
+		   and  a.state in('${dealed_state}' ,'${refused_state}' )  <!-- 待处理缺陷（已解决 1001、拒绝 1004） -->
+		</if>
+		<if test="unclose_state != null and unclose_state != ''">
+		   and   a.state != '${unclose_state}'  <!-- 项目ID -->
+		</if>
+		<if test="close_state != null and close_state != ''">
+		   and   a.state = '${close_state}'  <!-- 项目ID -->
+		</if>
+		
+		<if test="proj_id != null and proj_id != ''">
+		   and   a.proj_id = '${proj_id}'  <!-- 项目ID -->
+		</if>
+		<if test="bug_id != null and bug_id != ''">
+		      and a.bug_id like '${bug_id}%'  <!-- 缺陷ID -->
+		</if>
+	    <if test="log_id != null and log_id != ''">
+		      and a.log_id like '${log_id}%'  <!-- 消息记录ID -->
+		</if>
+		<if test="bug_code != null and bug_code != ''">
+		      and a.bug_code like '%${bug_code}%'  <!-- 缺陷编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+		      and a.demand_id like '${demand_id}%'  <!-- 需求ID -->
+		</if>
+	    
+	    <if test="stand_id != null and stand_id != ''">
+		      and a.stand_id like '${stand_id}%'  <!-- 模块ID -->
+		</if>
+	    <if test="bug_name != null and bug_name != ''">
+		      and a.bug_name like '%${bug_name}%'  <!-- 缺陷名称 -->
+		</if>
+	    <if test="bug_detail != null and bug_detail != ''">
+		      and a.bug_detail like '${bug_detail}%'  <!-- 缺陷详情 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      and a.state = '${state}'  <!-- 当前状态 -->
+		</if>
+	    <if test="find_time != null and find_time != ''">
+		      and a.find_time like '${find_time}%'  <!-- 发现时间 -->
+		</if>
+	    <!-- <if test="bug_type != null and bug_type != ''">
+		      and a.bug_type like '${bug_type}%'  类型(是否缺陷)
+		</if> -->
+	    <if test="create_name != null and create_name != ''">
+		      and a.create_name = '${create_name}'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      and a.create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+		      and a.update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      and a.update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	    <if test="close_name != null and close_name != ''">
+		      and a.close_name = '${close_name}'  <!-- 问题关闭人 -->
+		</if>
+	    <if test="close_time != null and close_time != ''">
+		      and a.close_time like '${close_time}%'  <!-- 关闭时间 -->
+		</if>
+		 <if test="standard_id != null and standard_id != ''">
+		      and a.standard_id like '${standard_id}%'  <!-- 测试用例id -->
+		</if>
+	    <if test="find_name != null and find_name != ''">
+		      and a.find_name = '${find_name}'   <!-- 发现人 -->
+		</if>
+	    <if test="condition == 2"><!-- 1 代表并 ，2 代表或 -->
+			and (a.deal_man = '${deal_man}' or a.final_deal_man = '${final_deal_man}')
+		</if>
+		<if test="condition == 1">
+			and (a.deal_man = '${deal_man}' and a.final_deal_man = '${final_deal_man}'
+			)
+		</if>
+	    <if test="condition == null or condition == ''">
+		    <if test="deal_man != null and deal_man != ''">
+			      and a.deal_man = '${deal_man}'  <!-- 当前处置人 -->
+			</if>
+			<if test="final_deal_man != null and final_deal_man != ''">
+				  and a.final_deal_man = '${final_deal_man}'
+			</if>
+		</if>
+		<if test="version_id != null and version_id != ''">
+		      and a.version_id = '${version_id}'  <!-- 版本号id -->
+		</if> 
+		<if test="code_version_id != null and code_version_id != ''">
+		      and a.code_version_id = '${code_version_id}'  <!-- 代码版本号id-->
+		</if>
+		<if test="test_version_id != null and test_version_id != ''">
+		      and a.test_version_id = '${test_version_id}'  <!-- 代码版本号id-->
+		</if>
+		</where>
+		) x
+ 		LEFT JOIN aos_user u on x.update_id = u.id
+		ORDER BY x.create_time desc		
+	</select>
+	
+	<!-- 角色发布功能授权 -->		 
+	<select  id="impowerIssue" resultType="Integer" parameterType="Dto" >
+			SELECT
+				count(*)
+			FROM
+				bs_proj_teams
+			WHERE
+				trp_code in (select trp_code from aos_role_type_permission where permission_code = 'update_bug_plan_wastage')
+			<if test=" PROJ_ID !=null " >
+	             and   PROJ_ID  = #{PROJ_ID}
+	        </if> 
+			<if test=" TEAM_USER_ID !=null " >
+	             and   TEAM_USER_ID  = #{TEAM_USER_ID}
+	        </if> 
+	</select>
+	
+	<select id="bugRelationPage" resultType="Dto">
+		SELECT x.*,
+			   u.name as bug_update_name,
+			   bpc.PROJ_NAME proj_name
+		  from 
+		  (
+			 SELECT a.*,
+					u1.NAME AS deal_man_name,
+				    u2.NAME AS bug_create_name,
+				    a.update_name AS update_id,
+		            re.DM_NAME,
+				    re.DM_CODE,
+				    re.DM_PARENT_CODE,
+				    vr.version_number AS version_number,
+		            cvr.code_version_number AS code_version_number,
+		            tvr.test_version_number AS test_version_number,
+		            te.standard_name
+		       from qa_bug_manage a 
+		       LEFT JOIN qa_test_example te ON te.standard_id = a.standard_id
+		       LEFT JOIN re_module_divide re ON a.proj_id = re.PROJ_ID and a.stand_id = re.DM_CODE,
+		      aos_user u1,aos_user u2,bs_proj_version vr,bs_proj_code_version cvr,bs_proj_test_version tvr
+		<where>
+				a.deal_man = u1.id
+			and a.create_name = u2.id
+			and a.proj_id = vr.proj_id
+			and a.version_id = vr.version_id
+			and a.proj_id = cvr.proj_id
+			and a.code_version_id = cvr.code_version_id
+			and a.test_version_id = tvr.test_version_id
+		    <if test="proj_id != null and proj_id != ''">
+        		AND	a.proj_id = '${proj_id}'
+        	</if>
+			<if test="query_values != null and query_values != ''">
+				and (a.bug_code like '%${query_values}%' or a.bug_name like '%${query_values}%')
+			</if>
+		</where>
+		) x
+ 		LEFT JOIN aos_user u on x.update_id = u.id
+ 		LEFT JOIN bs_proj_commons bpc ON bpc.proj_id = x.proj_id
+		ORDER BY x.create_time desc	
+	</select>
+</mapper>

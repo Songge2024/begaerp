@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ModuleDiviDao">
+
+	<!-- 判断测试编码是否已存在 -->
+	<select id="selectTestCode" resultType="int">
+		SELECT COUNT(DM_ID) FROM `re_module_divide` WHERE PROJ_ID = #{proj_id} and TEST_CODE = #{test_code} and STATE != -1
+	</select>
+	
+	<select id="selectTestCodeUpdate" resultType="int">
+		SELECT COUNT(DM_ID) FROM `re_module_divide` WHERE DM_ID <![CDATA[ <> ]]> #{dm_id} and PROJ_ID = #{proj_id} and TEST_CODE = #{test_code} and STATE != -1
+	</select>
+	
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="listModuleDivideComboBox" resultType="Dto">
+		SELECT
+		rmd.`DM_NAME` AS display,
+		rmd.`DM_CODE` AS value
+		FROM
+		`re_module_divide` rmd
+		where rmd.state = '1'
+		<if test="proj_id != null and proj_id != ''">
+			and  rmd.`PROJ_ID` = ${proj_id}
+		</if>
+		GROUP BY VALUE
+	</select>
+	
+	<select id="getMaxCascadeId" resultType="String" parameterType="Dto">
+	     SELECT MAX(DM_CODE) AS DM_CODE FROM re_module_divide WHERE DM_PARENT_CODE = #{DM_PARENT_CODE} AND proj_id=#{proj_id} and state != -1
+	</select>
+	
+	<select id="listModuleDivideComboBox2" resultType="Dto">
+		SELECT
+		rmd.`DM_NAME` AS display,
+		rmd.`DM_CODE` AS value
+		FROM
+		`re_module_divide` rmd
+		where rmd.state = '1'
+		and rmd.DM_IS_LEAF ='0'
+		<if test="proj_id != null and proj_id != ''">
+			and  rmd.`PROJ_ID` = ${proj_id}
+		</if>
+		GROUP BY VALUE
+	</select>
+	
+	
+
+	<!-- 查询模块缺陷的总数、完成的、未完成的 -->
+	<select id="listDefectNumber" resultType="Dto">
+		SELECT 
+		  rmd.`DM_NAME`,
+		  rmd.`DM_CODE`,
+		  (SELECT 
+		    COUNT(qbm.stand_id) AS number 
+		  FROM
+		    `qa_bug_manage` qbm 
+		  WHERE qbm.`proj_id` = ${proj_id} 
+		    AND qbm.`stand_id` LIKE CONCAT(rmd.`DM_CODE`, '%') 
+		    AND rmd.`DM_IS_LEAF` = '0') AS total,
+		  (SELECT 
+		    COUNT(qbm.stand_id) AS number 
+		  FROM
+		    `qa_bug_manage` qbm 
+		  WHERE qbm.`proj_id` = ${proj_id}  
+		    AND qbm.`stand_id` LIKE CONCAT(rmd.`DM_CODE`, '%') 
+		    AND rmd.`DM_IS_LEAF` = '0' 
+		    AND qbm.`close_time` IS NULL) AS not_finished,
+		  (SELECT 
+		    COUNT(qbm.stand_id) AS number 
+		  FROM
+		    `qa_bug_manage` qbm 
+		  WHERE qbm.`proj_id` = ${proj_id}  
+		    AND qbm.`stand_id` LIKE CONCAT(rmd.`DM_CODE`, '%') 
+		    AND rmd.`DM_IS_LEAF` = '0' 
+		    AND qbm.`close_time` IS NOT NULL) AS completed 
+		FROM
+		  `re_module_divide` rmd 
+		WHERE rmd.`PROJ_ID` = ${proj_id}  
+		  AND rmd.`STATE` = '1' 
+		  AND rmd.`DM_IS_LEAF` = '0' 
+	</select>
+
+	<!-- 查询项目团队下人员名称 -->
+	<select id="listPendingTask" resultType="Dto">
+		SELECT
+		au.name,
+		bpt.`TEAM_USER_ID`,
+		IFNULL(a.COUNT , 0) AS count
+		FROM
+		`aos_user` au ,
+		`bs_proj_teams` bpt
+		LEFT JOIN
+		(SELECT
+		COUNT(tt.`handler_user_id`) AS COUNT,
+		tt.`handler_user_id`,
+		tt.`proj_id`
+		FROM
+		`ta_task` tt
+		WHERE tt.`proj_id` = ${proj_id}
+		AND
+		tt.`real_end_time`
+		<if test="type == 0">
+			IS NULL
+		</if>
+		<if test="type == 1">
+			IS not NULL
+		</if>
+		GROUP BY tt.`handler_user_id` ) a
+		ON a.handler_user_id =
+		bpt.`TEAM_USER_ID`
+		WHERE bpt.`TEAM_USER_ID` = au.`id`
+		AND bpt.`PROJ_ID`
+		= ${proj_id}
+		AND bpt.`state` = '1'
+		ORDER BY COUNT
+	</select>
+
+	<!--查询项目的任务详情 -->
+
+	<select id="listProjectTaskDetails" resultType="Dto">
+		SELECT
+		IF(ad.`code`=1002,'已发布未接收',IF(ad.`code`=1003,'已接收未完成',IF(ad.`code`=1004,'已完成未关闭','已完成已关闭')))AS
+		name,
+		IFNULL(a.count, 0) AS value
+		FROM
+		`aos_dic` ad
+		LEFT JOIN
+		(SELECT
+		COUNT(tt.`state`) AS COUNT,
+		tt.`state`
+		FROM
+		`ta_task` tt
+		WHERE
+		tt.`proj_id` = ${proj_id}
+		AND tt.`state` BETWEEN 1002 AND 1005
+		GROUP BY
+		tt.`state`)a
+		ON a.state = ad.`code`
+		WHERE ad.`dic_key` = 'task_state'
+		AND ad.`code` BETWEEN 1002 AND 1005
+	</select>
+
+	<select id="listProcessFileUpload" resultType="Dto">
+		SELECT
+		IF(a.file_id IS NOT NULL,'1','0') AS value
+		FROM
+		`pr_process` pp
+		LEFT JOIN
+		(SELECT
+		ppfu.`process_id`,
+		ppfu.`file_id`
+		FROM
+		`pr_process_file_upload`
+		ppfu
+		GROUP BY process_id) a
+		ON a.process_id = pp.`process_id`
+		WHERE
+		pp.`proj_id` = ${proj_id}
+
+	</select>
+</mapper>

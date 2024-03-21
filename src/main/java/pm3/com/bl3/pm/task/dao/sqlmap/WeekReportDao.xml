@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ta_week_report[WeekReport]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-22 15:26:55 -->
+<mapper namespace="com.bl3.pm.task.dao.WeekReportDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="WeekReportPO">
+		INSERT INTO ta_week_report (
+		<if test="proj_name != null and proj_name != ''">
+	         proj_name, <!-- 项目名称-->
+		</if>
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 周报编码 -->
+		</if>
+		<if test="remarks != null and remarks != ''">
+	         remarks, <!-- 任务描述 -->
+		</if>
+		<if test="owner_id != null">
+	         owner_id, <!-- 责任人 -->
+		</if>
+		<if test="begin_date != null and begin_date != ''">
+	         begin_date, <!-- 计划开始时间 -->
+		</if>
+		<if test="end_date != null and end_date != ''">
+	         end_date, <!-- 计划结束时间 -->
+		</if>
+		<if test="finish_time != null and finish_time != ''">
+	         finish_time, <!-- 实际完成实际 -->
+		</if>
+		<if test="finish_cond != null and finish_cond != ''">
+	         finish_cond, <!-- 完成情况 -->
+		</if>
+		<if test="descc != null and descc != ''">
+	         descc, <!-- 任务偏差分析及解决措施 -->
+		</if>
+		<if test="proj_id != null and proj_id != ''">
+	         proj_id, <!-- 项目编码 -->
+		</if>
+		<if test="week_name != null and week_name != ''">
+	         week_name, <!-- 周报名称 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 周报状态 -->
+		</if>
+		<if test="task_plan_num != null">
+	         task_plan_num, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="solve != null and solve != ''">
+	         solve, <!-- 目前情况说明 -->
+		</if>
+		<if test="description != null and description != ''">
+	         description, <!-- 对外情况说明 -->
+		</if>
+	          id
+		)VALUES(
+		<if test="proj_name != null and proj_name != ''">
+	          #{proj_name, jdbcType=VARCHAR}, <!-- 项目名称-->
+	    </if>
+		<if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 周报编码 -->
+	    </if>
+		<if test="remarks != null and remarks != ''">
+	          #{remarks, jdbcType=VARCHAR}, <!-- 任务描述 -->
+	    </if>
+		<if test="owner_id != null">
+	          #{owner_id, jdbcType=VARCHAR}, <!-- 责任人 -->
+	    </if>
+		<if test="begin_date != null and begin_date != ''">
+	          #{begin_date, jdbcType=VARCHAR}, <!-- 计划开始时间 -->
+	    </if>
+		<if test="end_date != null and end_date != ''">
+	          #{end_date, jdbcType=VARCHAR}, <!-- 计划结束时间 -->
+	    </if>
+		<if test="finish_time != null and finish_time != ''">
+	          #{finish_time, jdbcType=VARCHAR}, <!-- 实际完成实际 -->
+	    </if>
+		<if test="finish_cond != null and finish_cond != ''">
+	          #{finish_cond, jdbcType=VARCHAR}, <!-- 完成情况 -->
+	    </if>
+		<if test="descc != null and descc != ''">
+	          #{descc, jdbcType=VARCHAR}, <!-- 任务偏差分析及解决措施 -->
+	    </if>
+		<if test="proj_id != null and proj_id != ''">
+	          #{proj_id, jdbcType=VARCHAR}, <!-- 项目编码 -->
+	    </if>
+		<if test="week_name != null and week_name != ''">
+	          #{week_name, jdbcType=VARCHAR}, <!-- 周报名称 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 周报状态 -->
+	    </if>
+		<if test="task_plan_num != null">
+	          #{task_plan_num, jdbcType=VARCHAR}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="solve != null and solve != ''">
+	          #{solve, jdbcType=VARCHAR}, <!-- 目前情况说明 -->
+	    </if>
+	    <if test="description != null and description != ''">
+	          #{description, jdbcType=VARCHAR}, <!-- 目前情况说明 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="id" parameterType="WeekReportPO">
+		INSERT INTO ta_week_report (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{id, jdbcType=INTEGER},  <!-- 周报ID -->
+		    #{proj_name, jdbcType=VARCHAR},  <!-- 项目名称-->
+		    #{test_code, jdbcType=VARCHAR},  <!-- 周报编码 -->
+		    #{remarks, jdbcType=VARCHAR},  <!-- 任务描述 -->
+		    #{owner_id, jdbcType=VARCHAR},  <!-- 责任人 -->
+		    #{begin_date, jdbcType=VARCHAR},  <!-- 计划开始时间 -->
+		    #{end_date, jdbcType=VARCHAR},  <!-- 计划结束时间 -->
+		    #{finish_time, jdbcType=VARCHAR},  <!-- 实际完成实际 -->
+		    #{finish_cond, jdbcType=VARCHAR},  <!-- 完成情况 -->
+		    #{descc, jdbcType=VARCHAR},  <!-- 任务偏差分析及解决措施 -->
+		    #{proj_id, jdbcType=VARCHAR},  <!-- 项目编码 -->
+		    #{week_name, jdbcType=VARCHAR},  <!-- 周报名称 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 周报状态 -->
+		    #{task_plan_num, jdbcType=VARCHAR},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{solve, jdbcType=VARCHAR}  <!-- 目前情况说明 -->
+		     #{description, jdbcType=VARCHAR}  <!-- 对外情况说明 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="WeekReportPO">
+		UPDATE ta_week_report
+		<set>
+			<if test="owner_id != null">
+		          owner_id = #{owner_id, jdbcType=VARCHAR},  <!-- 责任人id -->
+			</if>
+			<if test="owner_name != null">
+		          owner_name = #{owner_name, jdbcType=VARCHAR},  <!-- 责任人 -->
+			</if>
+			<if test="id != null">
+		          id = #{id, jdbcType=INTEGER},  <!-- 周报ID -->
+			</if>
+			<if test="proj_name != null">
+		          proj_name = #{proj_name, jdbcType=VARCHAR},  <!-- 项目名称 -->
+			</if>
+			<if test="test_code != null">
+		          test_code = #{test_code, jdbcType=VARCHAR},  <!-- 周报编码 -->
+			</if>
+			<if test="remarks != null">
+		          remarks = #{remarks, jdbcType=VARCHAR},  <!-- 任务描述 -->
+			</if>
+		
+			<if test="begin_date != null">
+		          begin_date = #{begin_date, jdbcType=VARCHAR},  <!-- 计划开始时间 -->
+			</if>
+			<if test="end_date != null">
+		          end_date = #{end_date, jdbcType=VARCHAR},  <!-- 计划结束时间 -->
+			</if>
+			<if test="finish_time != null">
+		          finish_time = #{finish_time, jdbcType=VARCHAR},  <!-- 实际完成实际 -->
+			</if>
+			<if test="finish_cond != null">
+		          finish_cond = #{finish_cond, jdbcType=VARCHAR},  <!-- 完成情况 -->
+			</if>
+			<if test="descc != null">
+		          descc = #{descc, jdbcType=VARCHAR},  <!-- 任务偏差分析及解决措施 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=VARCHAR},  <!-- 项目编码 -->
+			</if>
+			<if test="week_name != null">
+		          week_name = #{week_name, jdbcType=VARCHAR},  <!-- 周报名称 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 周报状态 -->
+			</if>
+			<if test="task_plan_num != null">
+		          task_plan_num = #{task_plan_num, jdbcType=VARCHAR},  <!-- 项目周 -->
+			</if>
+			<if test="week_class != null">
+		          week_class = #{week_class, jdbcType=VARCHAR},  <!-- 任务类型 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="solve != null">
+		          solve = #{solve, jdbcType=VARCHAR},  <!-- 目前情况说明 -->
+			</if>
+			<if test="description != null">
+		          description = #{description, jdbcType=VARCHAR},  <!-- 对外情况说明 -->
+			</if>
+		</set>
+		WHERE  id = #{id}
+	</update>
+
+	<!-- 根据主键修改下周工作计划 -->
+	<update id="updatePlan" parameterType="WeekReportPO">
+		UPDATE ta_week_report
+		<set>
+			<if test="owner_id != null">
+		          owner_id = #{owner_id, jdbcType=VARCHAR},  <!-- 责任人id -->
+			</if>
+			<if test="owner_name != null">
+		          owner_name = #{owner_name, jdbcType=VARCHAR},  <!-- 责任人 -->
+			</if>
+			<if test="id != null">
+		          id = #{id, jdbcType=INTEGER},  <!-- 周报ID -->
+			</if>
+			<if test="proj_name != null">
+		          proj_name = #{proj_name, jdbcType=VARCHAR},  <!-- 项目名称 -->
+			</if>
+			<if test="test_code != null">
+		          test_code = #{test_code, jdbcType=VARCHAR},  <!-- 周报编码 -->
+			</if>
+			<if test="remarks != null">
+		          remarks = #{remarks, jdbcType=VARCHAR},  <!-- 任务描述 -->
+			</if>
+			<if test="begin_date != null">
+		          begin_date = #{begin_date, jdbcType=VARCHAR},  <!-- 计划开始时间 -->
+			</if>
+			<if test="end_date != null">
+		          end_date = #{end_date, jdbcType=VARCHAR},  <!-- 计划结束时间 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=VARCHAR},  <!-- 项目编码 -->
+			</if>
+			<if test="week_name != null">
+		          week_name = #{week_name, jdbcType=VARCHAR},  <!-- 周报名称 -->
+			</if>
+			<if test="task_plan_num != null">
+		          task_plan_num = #{task_plan_num, jdbcType=VARCHAR},  <!-- 项目周 -->
+			</if>
+			<if test="week_class != null">
+		          week_class = #{week_class, jdbcType=VARCHAR},  <!-- 项目周 -->
+			</if>
+		</set>
+		WHERE  id = #{id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM ta_week_report WHERE  id = #{id}
+	</delete>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deletePlan">
+		DELETE FROM ta_week_report WHERE  id = #{id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="WeekReportPO">
+		SELECT
+		<include refid="column" />
+		FROM ta_week_report WHERE  id = #{id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="WeekReportPO">
+		SELECT
+		    <include refid="column" />
+		FROM ta_week_report
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="WeekReportPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_week_report
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="WeekReportPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_week_report
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="WeekReportPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_week_report
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="WeekReportPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_week_report
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="WeekReportPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_week_report
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="WeekReportPO" useCache="false">
+	    SELECT 
+	    t.*
+		FROM
+		  ta_week_report t
+		  LEFT JOIN 
+		  (SELECT a.id,a.name FROM`aos_user` a)us
+		  ON us.id=t.owner_id
+		<where>
+			 week_flag=1
+		      <if test="test_code != null and test_code != ''">
+		      AND test_code = #{test_code}  <!-- 周报编码 -->
+		</if>
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM ta_week_report
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM ta_week_report
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  id,  <!-- 周报ID -->
+		  proj_name,  <!-- 项目名称 -->
+		  test_code,  <!-- 周报编码 -->
+		  remarks,  <!-- 任务描述 -->
+		  owner_id,  <!-- 责任人 -->
+		  begin_date,  <!-- 计划开始时间 -->
+		  end_date,  <!-- 计划结束时间 -->
+		  finish_time,  <!-- 实际完成时间 -->
+		  finish_cond,  <!-- 完成情况 -->
+		  descc,  <!-- 任务偏差分析及解决措施 -->
+		  proj_id,  <!-- 项目编码 -->
+		  week_name,  <!-- 周报名称 -->
+		  state,  <!-- 周报状态 -->
+		  task_plan_num,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  create_time,  <!-- 创建时间 -->
+		  create_user_id,  <!-- 创建人 -->
+		  solve, <!-- 目前情况说明 -->
+		  description  <!-- 对外情况说明 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  ta_week_report.id,  <!-- 周报ID -->
+		  ta_week_report.proj_name,  <!-- 项目名称 -->
+		  ta_week_report.test_code,  <!-- 周报编码 -->
+		  ta_week_report.remarks,  <!-- 任务描述 -->
+		  ta_week_report.owner_id,  <!-- 责任人 -->
+		  ta_week_report.begin_date,  <!-- 计划开始时间 -->
+		  ta_week_report.end_date,  <!-- 计划结束时间 -->
+		  ta_week_report.finish_time,  <!-- 实际完成实际 -->
+		  ta_week_report.finish_cond,  <!-- 完成情况 -->
+		  ta_week_report.descc,  <!-- 任务偏差分析及解决措施 -->
+		  ta_week_report.proj_id,  <!-- 项目编码 -->
+		  ta_week_report.week_name,  <!-- 周报名称 -->
+		  ta_week_report.state,  <!-- 周报状态 -->
+		  ta_week_report.task_plan_num,  <!-- 更新人 -->
+		  ta_week_report.update_time,  <!-- 更新时间 -->
+		  ta_week_report.create_time,  <!-- 创建时间 -->
+		  ta_week_report.create_user_id,  <!-- 创建人 -->
+		  ta_week_report.solve,  <!-- 目前情况说明 -->
+		   ta_week_report.description  <!-- 对外情况说明 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="id != null ">
+		      AND id = #{id}  <!-- 周报ID -->
+		</if>
+		 <if test="proj_name != null and proj_name != ''">
+		      AND proj_name = #{proj_name}  <!-- 项目名称 -->
+		</if>
+	    <if test="test_code != null and test_code != ''">
+		      AND test_code = #{test_code}  <!-- 周报编码 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks = #{remarks}  <!-- 任务描述 -->
+		</if>
+	   <if test="owner_id != null ">
+		      AND owner_id = #{owner_id}  <!-- 责任人 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      AND begin_date = #{begin_date}  <!-- 计划开始时间 -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      AND end_date = #{end_date}  <!-- 计划结束时间 -->
+		</if>
+	    <if test="finish_time != null and finish_time != ''">
+		      AND finish_time = #{finish_time}  <!-- 实际完成实际 -->
+		</if>
+	    <if test="finish_cond != null and finish_cond != ''">
+		      AND finish_cond = #{finish_cond}  <!-- 完成情况 -->
+		</if>
+	    <if test="descc != null and descc != ''">
+		      AND descc = #{descc}  <!-- 任务偏差分析及解决措施 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id = #{proj_id}  <!-- 项目编码 -->
+		</if>
+	    <if test="week_name != null and week_name != ''">
+		      AND week_name = #{week_name}  <!-- 周报名称 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 周报状态 -->
+		</if>
+	   <if test="task_plan_num != null ">
+		      AND task_plan_num = #{task_plan_num}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="solve != null and solve != ''">
+		      AND solve = #{solve}  <!-- 目前情况说明 -->
+		</if>
+		<if test="description != null and description != ''">
+		      AND description = #{description}  <!-- 对外情况说明 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	  <if test="proj_name != null and proj_name != ''">
+		      AND proj_name like '${proj_name}%'  <!-- 项目名称 -->
+		</if>
+	    <if test="test_code != null and test_code != ''">
+		      AND test_code like '${test_code}%'  <!-- 周报编码 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks like '${remarks}%'  <!-- 任务描述 -->
+		</if>
+	    
+	    <if test="finish_time != null and finish_time != ''">
+		      AND finish_time like '${finish_time}%'  <!-- 实际完成实际 -->
+		</if>
+	    <if test="finish_cond != null and finish_cond != ''">
+		      AND finish_cond like '${finish_cond}%'  <!-- 完成情况 -->
+		</if>
+	    <if test="descc != null and descc != ''">
+		      AND descc like '${descc}%'  <!-- 任务偏差分析及解决措施 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id like '${proj_id}%'  <!-- 项目编码 -->
+		</if>
+	    <if test="week_name != null and week_name != ''">
+		      AND week_name like '${week_name}%'  <!-- 周报名称 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 周报状态 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="solve != null and solve != ''">
+		      AND solve like '${solve}%'  <!-- 目前情况说明 -->
+		</if>
+		<if test="description != null and description != ''">
+		      AND description like '${description}%'  <!-- 对外情况说明 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+		
+	    <if test="test_code != null and test_code != ''">
+		      Or test_code like '${test_code}%'  <!-- 周报编码 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      Or remarks like '${remarks}%'  <!-- 任务描述 -->
+		</if>
+	 
+	    <if test="finish_time != null and finish_time != ''">
+		      Or finish_time like '${finish_time}%'  <!-- 实际完成实际 -->
+		</if>
+	    <if test="finish_cond != null and finish_cond != ''">
+		      Or finish_cond like '${finish_cond}%'  <!-- 完成情况 -->
+		</if>
+	    <if test="descc != null and descc != ''">
+		      Or descc like '${descc}%'  <!-- 任务偏差分析及解决措施 -->
+		</if>
+	   
+	    <if test="week_name != null and week_name != ''">
+		      Or week_name like '${week_name}%'  <!-- 周报名称 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 周报状态 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	     <if test="solve != null and solve != ''">
+		      Or solve like '${solve}%'  <!-- 目前情况说明 -->
+		</if>
+		<if test="description != null and description != ''">
+		      Or description like '${description}%'  <!-- 对外情况说明 -->
+		</if>
+	</sql>
+	<!-- 查询项目数据 -->
+	<select id="getProjt" resultType="Dto">
+		SELECT
+        	q.*
+        	,t.*	 
+        FROM ta_week_report q,ta_week t
+        WHERE q.test_code=t.test_code AND t.proj_code= #{proj_code}
+	</select>
+	
+	<update id="copy" parameterType="WeekReportPO">
+		UPDATE ta_week
+		<set>
+			<if test="solve != null">
+		         description = #{solve, jdbcType=VARCHAR},  <!-- 责任人 -->
+			</if>
+			</set>
+		WHERE  test_code = #{test_code}
+	</update>
+	
+</mapper>

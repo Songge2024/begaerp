@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ta_work_hour[WorkHour]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-05-03 14:27:05 -->
+<mapper namespace="com.bl3.pm.task.dao.WorkHoursDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="work_id" parameterType="WorkHourPO">
+		INSERT INTO ta_work_hour (
+		<if test="user_id != null">
+	         user_id, <!-- 人员ID -->
+		</if>
+		<if test="proj_id != null and proj_id != ''">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 周报编码 -->
+		</if>
+		<if test="work_hours != null and work_hours != ''">
+	         work_hours, <!-- 基地工时 -->
+		</if>
+		<if test="business_hours != null and business_hours != ''">
+	         business_hours, <!-- 出差工时 -->
+		</if>
+	          work_id
+		)VALUES(
+		<if test="user_id != null">
+	          #{user_id, jdbcType=INTEGER}, <!-- 人员ID -->
+	    </if>
+		<if test="proj_id != null and proj_id != ''">
+	          #{proj_id, jdbcType=VARCHAR}, <!-- 项目ID -->
+	    </if>
+		<if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 周报编码 -->
+	    </if>
+		<if test="work_hours != null and work_hours != ''">
+	          #{work_hours, jdbcType=VARCHAR}, <!-- 基地工时 -->
+	    </if>
+		<if test="business_hours != null and business_hours != ''">
+	          #{business_hours, jdbcType=VARCHAR}, <!-- 出差工时 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="work_id" parameterType="WorkHourPO">
+		INSERT INTO ta_work_hour (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{work_id, jdbcType=INTEGER},  <!-- 工期 -->
+		    #{user_id, jdbcType=INTEGER},  <!-- 人员ID -->
+		    #{proj_id, jdbcType=VARCHAR},  <!-- 项目ID -->
+		    #{test_code, jdbcType=VARCHAR},  <!-- 周报编码 -->
+		    #{work_hours, jdbcType=VARCHAR},  <!-- 基地工时 -->
+		    #{business_hours, jdbcType=VARCHAR}  <!-- 出差工时 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="WorkHourPO">
+		UPDATE ta_work_hour
+		<set>
+			<if test="work_id != null">
+		          work_id = #{work_id, jdbcType=INTEGER},  <!-- 工期 -->
+			</if>
+			<if test="user_id != null">
+		          user_id = #{user_id, jdbcType=INTEGER},  <!-- 人员ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=VARCHAR},  <!-- 项目ID -->
+			</if>
+			<if test="test_code != null">
+		          test_code = #{test_code, jdbcType=VARCHAR},  <!-- 周报编码 -->
+			</if>
+			<if test="work_hours != null">
+		          work_hours = #{work_hours, jdbcType=VARCHAR},  <!-- 基地工时 -->
+			</if>
+			<if test="business_hours != null">
+		          business_hours = #{business_hours, jdbcType=VARCHAR},  <!-- 出差工时 -->
+			</if>
+		</set>
+		WHERE  work_id = #{work_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM ta_work_hour WHERE  work_id = #{work_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="WorkHourPO">
+		SELECT
+		<include refid="column" />
+		FROM ta_work_hour WHERE  work_id = #{work_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="WorkHourPO">
+		SELECT
+		    <include refid="column" />
+		FROM ta_work_hour
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="WorkHourPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_work_hour
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="WorkHourPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_work_hour
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="WorkHourPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_work_hour
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="WorkHourPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_work_hour
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="WorkHourPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_work_hour
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="WorkHourPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_work_hour
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM ta_work_hour
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM ta_work_hour
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  work_id,  <!-- 工期 -->
+		  user_id,  <!-- 人员ID -->
+		  proj_id,  <!-- 项目ID -->
+		  test_code,  <!-- 周报编码 -->
+		  work_hours,  <!-- 基地工时 -->
+		  business_hours  <!-- 出差工时 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  ta_work_hour.work_id,  <!-- 工期 -->
+		  ta_work_hour.user_id,  <!-- 人员ID -->
+		  ta_work_hour.proj_id,  <!-- 项目ID -->
+		  ta_work_hour.test_code,  <!-- 周报编码 -->
+		  ta_work_hour.work_hours,  <!-- 基地工时 -->
+		  ta_work_hour.business_hours  <!-- 出差工时 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="work_id != null ">
+		      AND work_id = #{work_id}  <!-- 工期 -->
+		</if>
+	   <if test="user_id != null ">
+		      AND user_id = #{user_id}  <!-- 人员ID -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="test_code != null and test_code != ''">
+		      AND test_code = #{test_code}  <!-- 周报编码 -->
+		</if>
+	    <if test="work_hours != null and work_hours != ''">
+		      AND work_hours = #{work_hours}  <!-- 基地工时 -->
+		</if>
+	    <if test="business_hours != null and business_hours != ''">
+		      AND business_hours = #{business_hours}  <!-- 出差工时 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id like '${proj_id}%'  <!-- 项目ID -->
+		</if>
+	    <if test="test_code != null and test_code != ''">
+		      AND test_code like '${test_code}%'  <!-- 周报编码 -->
+		</if>
+	    <if test="work_hours != null and work_hours != ''">
+		      AND work_hours like '${work_hours}%'  <!-- 基地工时 -->
+		</if>
+	    <if test="business_hours != null and business_hours != ''">
+		      AND business_hours like '${business_hours}%'  <!-- 出差工时 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="proj_id != null and proj_id != ''">
+		      Or proj_id like '${proj_id}%'  <!-- 项目ID -->
+		</if>
+	    <if test="test_code != null and test_code != ''">
+		      Or test_code like '${test_code}%'  <!-- 周报编码 -->
+		</if>
+	    <if test="work_hours != null and work_hours != ''">
+		      Or work_hours like '${work_hours}%'  <!-- 基地工时 -->
+		</if>
+	    <if test="business_hours != null and business_hours != ''">
+		      Or business_hours like '${business_hours}%'  <!-- 出差工时 -->
+		</if>
+	</sql>
+	
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ContractStageDao">
+	<!-- 根据Dto查询并返回分页数据Dto对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="Dto" useCache="false">
+	    select a.*,u.name as update_user_name from(SELECT
+			<include refid="column"  />	
+			,u.name as create_user_name
+		FRoM bs_contract_stage s,aos_user u
+		<where>
+		    <include refid="com.bl3.pm.contract.dao.ContractStageDao.equal" />
+		    and s.create_user_id = u.id
+		</where>
+		)a left join aos_user u	on a.update_user_id = u.id
+	</select>
+	
+	<!-- 根据合同主键删除数据持久化对象 -->
+	<delete id="deleteByCtKey">
+		DELETE FROM bs_contract_stage WHERE  ct_id = #{ct_id}
+	</delete>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  s.ct_stage_id,  <!-- 合同支付阶段ID -->
+		  s.ct_id,  <!-- 合同ID -->
+		  s.stage_code,  <!-- 阶段编码 -->
+		  s.stage_name,  <!-- 阶段名称 -->
+		  s.percentage,  <!-- 支付百分比 -->
+		  s.rece_amount,  <!-- 应收金额 -->
+		  s.pay_amount,  <!-- 实收金额 -->
+		  s.stage_remark,  <!-- 备注 -->
+		  s.create_user_id,  <!-- 创建人 -->
+		  s.create_time,  <!-- 创建时间 -->
+		  s.update_user_id,  <!-- 更新人 -->
+		  s.update_time,  <!-- 更新时间 -->
+		  s.state  <!-- 状态 -->
+	</sql>
+</mapper>

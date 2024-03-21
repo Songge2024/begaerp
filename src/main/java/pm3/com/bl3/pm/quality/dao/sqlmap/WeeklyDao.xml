@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- qa_weekly[Weekly]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-19 09:42:27 -->
+<mapper namespace="com.bl3.pm.quality.dao.WeeklyDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="weekly_id" parameterType="WeeklyPO">
+		INSERT INTO qa_weekly (
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 周报明细编码 -->
+		</if>
+		<if test="begin_date != null">
+	         begin_date, <!-- 开始时间 -->
+		</if>
+		<if test="end_date != null">
+	         end_date, <!-- 结束时间 -->
+		</if>
+		<if test="test_leader != null and test_leader != ''">
+	         test_leader, <!-- 测试组长 -->
+		</if>
+		<if test="add_name != null and add_name != ''">
+	         add_name, <!-- 记录人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 记录时间 -->
+		</if>
+		<if test="remarks != null and remarks != ''">
+	         remarks, <!-- 备注 -->
+		</if>
+		<if test="flag != null and flag != ''">
+	         flag, <!-- 是否有效 -->
+		</if>
+	          weekly_id
+		)VALUES(
+		<if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 周报明细编码 -->
+	    </if>
+		<if test="begin_date != null">
+	          #{begin_date, jdbcType=DATE}, <!-- 开始时间 -->
+	    </if>
+		<if test="end_date != null">
+	          #{end_date, jdbcType=DATE}, <!-- 结束时间 -->
+	    </if>
+		<if test="test_leader != null and test_leader != ''">
+	          #{test_leader, jdbcType=VARCHAR}, <!-- 测试组长 -->
+	    </if>
+		<if test="add_name != null and add_name != ''">
+	          #{add_name, jdbcType=VARCHAR}, <!-- 记录人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 记录时间 -->
+	    </if>
+		<if test="remarks != null and remarks != ''">
+	          #{remarks, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+		<if test="flag != null and flag != ''">
+	          #{flag, jdbcType=VARCHAR}, <!-- 是否有效 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="weekly_id" parameterType="WeeklyPO">
+		INSERT INTO qa_weekly (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{weekly_id, jdbcType=INTEGER},  <!-- 周报ID -->
+		    #{test_code, jdbcType=VARCHAR},  <!-- 周报明细编码 -->
+		    #{begin_date, jdbcType=DATE},  <!-- 开始时间 -->
+		    #{end_date, jdbcType=DATE},  <!-- 结束时间 -->
+		    #{test_leader, jdbcType=VARCHAR},  <!-- 测试组长 -->
+		    #{add_name, jdbcType=VARCHAR},  <!-- 记录人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 记录时间 -->
+		    #{remarks, jdbcType=VARCHAR},  <!-- 备注 -->
+		    #{flag, jdbcType=VARCHAR}  <!-- 是否有效 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="WeeklyPO">
+		UPDATE qa_weekly
+		<set>
+			<if test="weekly_id != null">
+		          weekly_id = #{weekly_id, jdbcType=INTEGER},  <!-- 周报ID -->
+			</if>
+			<if test="test_code != null">
+		          test_code = #{test_code, jdbcType=VARCHAR},  <!-- 周报明细编码 -->
+			</if>
+			<if test="begin_date != null">
+		          begin_date = #{begin_date, jdbcType=DATE},  <!-- 开始时间 -->
+			</if>
+			<if test="end_date != null">
+		          end_date = #{end_date, jdbcType=DATE},  <!-- 结束时间 -->
+			</if>
+			<if test="test_leader != null">
+		          test_leader = #{test_leader, jdbcType=VARCHAR},  <!-- 测试组长 -->
+			</if>
+			<if test="add_name != null">
+		          add_name = #{add_name, jdbcType=VARCHAR},  <!-- 记录人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 记录时间 -->
+			</if>
+			<if test="remarks != null">
+		          remarks = #{remarks, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+			<if test="flag != null">
+		          flag = #{flag, jdbcType=VARCHAR},  <!-- 是否有效 -->
+			</if>
+		</set>
+		WHERE  weekly_id = #{weekly_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM qa_weekly WHERE  weekly_id = #{weekly_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="WeeklyPO">
+		SELECT
+		<include refid="column" />
+		FROM qa_weekly WHERE  weekly_id = #{weekly_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="WeeklyPO">
+		SELECT
+		    <include refid="column" />
+		FROM qa_weekly
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="WeeklyPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_weekly
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="WeeklyPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_weekly
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="WeeklyPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_weekly
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="WeeklyPO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_weekly
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="WeeklyPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_weekly
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="WeeklyPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_weekly
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+		ORDER BY  create_time DESC
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM qa_weekly
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM qa_weekly
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  weekly_id,  <!-- 周报ID -->
+		  test_code,  <!-- 周报明细编码 -->
+		  begin_date,  <!-- 开始时间 -->
+		  end_date,  <!-- 结束时间 -->
+		  test_leader,  <!-- 测试组长 -->
+		  add_name,  <!-- 记录人 -->
+		  create_time,  <!-- 记录时间 -->
+		  remarks,  <!-- 备注 -->
+		  flag  <!-- 是否有效 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  qa_weekly.weekly_id,  <!-- 周报ID -->
+		  qa_weekly.test_code,  <!-- 周报明细编码 -->
+		  qa_weekly.begin_date,  <!-- 开始时间 -->
+		  qa_weekly.end_date,  <!-- 结束时间 -->
+		  qa_weekly.test_leader,  <!-- 测试组长 -->
+		  qa_weekly.add_name,  <!-- 记录人 -->
+		  qa_weekly.create_time,  <!-- 记录时间 -->
+		  qa_weekly.remarks,  <!-- 备注 -->
+		  qa_weekly.flag  <!-- 是否有效 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="weekly_id != null ">
+		      AND weekly_id = #{weekly_id}  <!-- 周报ID -->
+		</if>
+	    <if test="test_code != null and test_code != ''">
+		      AND test_code = #{test_code}  <!-- 周报明细编码 -->
+		</if>
+	   <if test="begin_date != null ">
+		      AND begin_date = #{begin_date}  <!-- 开始时间 -->
+		</if>
+	   <if test="end_date != null ">
+		      AND end_date = #{end_date}  <!-- 结束时间 -->
+		</if>
+	    <if test="test_leader != null and test_leader != ''">
+		      AND test_leader = #{test_leader}  <!-- 测试组长 -->
+		</if>
+	    <if test="add_name != null and add_name != ''">
+		      AND add_name = #{add_name}  <!-- 记录人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 记录时间 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks = #{remarks}  <!-- 备注 -->
+		</if>
+	    <if test="flag != null and flag != ''">
+		      AND flag = #{flag}  <!-- 是否有效 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="test_code != null and test_code != ''">
+		      AND test_code like '${test_code}%'  <!-- 周报明细编码 -->
+		</if>
+	    <if test="test_leader != null and test_leader != ''">
+		      AND test_leader like '${test_leader}%'  <!-- 测试组长 -->
+		</if>
+	    <if test="add_name != null and add_name != ''">
+		      AND add_name like '${add_name}%'  <!-- 记录人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 记录时间 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks like '${remarks}%'  <!-- 备注 -->
+		</if>
+	    <if test="flag != null and flag != ''">
+		      AND flag like '${flag}%'  <!-- 是否有效 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="test_code != null and test_code != ''">
+		      Or test_code like '${test_code}%'  <!-- 周报明细编码 -->
+		</if>
+	    <if test="test_leader != null and test_leader != ''">
+		      Or test_leader like '${test_leader}%'  <!-- 测试组长 -->
+		</if>
+	    <if test="add_name != null and add_name != ''">
+		      Or add_name like '${add_name}%'  <!-- 记录人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 记录时间 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      Or remarks like '${remarks}%'  <!-- 备注 -->
+		</if>
+	    <if test="flag != null and flag != ''">
+		      Or flag like '${flag}%'  <!-- 是否有效 -->
+		</if>
+	</sql>
+	
+</mapper>

@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_templet_main[TempletMain]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-11 16:46:36 -->
+<mapper namespace="com.bl3.pm.process.dao.TempletMainDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="TempletMainPO">
+		INSERT INTO pr_templet_main (
+		<if test="templet_name != null and templet_name != ''">
+	         templet_name, <!-- 模板名称 -->
+		</if>
+		<if test="templet_comment != null and templet_comment != ''">
+	         templet_comment, <!-- 模板说明 -->
+		</if>
+		<if test="create_user_id != null and create_user_id != ''">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="templet_id != null">
+	         templet_id, <!--id-->
+		</if>
+		  create_time <!-- 创建时间 -->
+		)VALUES(
+		<if test="templet_name != null and templet_name != ''">
+	          #{templet_name, jdbcType=VARCHAR}, <!-- 模板名称 -->
+	    </if>
+		<if test="templet_comment != null and templet_comment != ''">
+	          #{templet_comment, jdbcType=VARCHAR}, <!-- 模板说明 -->
+	    </if>
+		<if test="create_user_id != null and create_user_id != ''">
+	          #{create_user_id, jdbcType=VARCHAR}, <!-- 创建人 -->
+	    </if>
+		<if test="update_user_id != null and update_user_id != ''">
+	          #{update_user_id, jdbcType=VARCHAR}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+	    <if test="templet_id != null">
+		     #{templet_id, jdbcType=INTEGER} , <!-- id -->
+	    </if>
+	      sysdate() <!-- 创建时间 -->
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="TempletMainPO">
+		INSERT INTO pr_templet_main (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{templet_name, jdbcType=VARCHAR},  <!-- 模板名称 -->
+		    #{templet_comment, jdbcType=VARCHAR},  <!-- 模板说明 -->
+		    #{create_user_id, jdbcType=VARCHAR},  <!-- 创建人 -->
+		    sysdate(),  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=VARCHAR},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="TempletMainPO">
+		UPDATE pr_templet_main
+		<set>
+			<if test="templet_id != null">
+		          templet_id = #{templet_id, jdbcType=INTEGER},  <!-- 模板ID -->
+			</if>
+			<if test="templet_name != null">
+		          templet_name = #{templet_name, jdbcType=VARCHAR},  <!-- 模板名称 -->
+			</if>
+			<if test="templet_comment != null">
+		          templet_comment = #{templet_comment, jdbcType=VARCHAR},  <!-- 模板说明 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=VARCHAR},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=VARCHAR},  <!-- 更新人 -->
+			</if>
+		          update_time = sysdate(),  <!-- 更新时间 -->
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  templet_id = #{templet_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		update  pr_templet_main set state = 0 WHERE  templet_id = #{templet_id}
+	</delete>
+	
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteFiletypeByKey">
+		update  pr_templet_process set state = 0 WHERE  templet_id = #{templet_id}
+	</delete>
+	
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteProcessByKey">
+		update  pr_templet_filetype set state = 0 WHERE  templet_id = #{templet_id}
+	</delete>
+	
+	<!-- 根据主键启用 -->
+	<delete id="enableByKey">
+		update  pr_templet_main set state = 2 WHERE  templet_id = #{templet_id}
+	</delete>
+	
+	<!-- 根据主键停用 -->
+	<delete id="disableByKey">
+		update  pr_templet_main set state = 1 WHERE  templet_id = #{templet_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="TempletMainPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_templet_main WHERE  templet_id = #{templet_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="TempletMainPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_templet_main
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="TempletMainPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_templet_main
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="TempletMainPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_templet_main
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="TempletMainPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_templet_main
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="TempletMainPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_templet_main
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="TempletMainPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_templet_main
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="TempletMainPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_templet_main
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_templet_main
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_templet_main
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  templet_id,  <!-- 模板ID -->
+		  templet_name,  <!-- 模板名称 -->
+		  templet_comment,  <!-- 模板说明 -->
+		  (select name from aos_user where id =create_user_id) create_user_name,  <!-- 创建人 -->
+		  create_user_id,
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_templet_main.templet_id,  <!-- 模板ID -->
+		  pr_templet_main.templet_name,  <!-- 模板名称 -->
+		  pr_templet_main.templet_comment,  <!-- 模板说明 -->
+		  pr_templet_main.create_user_id,  <!-- 创建人 -->
+		  pr_templet_main.create_time,  <!-- 创建时间 -->
+		  pr_templet_main.update_user_id,  <!-- 更新人 -->
+		  pr_templet_main.update_time,  <!-- 更新时间 -->
+		  pr_templet_main.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="templet_id != null ">
+		      AND templet_id = #{templet_id}  <!-- 模板ID -->
+		</if>
+	    <if test="templet_name != null and templet_name != ''">
+		      AND templet_name = #{templet_name}  <!-- 模板名称 -->
+		</if>
+	    <if test="templet_comment != null and templet_comment != ''">
+		      AND templet_comment = #{templet_comment}  <!-- 模板说明 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+		      AND state != 0  <!-- 状态 -->
+		      order by create_time desc
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="templet_name != null and templet_name != ''">
+		      AND templet_name like '${templet_name}%'  <!-- 模板名称 -->
+		</if>
+	    <if test="templet_comment != null and templet_comment != ''">
+		      AND templet_comment like '${templet_comment}%'  <!-- 模板说明 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	  		  AND state != 0 <!-- 状态 -->
+	  		   order by create_time desc
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="templet_name != null and templet_name != ''">
+		      Or templet_name like '${templet_name}%'  <!-- 模板名称 -->
+		</if>
+	    <if test="templet_comment != null and templet_comment != ''">
+		      Or templet_comment like '${templet_comment}%'  <!-- 模板说明 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      Or create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      Or update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	  		  Or state != 0 <!-- 状态 -->
+	  		   order by create_time desc
+	</sql>
+
+	
+</mapper>

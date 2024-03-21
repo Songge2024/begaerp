@@ -1,0 +1,809 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ta_task[Task]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-22 11:10:33 -->
+<mapper namespace="com.bl3.pm.task.dao.TaskDao">
+	<!-- 判断新增时间段是否重叠 -->
+	<select id="judgePlanTime" parameterType="Dto" resultType="Integer">
+		select COUNT(task_id) from ta_task WHERE handler_user_id IN
+		<foreach collection="handler_user_id" item="handler_user_id" index="index" open="(" close=")" separator=",">
+            #{handler_user_id}
+        </foreach> 
+		AND (plan_begin_time BETWEEN #{plan_begin_time} AND #{plan_end_time}
+    		OR 
+			plan_end_time BETWEEN #{plan_begin_time} AND #{plan_end_time}
+			OR
+			#{plan_begin_time} BETWEEN plan_begin_time AND plan_end_time
+			OR 
+			#{plan_end_time} BETWEEN plan_begin_time AND plan_end_time
+		)
+		AND state != 1006
+	</select>
+	
+	<!-- 判断新增时间段计划消耗天数-->
+	<select id="judgePlanWastage" parameterType="Dto" resultType="Double">
+		select sum(plan_wastage) from ta_task WHERE handler_user_id IN
+		<foreach collection="handler_user_id" item="handler_user_id" index="index" open="(" close=")" separator=",">
+            #{handler_user_id}
+        </foreach> 
+		AND (plan_begin_time BETWEEN #{plan_begin_time} AND #{plan_end_time}
+    		OR 
+			plan_end_time BETWEEN #{plan_begin_time} AND #{plan_end_time}
+			OR
+			#{plan_begin_time} BETWEEN plan_begin_time AND plan_end_time
+			OR 
+			#{plan_end_time} BETWEEN plan_begin_time AND plan_end_time
+		)
+		AND state != 1006
+	</select>
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="TaskPO">
+		INSERT INTO ta_task (
+		<if test="task_code != null and task_code != ''">
+	         task_code, <!-- 编码 -->
+		</if>
+		<if test="task_name != null and task_name != ''">
+	         task_name, <!-- 任务名称 -->
+		</if>
+		<if test="proj_id != null and proj_id != ''">
+	         proj_id, <!-- 项目编码 -->
+		</if>
+		<if test="module_id != null and module_id != ''">
+	         module_id, <!-- 模块编码 -->
+		</if>
+		<if test="demand_id != null and demand_id != ''">
+	         demand_id, <!-- 需求编码 -->
+		</if>
+		<if test="group_id != null">
+	         group_id, <!-- 分组编码 -->
+		</if>
+		<if test="grade != null">
+	         grade, <!-- 任务分数 -->
+		</if>
+		<if test="real_grade != null">
+	         real_grade, <!-- 实际得分 -->
+		</if>
+		<if test="plan_begin_time != null and plan_begin_time != ''">
+	         plan_begin_time, <!-- 计划开始时间 -->
+		</if>
+		<if test="plan_end_time != null and plan_end_time != ''">
+	         plan_end_time, <!-- 计划完成时间 -->
+		</if>
+		<if test="plan_wastage != null">
+	         plan_wastage, <!-- 计划消耗天数 -->
+		</if>
+		<if test="real_begin_time != null and real_begin_time != ''">
+	         real_begin_time, <!-- 实际开始时间 -->
+		</if>
+		<if test="real_end_time != null and real_end_time != ''">
+	         real_end_time, <!-- 实际完成时间 -->
+		</if>
+		<if test="real_wastage != null">
+	         real_wastage, <!-- 实际消耗天数 -->
+		</if>
+		<if test="handler_user_id != null">
+	         handler_user_id, <!-- 处理人编码 -->
+		</if>
+		<if test="assign_user_id != null">
+	         assign_user_id, <!-- 指派人编码 -->
+		</if>
+		<if test="task_type != null and task_type != ''">
+	         task_type, <!-- 任务类型 -->
+		</if>
+		<if test="task_level != null and task_level != ''">
+	         task_level, <!-- 任务等级 -->
+		</if>
+		<if test="percent != null">
+	         percent, <!-- 完成百分比 -->
+		</if>
+		<if test="group_type != null and group_type != ''">
+	         group_type, <!-- 任务分组类型 -->
+		</if>
+		<if test="cc_user_ids != null and cc_user_ids != ''">
+	         cc_user_ids, <!-- 抄送人编码 -->
+		</if>
+		<if test="consume_time != null">
+	         consume_time, <!-- 耗时 -->
+		</if>
+		<if test="task_desc != null and task_desc != ''">
+	         task_desc, <!-- 任务描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+	         remark, <!-- 备注 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人编码 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 任务状态 -->
+		</if>
+		<if test="is_decomposed != null and is_decomposed != ''">
+			is_decomposed, <!-- 任务是否分解('0'为否，'1'为是) -->
+		</if>
+		<if test="task_extra_time != null and task_extra_time != ''">
+			task_extra_time, <!-- 额外完成任务时间 -->
+		</if>
+		<if test="task_parent_id != null and task_parent_id != ''">
+			task_parent_id, <!-- 分解任务上级ID -->
+		</if>
+		<if test="task_root_id != null and task_root_id != ''">
+			task_root_id, <!-- 分解任务根ID -->
+		</if>
+		<if test="task_id != null">
+	          task_id  <!-- 任务编码 -->
+	   </if>
+		)VALUES(
+		<if test="task_code != null and task_code != ''">
+	          #{task_code, jdbcType=VARCHAR}, <!-- 编码 -->
+	    </if>
+		<if test="task_name != null and task_name != ''">
+	          #{task_name, jdbcType=VARCHAR}, <!-- 任务名称 -->
+	    </if>
+		<if test="proj_id != null and proj_id != ''">
+	          #{proj_id, jdbcType=VARCHAR}, <!-- 项目编码 -->
+	    </if>
+		<if test="module_id != null and module_id != ''">
+	          #{module_id, jdbcType=VARCHAR}, <!-- 模块编码 -->
+	    </if>
+		<if test="demand_id != null and demand_id != ''">
+	          #{demand_id, jdbcType=VARCHAR}, <!-- 需求编码 -->
+	    </if>
+		<if test="group_id != null">
+	          #{group_id, jdbcType=INTEGER}, <!-- 分组编码 -->
+	    </if>
+		<if test="grade != null">
+	          #{grade, jdbcType=INTEGER}, <!-- 任务分数 -->
+	    </if>
+		<if test="real_grade != null">
+	          #{real_grade, jdbcType=INTEGER}, <!-- 实际得分 -->
+	    </if>
+		<if test="plan_begin_time != null and plan_begin_time != ''">
+	          #{plan_begin_time, jdbcType=VARCHAR}, <!-- 计划开始时间 -->
+	    </if>
+		<if test="plan_end_time != null and plan_end_time != ''">
+	          #{plan_end_time, jdbcType=VARCHAR}, <!-- 计划完成时间 -->
+	    </if>
+		<if test="plan_wastage != null">
+	          #{plan_wastage, jdbcType=NUMERIC}, <!-- 计划消耗天数 -->
+	    </if>
+		<if test="real_begin_time != null and real_begin_time != ''">
+	          #{real_begin_time, jdbcType=VARCHAR}, <!-- 实际开始时间 -->
+	    </if>
+		<if test="real_end_time != null and real_end_time != ''">
+	          #{real_end_time, jdbcType=VARCHAR}, <!-- 实际完成时间 -->
+	    </if>
+		<if test="real_wastage != null">
+	          #{real_wastage, jdbcType=NUMERIC}, <!-- 实际消耗天数 -->
+	    </if>
+		<if test="handler_user_id != null">
+	          #{handler_user_id, jdbcType=INTEGER}, <!-- 处理人编码 -->
+	    </if>
+		<if test="assign_user_id != null">
+	          #{assign_user_id, jdbcType=INTEGER}, <!-- 指派人编码 -->
+	    </if>
+		<if test="task_type != null and task_type != ''">
+	          #{task_type, jdbcType=VARCHAR}, <!-- 任务类型 -->
+	    </if>
+		<if test="task_level != null and task_level != ''">
+	          #{task_level, jdbcType=VARCHAR}, <!-- 任务等级 -->
+	    </if>
+		<if test="percent != null">
+	          #{percent, jdbcType=INTEGER}, <!-- 完成百分比 -->
+	    </if>
+		<if test="group_type != null and group_type != ''">
+	          #{group_type, jdbcType=VARCHAR}, <!-- 任务分组类型 -->
+	    </if>
+		<if test="cc_user_ids != null and cc_user_ids != ''">
+	          #{cc_user_ids, jdbcType=VARCHAR}, <!-- 抄送人编码 -->
+	    </if>
+		<if test="consume_time != null">
+	          #{consume_time, jdbcType=INTEGER}, <!-- 耗时 -->
+	    </if>
+		<if test="task_desc != null and task_desc != ''">
+	          #{task_desc, jdbcType=VARCHAR}, <!-- 任务描述 -->
+	    </if>
+		<if test="remark != null and remark != ''">
+	          #{remark, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人编码 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 任务状态 -->
+	    </if>
+	    <if test="is_decomposed != null and is_decomposed != ''">
+	    	#{is_decomposed, jdbcType=VARCHAR}, <!-- 任务是否分解('0'为否，'1'为是) -->
+	    </if>
+	    <if test="task_extra_time != null and task_extra_time != ''">
+	    	#{task_extra_time, jdbcType=VARCHAR}, <!-- 额外完成任务时间  -->
+	    </if>
+	    <if test="task_parent_id != null">
+	    	#{task_parent_id, jdbcType=VARCHAR}, <!-- 分解任务上级ID -->
+	    </if>
+	    <if test="task_root_id != null">
+	    	#{task_root_id, jdbcType=VARCHAR}, <!-- 分解任务根ID -->
+	    </if>
+		<if test="task_id != null">
+		     #{task_id, jdbcType=INTEGER}  <!-- 任务编码 -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="TaskPO">
+		INSERT INTO ta_task (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{task_id, jdbcType=INTEGER},  <!-- 任务编码 -->
+		    #{task_code, jdbcType=VARCHAR},  <!-- 编码 -->
+		    #{task_name, jdbcType=VARCHAR},  <!-- 任务名称 -->
+		    #{proj_id, jdbcType=VARCHAR},  <!-- 项目编码 -->
+		    #{module_id, jdbcType=VARCHAR},  <!-- 模块编码 -->
+		    #{demand_id, jdbcType=VARCHAR},  <!-- 需求编码 -->
+		    #{group_id, jdbcType=INTEGER},  <!-- 分组编码 -->
+		    #{grade, jdbcType=INTEGER},  <!-- 任务分数 -->
+		    #{real_grade, jdbcType=INTEGER},  <!-- 实际得分 -->
+		    #{plan_begin_time, jdbcType=VARCHAR},  <!-- 计划开始时间 -->
+		    #{plan_end_time, jdbcType=VARCHAR},  <!-- 计划完成时间 -->
+		    #{plan_wastage, jdbcType=NUMERIC},  <!-- 计划消耗天数 -->
+		    #{real_begin_time, jdbcType=VARCHAR},  <!-- 实际开始时间 -->
+		    #{real_end_time, jdbcType=VARCHAR},  <!-- 实际完成时间 -->
+		    #{real_wastage, jdbcType=NUMERIC},  <!-- 实际消耗天数 -->
+		    #{handler_user_id, jdbcType=INTEGER},  <!-- 处理人编码 -->
+		    #{assign_user_id, jdbcType=INTEGER},  <!-- 指派人编码 -->
+		    #{task_type, jdbcType=VARCHAR},  <!-- 任务类型 -->
+		    #{task_level, jdbcType=VARCHAR},  <!-- 任务等级 -->
+		    #{percent, jdbcType=INTEGER},  <!-- 完成百分比 -->
+		    #{group_type, jdbcType=VARCHAR},  <!-- 任务分组类型 -->
+		    #{cc_user_ids, jdbcType=VARCHAR},  <!-- 抄送人编码 -->
+		    #{consume_time, jdbcType=INTEGER},  <!-- 耗时 -->
+		    #{task_desc, jdbcType=VARCHAR},  <!-- 任务描述 -->
+		    #{remark, jdbcType=VARCHAR},  <!-- 备注 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人编码 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 任务状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="TaskPO">
+		UPDATE ta_task
+		<set>
+			<if test="task_id != null">
+		          task_id = #{task_id, jdbcType=INTEGER},  <!-- 任务编码 -->
+			</if>
+			<if test="task_code != null">
+		          task_code = #{task_code, jdbcType=VARCHAR},  <!-- 编码 -->
+			</if>
+			<if test="task_name != null">
+		          task_name = #{task_name, jdbcType=VARCHAR},  <!-- 任务名称 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=VARCHAR},  <!-- 项目编码 -->
+			</if>
+			<if test="module_id != null">
+		          module_id = #{module_id, jdbcType=VARCHAR},  <!-- 模块编码 -->
+			</if>
+			<if test="demand_id != null">
+		          demand_id = #{demand_id, jdbcType=VARCHAR},  <!-- 需求编码 -->
+			</if>
+			<if test="group_id != null">
+		          group_id = #{group_id, jdbcType=INTEGER},  <!-- 分组编码 -->
+			</if>
+			<if test="grade != null">
+		          grade = #{grade, jdbcType=INTEGER},  <!-- 任务分数 -->
+			</if>
+			<if test="real_grade != null">
+		          real_grade = #{real_grade, jdbcType=INTEGER},  <!-- 实际得分 -->
+			</if>
+			<if test="plan_begin_time != null">
+		          plan_begin_time = #{plan_begin_time, jdbcType=VARCHAR},  <!-- 计划开始时间 -->
+			</if>
+			<if test="plan_end_time != null">
+		          plan_end_time = #{plan_end_time, jdbcType=VARCHAR},  <!-- 计划完成时间 -->
+			</if>
+			<if test="plan_wastage != null">
+		          plan_wastage = #{plan_wastage, jdbcType=NUMERIC},  <!-- 计划消耗天数 -->
+			</if>
+			<if test="real_begin_time != null">
+		          real_begin_time = #{real_begin_time, jdbcType=VARCHAR},  <!-- 实际开始时间 -->
+			</if>
+			<if test="real_end_time != null">
+		          real_end_time = #{real_end_time, jdbcType=VARCHAR},  <!-- 实际完成时间 -->
+			</if>
+			<if test="real_wastage != null">
+		          real_wastage = #{real_wastage, jdbcType=NUMERIC},  <!-- 实际消耗天数 -->
+			</if>
+			<if test="handler_user_id != null">
+		          handler_user_id = #{handler_user_id, jdbcType=INTEGER},  <!-- 处理人编码 -->
+			</if>
+			<if test="assign_user_id != null">
+		          assign_user_id = #{assign_user_id, jdbcType=INTEGER},  <!-- 指派人编码 -->
+			</if>
+			<if test="task_type != null">
+		          task_type = #{task_type, jdbcType=VARCHAR},  <!-- 任务类型 -->
+			</if>
+			<if test="task_level != null">
+		          task_level = #{task_level, jdbcType=VARCHAR},  <!-- 任务等级 -->
+			</if>
+			<if test="percent != null">
+		          percent = #{percent, jdbcType=INTEGER},  <!-- 完成百分比 -->
+			</if>
+			<if test="group_type != null">
+		          group_type = #{group_type, jdbcType=VARCHAR},  <!-- 任务分组类型 -->
+			</if>
+			<if test="cc_user_ids != null">
+		          cc_user_ids = #{cc_user_ids, jdbcType=VARCHAR},  <!-- 抄送人编码 -->
+			</if>
+			<if test="consume_time != null">
+		          consume_time = #{consume_time, jdbcType=INTEGER},  <!-- 耗时 -->
+			</if>
+			<if test="task_desc != null">
+		          task_desc = #{task_desc, jdbcType=VARCHAR},  <!-- 任务描述 -->
+			</if>
+			<if test="remark != null">
+		          remark = #{remark, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人编码 -->
+			</if>
+			<if test="is_decomposed != null">
+				is_decomposed = #{is_decomposed, jdbcType=VARCHAR},  <!-- 任务是否分解('0'为否，'1'为是) -->
+			</if>
+			<if test="task_extra_time != null">
+				task_extra_time = #{task_extra_time, jdbcType=VARCHAR},  <!-- 额外完成任务时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 任务状态 -->
+			</if>
+		</set>
+		WHERE  task_id = #{task_id}
+	</update>
+	
+	<update id="updateDecomposed" parameterType="Dto">
+		UPDATE ta_task
+		<set>
+			<if test="is_decomposed != null">
+				is_decomposed = #{is_decomposed, jdbcType=VARCHAR},  <!-- 任务是否分解('0'为否，'1'为是) -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR}  <!-- 更新时间 -->
+			</if>
+		</set>
+		WHERE task_id = #{task_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM ta_task WHERE  task_id = #{task_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="TaskPO">
+		SELECT
+		<include refid="column" />
+		FROM ta_task WHERE  task_id = #{task_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="TaskPO">
+		SELECT
+		    <include refid="column" />
+		FROM ta_task
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="TaskPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_task
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="TaskPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_task
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="TaskPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_task
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="TaskPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_task
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="TaskPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_task
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="TaskPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_task
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM ta_task
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM ta_task
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  task_id,  <!-- 任务编码 -->
+		  task_code,  <!-- 编码 -->
+		  task_name,  <!-- 任务名称 -->
+		  proj_id,  <!-- 项目编码 -->
+		  module_id,  <!-- 模块编码 -->
+		  demand_id,  <!-- 需求编码 -->
+		  group_id,  <!-- 分组编码 -->
+		  grade,  <!-- 任务分数 -->
+		  real_grade,  <!-- 实际得分 -->
+		  plan_begin_time,  <!-- 计划开始时间 -->
+		  plan_end_time,  <!-- 计划完成时间 -->
+		  plan_wastage,  <!-- 计划消耗天数 -->
+		  real_begin_time,  <!-- 实际开始时间 -->
+		  real_end_time,  <!-- 实际完成时间 -->
+		  real_wastage,  <!-- 实际消耗天数 -->
+		  handler_user_id,  <!-- 处理人编码 -->
+		  assign_user_id,  <!-- 指派人编码 -->
+		  task_type,  <!-- 任务类型 -->
+		  task_level,  <!-- 任务等级 -->
+		  percent,  <!-- 完成百分比 -->
+		  group_type,  <!-- 任务分组类型 -->
+		  cc_user_ids,  <!-- 抄送人编码 -->
+		  consume_time,  <!-- 耗时 -->
+		  task_desc,  <!-- 任务描述 -->
+		  remark,  <!-- 备注 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  create_time,  <!-- 创建时间 -->
+		  create_user_id,  <!-- 创建人编码 -->
+		  is_decomposed, <!-- 任务是否分解('0'为否，'1'为是) -->
+		  task_extra_time,	<!-- 额外完成任务时间 -->
+		  task_parent_id,  <!-- 分解任务上级ID -->
+		  task_root_id,  <!-- 分解任务根ID -->
+		  state  <!-- 任务状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  ta_task.task_id,  <!-- 任务编码 -->
+		  ta_task.task_code,  <!-- 编码 -->
+		  ta_task.task_name,  <!-- 任务名称 -->
+		  ta_task.proj_id,  <!-- 项目编码 -->
+		  ta_task.module_id,  <!-- 模块编码 -->
+		  ta_task.demand_id,  <!-- 需求编码 -->
+		  ta_task.group_id,  <!-- 分组编码 -->
+		  ta_task.grade,  <!-- 任务分数 -->
+		  ta_task.real_grade,  <!-- 实际得分 -->
+		  ta_task.plan_begin_time,  <!-- 计划开始时间 -->
+		  ta_task.plan_end_time,  <!-- 计划完成时间 -->
+		  ta_task.plan_wastage,  <!-- 计划消耗天数 -->
+		  ta_task.real_begin_time,  <!-- 实际开始时间 -->
+		  ta_task.real_end_time,  <!-- 实际完成时间 -->
+		  ta_task.real_wastage,  <!-- 实际消耗天数 -->
+		  ta_task.handler_user_id,  <!-- 处理人编码 -->
+		  ta_task.assign_user_id,  <!-- 指派人编码 -->
+		  ta_task.task_type,  <!-- 任务类型 -->
+		  ta_task.task_level,  <!-- 任务等级 -->
+		  ta_task.percent,  <!-- 完成百分比 -->
+		  ta_task.group_type,  <!-- 任务分组类型 -->
+		  ta_task.cc_user_ids,  <!-- 抄送人编码 -->
+		  ta_task.consume_time,  <!-- 耗时 -->
+		  ta_task.task_desc,  <!-- 任务描述 -->
+		  ta_task.remark,  <!-- 备注 -->
+		  ta_task.update_user_id,  <!-- 更新人 -->
+		  ta_task.update_time,  <!-- 更新时间 -->
+		  ta_task.create_time,  <!-- 创建时间 -->
+		  ta_task.create_user_id,  <!-- 创建人编码 -->
+		  ta_task.is_decomposed, <!-- 任务是否分解('0'为否，'1'为是) -->
+		  ta_task.task_extra_time,	<!-- 额外完成任务时间 -->
+		  ta_task.task_parent_id,  <!-- 分解任务上级ID -->
+		  ta_task.task_root_id,  <!-- 分解任务根ID -->
+		  ta_task.state  <!-- 任务状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="task_id != null ">
+		      AND task_id = #{task_id}  <!-- 任务编码 -->
+		</if>
+	    <if test="task_code != null and task_code != ''">
+		      AND task_code = #{task_code}  <!-- 编码 -->
+		</if>
+	    <if test="task_name != null and task_name != ''">
+		      AND task_name = #{task_name}  <!-- 任务名称 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id = #{proj_id}  <!-- 项目编码 -->
+		</if>
+	    <if test="module_id != null and module_id != ''">
+		      AND module_id = #{module_id}  <!-- 模块编码 -->
+		</if>
+	    <if test="demand_id != null and demand_id != ''">
+		      AND demand_id = #{demand_id}  <!-- 需求编码 -->
+		</if>
+	   <if test="group_id != null ">
+		      AND group_id = #{group_id}  <!-- 分组编码 -->
+		</if>
+	   <if test="grade != null ">
+		      AND grade = #{grade}  <!-- 任务分数 -->
+		</if>
+	   <if test="real_grade != null ">
+		      AND real_grade = #{real_grade}  <!-- 实际得分 -->
+		</if>
+	    <if test="plan_begin_time != null and plan_begin_time != ''">
+		      AND plan_begin_time = #{plan_begin_time}  <!-- 计划开始时间 -->
+		</if>
+	    <if test="plan_end_time != null and plan_end_time != ''">
+		      AND plan_end_time = #{plan_end_time}  <!-- 计划完成时间 -->
+		</if>
+	   <if test="plan_wastage != null ">
+		      AND plan_wastage = #{plan_wastage}  <!-- 计划消耗天数 -->
+		</if>
+	    <if test="real_begin_time != null and real_begin_time != ''">
+		      AND real_begin_time = #{real_begin_time}  <!-- 实际开始时间 -->
+		</if>
+	    <if test="real_end_time != null and real_end_time != ''">
+		      AND real_end_time = #{real_end_time}  <!-- 实际完成时间 -->
+		</if>
+	   <if test="real_wastage != null ">
+		      AND real_wastage = #{real_wastage}  <!-- 实际消耗天数 -->
+		</if>
+	   <if test="handler_user_id != null ">
+		      AND handler_user_id = #{handler_user_id}  <!-- 处理人编码 -->
+		</if>
+	   <if test="assign_user_id != null ">
+		      AND assign_user_id = #{assign_user_id}  <!-- 指派人编码 -->
+		</if>
+	    <if test="task_type != null and task_type != ''">
+		      AND task_type = #{task_type}  <!-- 任务类型 -->
+		</if>
+	    <if test="task_level != null and task_level != ''">
+		      AND task_level = #{task_level}  <!-- 任务等级 -->
+		</if>
+	   <if test="percent != null ">
+		      AND percent = #{percent}  <!-- 完成百分比 -->
+		</if>
+	    <if test="group_type != null and group_type != ''">
+		      AND group_type = #{group_type}  <!-- 任务分组类型 -->
+		</if>
+	    <if test="cc_user_ids != null and cc_user_ids != ''">
+		      AND cc_user_ids = #{cc_user_ids}  <!-- 抄送人编码 -->
+		</if>
+	   <if test="consume_time != null ">
+		      AND consume_time = #{consume_time}  <!-- 耗时 -->
+		</if>
+	    <if test="task_desc != null and task_desc != ''">
+		      AND task_desc = #{task_desc}  <!-- 任务描述 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark = #{remark}  <!-- 备注 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人编码 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 任务状态 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="task_code != null and task_code != ''">
+		      AND task_code like '${task_code}%'  <!-- 编码 -->
+		</if>
+	    <if test="task_name != null and task_name != ''">
+		      AND task_name like '${task_name}%'  <!-- 任务名称 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      AND proj_id like '${proj_id}%'  <!-- 项目编码 -->
+		</if>
+	    <if test="module_id != null and module_id != ''">
+		      AND module_id like '${module_id}%'  <!-- 模块编码 -->
+		</if>
+	    <if test="demand_id != null and demand_id != ''">
+		      AND demand_id like '${demand_id}%'  <!-- 需求编码 -->
+		</if>
+	    <if test="plan_begin_time != null and plan_begin_time != ''">
+		      AND plan_begin_time like '${plan_begin_time}%'  <!-- 计划开始时间 -->
+		</if>
+	    <if test="plan_end_time != null and plan_end_time != ''">
+		      AND plan_end_time like '${plan_end_time}%'  <!-- 计划完成时间 -->
+		</if>
+	    <if test="real_begin_time != null and real_begin_time != ''">
+		      AND real_begin_time like '${real_begin_time}%'  <!-- 实际开始时间 -->
+		</if>
+	    <if test="real_end_time != null and real_end_time != ''">
+		      AND real_end_time like '${real_end_time}%'  <!-- 实际完成时间 -->
+		</if>
+	    <if test="task_type != null and task_type != ''">
+		      AND task_type like '${task_type}%'  <!-- 任务类型 -->
+		</if>
+	    <if test="task_level != null and task_level != ''">
+		      AND task_level like '${task_level}%'  <!-- 任务等级 -->
+		</if>
+	    <if test="group_type != null and group_type != ''">
+		      AND group_type like '${group_type}%'  <!-- 任务分组类型 -->
+		</if>
+	    <if test="cc_user_ids != null and cc_user_ids != ''">
+		      AND cc_user_ids like '${cc_user_ids}%'  <!-- 抄送人编码 -->
+		</if>
+	    <if test="task_desc != null and task_desc != ''">
+		      AND task_desc like '${task_desc}%'  <!-- 任务描述 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark like '${remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 任务状态 -->
+		</if>
+		<if test="handler_user_id != null and handler_user_id != ''">
+		      AND handler_user_id like '${handler_user_id}%'  <!-- 任务状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="task_code != null and task_code != ''">
+		      Or task_code like '${task_code}%'  <!-- 编码 -->
+		</if>
+	    <if test="task_name != null and task_name != ''">
+		      Or task_name like '${task_name}%'  <!-- 任务名称 -->
+		</if>
+	    <if test="proj_id != null and proj_id != ''">
+		      Or proj_id like '${proj_id}%'  <!-- 项目编码 -->
+		</if>
+	    <if test="module_id != null and module_id != ''">
+		      Or module_id like '${module_id}%'  <!-- 模块编码 -->
+		</if>
+	    <if test="demand_id != null and demand_id != ''">
+		      Or demand_id like '${demand_id}%'  <!-- 需求编码 -->
+		</if>
+	    <if test="plan_begin_time != null and plan_begin_time != ''">
+		      Or plan_begin_time like '${plan_begin_time}%'  <!-- 计划开始时间 -->
+		</if>
+	    <if test="plan_end_time != null and plan_end_time != ''">
+		      Or plan_end_time like '${plan_end_time}%'  <!-- 计划完成时间 -->
+		</if>
+	    <if test="real_begin_time != null and real_begin_time != ''">
+		      Or real_begin_time like '${real_begin_time}%'  <!-- 实际开始时间 -->
+		</if>
+	    <if test="real_end_time != null and real_end_time != ''">
+		      Or real_end_time like '${real_end_time}%'  <!-- 实际完成时间 -->
+		</if>
+	    <if test="task_type != null and task_type != ''">
+		      Or task_type like '${task_type}%'  <!-- 任务类型 -->
+		</if>
+	    <if test="task_level != null and task_level != ''">
+		      Or task_level like '${task_level}%'  <!-- 任务等级 -->
+		</if>
+	    <if test="group_type != null and group_type != ''">
+		      Or group_type like '${group_type}%'  <!-- 任务分组类型 -->
+		</if>
+	    <if test="cc_user_ids != null and cc_user_ids != ''">
+		      Or cc_user_ids like '${cc_user_ids}%'  <!-- 抄送人编码 -->
+		</if>
+	    <if test="task_desc != null and task_desc != ''">
+		      Or task_desc like '${task_desc}%'  <!-- 任务描述 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      Or remark like '${remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 任务状态 -->
+		</if>
+		<if test="handler_user_id != null and handler_user_id != ''">
+		      Or handler_user_id like '${handler_user_id}%'  <!-- 指派人 -->
+		</if>
+	</sql>
+	
+	<update id="taskUpdateByKey" parameterType="Dto">
+		update ta_task 
+		set
+			percent = #{percent}
+		where
+			task_id = #{id}
+	</update>
+	
+</mapper>

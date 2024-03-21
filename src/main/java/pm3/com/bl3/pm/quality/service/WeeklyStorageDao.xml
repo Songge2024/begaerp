@@ -1,0 +1,854 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 测试模块使用的SQL语句 -->
+<mapper namespace = "WeeklyStorage">
+<!-- 根据主键集合查询周报  -->
+	<select id="getWeeklyTestCode" resultType="Dto" parameterType="Dto">
+			SELECT
+				qa_weekly_detail.*,qa_weekly.begin_date as begin_date,qa_weekly.end_date as end_date
+			FROM
+				qa_weekly
+			LEFT JOIN qa_weekly_detail ON qa_weekly_detail.test_code = qa_weekly.test_code
+			WHERE
+				qa_weekly.weekly_id = #{weekly_id}
+	</select>
+	<!-- 根据主键集合查询明细周报  -->
+	<select id="getWeeklyTextCodedaile" resultType="Dto" parameterType="Dto">
+			SELECT
+				qa_weekly_detail.*,qa_weekly.begin_date as begin_date,qa_weekly.end_date as end_date
+			FROM
+				qa_weekly
+			LEFT JOIN qa_weekly_detail ON qa_weekly_detail.test_code = qa_weekly.test_code
+			WHERE
+				qa_weekly_detail.test_code = #{test_code}
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="getWeeklyPage" parameterType="Dto" resultType="Dto" useCache="false">
+				SELECT
+					(
+						SELECT
+							NAME
+						FROM
+							aos_user au
+						WHERE
+							au.id = qfm.compere
+					) AS name,
+					(
+						SELECT
+							NAME
+						FROM
+							aos_user au
+						WHERE
+							au.id = qfm.initiator
+					) AS initiator_id,
+					c.proj_name,
+					qfm.*
+				FROM
+					qa_files_manage qfm,
+					bs_proj_commons c
+				<where>
+					qfm.proj_id=c.proj_id
+				    <if test="theme != null and theme != ''">
+		                  and    theme like '%${theme}%'  <!-- 主题 -->
+		            </if>
+		            <if test="attende_mans != null and attende_mans != ''">
+		                  and    attende_mans like '%${attende_mans}%'  <!-- 参加人员(内部) -->
+		            </if>
+		            <if test="create_name != null and  create_name != ''">
+		                  and    create_name = #{create_name}  <!-- 参加人员(内部) -->
+		            </if>
+		            <if test="manage_code != null and  manage_code != ''">
+		                  and    manage_code = #{manage_code}  <!-- code -->
+		            </if>
+		            <if test="beginDate_ != null and endDate_ !=null   and  beginDate_ != '' and endDate_ != ''"  >
+	                      and   qfm.create_time BETWEEN   #{beginDate_} and DATE_ADD(#{endDate_},INTERVAL 1 DAY )
+	                </if> 
+	                <if test="proj_id != null and  proj_id != ''">
+		                  and   qfm.proj_id = #{proj_id}  <!-- 项目ID -->
+		            </if>
+		            <if test="review_type != null and  review_type != ''">
+		                  and    review_type = #{review_type}  <!-- 项目ID -->
+		            </if>
+		            <if test="meeting_type != null and  meeting_type != ''">
+		                  and    meeting_type = #{meeting_type}  <!-- 项目ID -->
+		            </if>
+				</where>
+			ORDER BY
+				qfm.create_time DESC
+	</select>
+	<!-- 获取系统名称 -->
+	<select id="getName" parameterType="Dto" resultType="Dto" useCache="false">
+			SELECT
+				name
+			FROM  aos_user
+			where
+			 id= #{id}
+	</select>	
+	
+	<!-- 根据Dto查询并返回消息分页数据持久化对象集合 -->
+	<select id="listmessagePage" parameterType="Dto" resultType="MessagePO" useCache="false">
+	    SELECT
+			<include refid="com.bl3.pm.quality.dao.MessageDao.column" />	
+		FRoM qa_message
+		<where>
+			  <if test=" endDate_ !=null" >
+	                          and   end_date    >= #{endDate_}
+	          </if> 
+	          <if test=" msg_state !=null  and msg_state!=''" >
+	                          and   msg_state  = #{msg_state}
+	          </if> 
+	           <if test=" user_id !=null " >
+	                          and   user_id  = #{user_id}
+	          </if> 
+	            <if test=" flag !=null and endDate_!='' " >
+	                          and   flag  = #{flag}
+	          </if> 
+		</where>
+		ORDER BY create_time desc
+			
+	</select>
+	<!-- 插入是否通过字段-->
+	<select id="getflagState" parameterType="Dto" resultType="MessagePO" useCache="false">
+	    SELECT
+			<include refid="com.bl3.pm.quality.dao.MessageDao.column" />	
+		FRoM qa_message
+		<where>
+			  <if test=" endDate_ !=null" >
+	                          and   end_date    >= #{endDate_}
+	          </if> 
+	          <if test=" msg_state !=null  and msg_state!=''" >
+	                          and   msg_state  = #{msg_state}
+	          </if> 
+	           <if test=" user_id !=null " >
+	                          and   user_id  = #{user_id}
+	          </if> 
+	            <if test=" flag !=null and endDate_!='' " >
+	                          and   flag  = #{flag}
+	          </if> 
+		</where>
+		ORDER BY create_time desc
+			
+	</select>
+	
+	
+	<!-- 修改数据持久化对象 -->
+	<update id="updateMessage" parameterType="MessagePO">
+		UPDATE qa_message
+		<set>
+			<if test="pass_flag != null">
+		          pass_flag = #{pass_flag, jdbcType=INTEGER},  <!-- 意见入口 -->
+			</if>
+		</set>
+		WHERE  opinion_code = #{opinion_code} AND  user_id = #{user_id}
+	</update>
+	<!-- 获取回复序号 -->
+	<select  id="getMaxIndex" parameterType="Dto" resultType="Integer">
+	  select  max(is_pass)as getindex  FROM qa_reply_news WHERE text_code =#{text_code}
+	</select>
+	
+	<!-- 获取回复信息通过是否通过人数 -->
+	<select  id="getpassDaitiel" parameterType="Dto"  resultType="Dto">
+		SELECT count(*) num, ( SELECT count(*) FROM qa_message qa WHERE pass_flag = 2 AND qa.opinion_code = qm.opinion_code ) pass, ( SELECT count(*) FROM qa_message qas WHERE qas.opinion_code = qm.opinion_code AND pass_flag = 1 ) notpass FROM qa_message qm 
+        <where >
+			<if  test="text_code !=null and text_code!=''" >
+		      opinion_code = #{text_code} 
+		    </if>
+		</where>
+	</select>
+	
+	<!-- 获取是否通过详细信息 -->
+	<select  id="getpassDaitieluser" parameterType="Dto"  resultType="Dto">
+			SELECT 
+			  ( case pass_flag 
+			    when  1 
+			   then '不通过' 
+			     when  2 
+			    THEN  '通过'
+			      end  ) as pass_flag
+			    FROM qa_message   
+		  <where >
+			<if  test="text_code !=null and text_code!=''" >
+		      and opinion_code = #{text_code} 
+		    </if>
+		    <if  test="text_name !=null and text_name!=''" >
+		      and user_name = #{text_name} 
+		    </if>
+		</where>
+	</select>
+	<!-- 删除消息 -->
+	<delete id="updateFlagByKey">
+		DELETE FROM qa_message WHERE   opinion_code = #{opinion_code}
+	</delete>
+	<!-- 删除回复信息-->
+	<delete id="updateFlagrelyByKey">
+		DELETE FROM qa_reply_news WHERE   text_code = #{opinion_code}
+	</delete>
+	
+	<!-- 删除回复信息关联名称-->
+	<delete id="updateFlagrelyidByKey">
+		DELETE FROM qa_reply_news WHERE   text_code = #{text_code}
+		and  text_name = #{text_name}
+	</delete>
+	
+	<!-- 查询信息文件ID-->
+	<select id="selectUpload"  resultType="Dto">
+		select FILEID FROM aos_upload  WHERE   MANIN_ID = #{manage_code}
+	</select>
+	
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="query_aos_user" resultType="Dto">
+			SELECT
+				au.name AS user_name,
+				ar.`name` AS role_name,
+				ao.`name` AS org_name,
+				au.`sex`,
+				au.id,
+				au.`status`,
+				au.`type`,
+				au.id as user_id
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au,
+			  `aos_role` ar,
+			  `aos_org` ao,
+			  `aos_user_role` aur
+			  WHERE bpt.`TEAM_USER_ID` = au.`id`
+			  AND au.id=aur.`user_id`
+			  AND aur.`role_id` = ar.`id`
+			  AND au.`org_id`=ao.`id`
+			  AND au.id !='-1'
+			  AND au.is_del = 0
+			  <if test="id !='null' and id !=''">
+				       AND au.`id` in (${id})
+				
+			  </if>
+			   <if test="id =='null' or id ==''">
+				      and 1=0
+			  </if>
+			  	
+			  
+			 
+			  GROUP BY au.id 
+	</select>
+	
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="query_aos_user_corp" resultType="Dto">
+			SELECT
+				au.name AS user_name,
+				ar.`name` AS role_name,
+				ao.`name` AS org_name,
+				au.`sex`,
+				au.id,
+				au.`status`,
+				au.`type`,
+				au.id as user_id
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au,
+			  `aos_role` ar,
+			  `aos_org` ao,
+			  `aos_user_role` aur
+			  WHERE bpt.`TEAM_USER_ID` = au.`id`
+			  AND au.id=aur.`user_id`
+			  AND aur.`role_id` = ar.`id`
+			  AND au.`org_id`=ao.`id`
+			  AND au.id !='-1'
+			  AND au.is_del = 0
+			 <if test="id !='null' and id !=''">
+				AND au.`id`  not  in (${id}) 
+			</if>
+			<if test="id_name !='null' and id_name !=''">
+				AND au.name like '%${id_name}%'
+			</if>
+			<if test="subordinate_departments != null and subordinate_departments != ''">
+	            and ao.id = #{subordinate_departments}
+	      	</if>
+			GROUP BY au.id 
+			ORDER BY ao.`name`,ar.`name`
+	</select>
+	
+	<!-- 常用联系人列表查询 -->
+	<select id="topContactsPage" resultType="Dto">
+			select 
+				qa_top_contacts.top_id,  
+				qa_top_contacts.top_name as user_name,  
+				qa_top_contacts.user_id,  
+				qa_top_contacts.create_id,
+				au.id,
+				au.`status`,
+				au.`type`,  
+				qa_top_contacts.create_time,
+				qa_top_contacts.top_org_name_id,
+				qa_top_contacts.top_org_name  as org_name,
+				qa_top_contacts.top_role_name as role_name,
+				qa_top_contacts.top_sex  as sex
+			from
+				`aos_user` au,
+				qa_top_contacts
+			where
+				au.id = qa_top_contacts.user_id
+				AND au.id !='-1'
+			 	AND au.is_del = 0
+				<if test="create_id != null">
+					AND qa_top_contacts.create_id = #{create_id}
+				</if>
+				<if test="top_name != null and top_name != ''">
+					AND top_name = #{top_name}
+				</if>
+				<if test="top_org_name_id != null and top_org_name_id != ''">
+					AND top_org_name_id = #{top_org_name_id}
+				</if>
+			ORDER BY qa_top_contacts.top_org_name
+	</select>
+	
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectQaWeekly" parameterType="Dto"  resultType="Dto">
+		SELECT
+		    *
+		FROM qa_weekly where test_code=#{test_code};
+	</select>
+	
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectQaWeeklyDetail"  parameterType="Dto" resultType="Dto" >
+		SELECT
+		    *
+		FROM qa_weekly_detail  where test_code=#{test_code};
+	</select>
+	<!-- 评审管理根据意见查询 -->
+	<select id="isNoJudeg" resultType="FilesManagePO"  parameterType="Dto" >
+			select  * from 
+			qa_files_manage 
+			<where>
+			<if test="opinion_code != null and opinion_code!='' ">
+				     opinion_code = #{opinion_code}
+			</if>
+			</where> 
+	</select>
+	<!-- 测试组长查询 -->
+	<select id="testGrouplaSel" resultType="String"  parameterType="Dto" >
+			SELECT
+				 au. NAME 
+				FROM
+					aos_user_role aur,
+					aos_role ar,
+					aos_user au
+				WHERE
+					aur.role_id = ar.id
+				AND ar.id = 1634
+				AND au.id = aur.user_id
+				LIMIT 1;
+	</select>
+	<!-- 删除收藏 -->
+	<delete id="removeCollect"   parameterType="Dto" >
+			delete from bs_module_collect 
+			WHERE
+				user_id =#{user_id}
+			AND mode_id = #{mode_id}
+	</delete>
+	<!-- 添加收藏 -->
+	<insert id="addCollect"   parameterType="Dto" >
+			insert  into bs_module_collect (
+			       user_id,
+			       mode_id,
+			       <if test="url != null and url != ''">
+	                   url,
+		           </if>
+		           create_time,
+		           root_id,
+			       id
+			)VALUES(
+			  #{user_id, jdbcType=INTEGER},      <!-- 用户ID -->
+			  #{mode_id, jdbcType=INTEGER}, <!-- 模块ID -->
+			  <if test="url != null and url != ''">
+	            #{url, jdbcType=VARCHAR}, <!-- 外部链接 -->
+	          </if>
+			
+			  #{create_time, jdbcType=DATE}, <!-- 创建时间 -->
+			  #{root_id, jdbcType=INTEGER}, <!-- 根节点 -->
+			  NULL
+			)
+	</insert>
+	<!-- 判断重复收藏 -->
+	<select id="diffAddCollect" resultType="Integer"   parameterType="Dto" >
+			select count(*)
+			   from bs_module_collect 
+			WHERE
+				user_id =#{user_id}
+			AND mode_id = #{mode_id}
+	</select>
+	
+	<!-- 判断项目周报本周是否编写 -->
+	<select id="getWeekDate" resultType="Integer"   parameterType="Dto" >
+				SELECT
+					 count(*)
+				FROM
+					(
+						SELECT
+							*
+						FROM
+							ta_week
+						WHERE
+							begin_date &gt; #{begin_date}
+						AND begin_date &lt; #{end_date}
+						AND proj_id =#{proj_id}
+						AND flag = 1
+						UNION
+							SELECT
+								*
+							FROM
+								ta_week
+							WHERE
+								end_date &gt; #{begin_date}
+							AND end_date &lt; #{end_date}
+							AND proj_id =#{proj_id}
+							AND flag = 1
+					)a		
+	</select>
+	<!-- 更新周报主表的备注 -->
+	<update id="upWeekRemarks"   parameterType="Dto" >
+		UPDATE qa_weekly
+		SET remarks = #{remarks}   where test_code =#{test_code}
+	</update>
+	
+	<!-- 项目周报grid显示 -->
+	<select id="listWeekPage" parameterType="Dto" resultType="Dto">
+		 	SELECT
+				*
+			FROM
+				ta_week 
+			WHERE  flag = 1
+		      <if test="task_plan_num != null and task_plan_num != ''">
+		      AND  task_plan_num=#{task_plan_num}  <!-- 項目周 -->
+		      </if>
+		    
+             <if test="proj_id != null and proj_id != ''">
+				 and    (proj_id = '${proj_id}' or '${proj_id}' in ("A1","A2","0000"))
+			</if>
+			<if test="begin_date != null and begin_date != ''">
+						  and  commit_time &gt;
+								'${begin_date}'   <!-- 开始时间-->
+			  </if>
+			  <if test="end_date != null and end_date != ''">
+						      and commit_time  &lt;
+							 DATE_ADD('${end_date}',INTERVAL 1 DAY) 	 <!-- 结束时间 -->
+			  </if>
+			  order by commit_time desc
+	</select>
+	<!-- 查询项目  -->
+	<select id="querymy_project_tree" resultType="Dto">
+		SELECT 
+			  bpc.* 
+			FROM
+			  `bs_proj_commons` bpc,
+			  `bs_proj_teams` bpt 
+			WHERE bpt.`state` = '1' 
+			  AND bpt.`PROJ_ID` = bpc.`PROJ_ID` 
+			  AND (bpc.`STATE` = 1 
+			  OR bpc.`STATE` = 2)
+			  GROUP BY bpc.`PROJ_ID`
+	</select>
+	
+	<!-- 查询评审内容  -->
+	<select id="getFilesId" resultType="Dto"  parameterType="Dto" >
+			SELECT a.theme FROM qa_files_manage a
+			    WHERE a.state_flag &lt;&gt; '1' 
+			    AND a.review_type ='1'    
+			    AND date_format(a.begin_date, '%Y-%m-%d') &gt;= #{begin_date}
+			    AND date_format(a.end_date, '%Y-%m-%d') &lt;= #{end_date}
+	</select>
+	
+	
+	<!-- 导出工时表数据 -->
+	<select id="workHourslikeOrPage" parameterType="Dto" resultType="Dto" useCache="false">
+			SELECT
+			 DISTINCT	twh.user_id,
+				au. NAME,
+			 	twh. user_id,
+				bpc.project_for_short,
+				min(	tw.begin_date)begin_date,
+			    max(	tw.end_date)end_date,
+				tw.task_plan_num,
+				sum(twh.work_hours)work_hours,
+              sum(twh.business_hours)business_hours
+			FROM
+				ta_work_hour twh
+			LEFT JOIN aos_user au ON twh.user_id = au.id
+			LEFT JOIN ta_week tw ON twh.test_code = tw.test_code
+			LEFT JOIN bs_proj_commons bpc ON bpc.PROJ_ID = twh.proj_id	
+			<where>
+			<if test="proj_id != null and proj_id != ''">
+				    (twh.proj_id = '${proj_id}' or '${proj_id}' in ("A1","A2","0000"))
+			</if>
+			<if test="begin_date != null and begin_date != ''">
+						  and  tw.begin_date &gt;=
+								'${begin_date}'   <!-- 开始时间-->
+			  </if>
+			  <if test="end_date != null and end_date != ''">
+						      and tw.begin_date  &lt;=
+								'${end_date}' <!-- 结束时间 -->
+			  </if>
+			  </where>
+			  GROUP BY twh.user_id
+			  order by tw.begin_date desc
+	</select>
+	
+	<!-- 导出工时表数据 -->
+	<select id="workHourslikecount" parameterType="Dto" resultType="Dto" >
+			SELECT
+					twh.proj_id,
+					bpc.project_for_short,
+					ifnull(sum(twh.work_hours),0) work_hours,
+					ifnull(sum(twh.business_hours),0) business_hours,
+					(
+	    	SELECT
+	  				GROUP_CONCAT(
+					twh_au. NAME,"("
+					,
+				IF (
+					twh_au.work_hours > 0,
+					CONCAT(
+						"基地:",
+						twh_au.work_hours
+					),
+					' '
+				),
+			IF (
+				twh_au.business_hours > 0,
+				CONCAT(
+					"出差:",
+					twh_au.business_hours
+				),
+				''
+			),
+			")"
+				)
+			FROM
+				(
+					SELECT DISTINCT
+						au. NAME,
+						sum(work_hours) work_hours,
+						sum(business_hours) business_hours,
+						twh.proj_id,
+						twh.test_code
+					FROM
+						ta_work_hour twh
+					LEFT JOIN aos_user au ON twh.user_id = au.id
+					LEFT JOIN ta_week tw ON twh.test_code = tw.test_code
+					 <where>
+							<if test="proj_id != null and proj_id != ''">
+						     (twh.proj_id = '${proj_id}' or '${proj_id}' in ("A1","A2","0000"))
+					        </if>
+					       <if test="begin_date!= null and begin_date!= ''">
+								  and  tw.begin_date &gt;
+										#{begin_date}   <!-- 开始时间-->
+					       </if>
+					       <if test="end_date!= null and end_date!= ''">
+								      and tw.begin_date  &lt;
+										#{end_date} <!-- 结束时间 -->
+					       </if>
+						</where>
+					GROUP BY
+						twh.user_id,
+						twh.proj_id
+				) twh_au
+	               where  twh_au.proj_id = twh.proj_id
+		          GROUP BY
+				twh_au.proj_id)hours ,
+			 min(tw.begin_date)as  min_date,
+				max(tw.end_date)as  max_date,
+				ifnull((
+					SELECT
+						count(	DISTINCT twh1.user_id)
+					FROM
+					ta_week tw1  LEFT JOIN	   ta_work_hour twh1 on tw1.test_code=twh1.test_code
+					LEFT JOIN bs_proj_teams bpt ON twh1.user_id = bpt.team_user_id
+					LEFT JOIN bs_proj_role_types bprt ON bprt.trp_code = bpt.trp_code
+					WHERE
+						bprt.trp_code IN (28, 26)
+					AND twh1.proj_id = twh.proj_id
+					and twh1.proj_id=bpt.PROJ_ID
+					
+					<if test="proj_id != null and proj_id != ''">
+						   and  (twh1.proj_id = '${proj_id}' or '${proj_id}' in ("A1","A2","0000"))
+					</if>
+					<if test="begin_date!= null and begin_date!= ''">
+								  and  tw1.begin_date &gt;
+										#{begin_date}   <!-- 开始时间-->
+					  </if>
+					  <if test="end_date!= null and end_date!= ''">
+								      and tw1.begin_date  &lt;
+										#{end_date} <!-- 结束时间 -->
+					  </if>
+					GROUP BY
+						twh1.proj_id
+				),0) as  maneg_user,
+				ifnull((
+					SELECT
+						count(	DISTINCT twh1.user_id)
+					FROM
+					   ta_week tw1  LEFT JOIN	   ta_work_hour twh1 on tw1.test_code=twh1.test_code
+					LEFT JOIN bs_proj_teams bpt ON twh1.user_id = bpt.team_user_id
+					LEFT JOIN bs_proj_role_types bprt ON bprt.trp_code = bpt.trp_code
+					WHERE
+						bprt.trp_code NOT IN (28, 26)
+						<if test="proj_id != null and proj_id != ''">
+				   and  (twh.proj_id = '${proj_id}' or '${proj_id}' in ("A1","A2","0000"))
+			    </if>
+			      <if test="begin_date != null and begin_date != ''">
+						  and  tw1.begin_date &gt;
+			 					#{begin_date}   <!-- 开始时间-->
+			     </if>
+			     <if test="end_date != null and end_date != ''">
+						      and tw1.begin_date  &lt;
+								#{end_date}  <!-- 结束时间 -->
+			    </if>
+					AND twh1.proj_id = twh.proj_id
+					and twh1.proj_id=bpt.PROJ_ID
+					GROUP BY
+						twh1.proj_id
+				),0)as user_s
+			FROM
+				ta_work_hour twh
+			LEFT JOIN aos_user au ON twh.user_id = au.id
+			LEFT JOIN ta_week tw ON twh.test_code = tw.test_code
+			LEFT JOIN bs_proj_commons bpc ON bpc.PROJ_ID = twh.proj_id
+			<where>
+			<if test="proj_id != null and proj_id != ''">
+				    (twh.proj_id = '${proj_id}' or '${proj_id}' in ("A1","A2","0000"))
+			  </if>
+			  <if test="begin_date != null and begin_date != ''">
+						  and  tw.begin_date &gt;
+								#{begin_date}   <!-- 开始时间-->
+			  </if>
+			  <if test="end_date != null and end_date != ''">
+						      and tw.begin_date  &lt;
+								#{end_date}  <!-- 结束时间 -->
+			  </if>
+		    </where>
+			 GROUP BY  twh.proj_id
+	</select>
+	<!-- 部门经理角色 -->		 
+	<select  id="departmentManager"  resultType="String" >
+			SELECT
+				au.name
+			FROM
+				aos_role ar,
+				aos_user_role aur,
+			aos_user au
+			WHERE
+				ar.id = aur.role_id
+			and au.id=aur.user_id
+			AND ar.id = '4986' 
+			 limit 1
+	</select>
+	<!-- 角色发布功能授权 -->		 
+	<select  id="impowerIssue"  resultType="Integer" parameterType="Dto" >
+			SELECT
+				count(*)
+			FROM
+				bs_proj_teams
+			WHERE
+				trp_code IN (10, 23, 26, 28, 29, 38)
+			<if test=" PROJ_ID !=null " >
+	             and   PROJ_ID  = #{PROJ_ID}
+	        </if> 
+			<if test=" TEAM_USER_ID !=null " >
+	             and   TEAM_USER_ID  = #{TEAM_USER_ID}
+	        </if> 
+	</select>
+	<!-- 角色发布功能授权 -->		 
+	<select  id="getRoleTypePermissionPersonCount"  resultType="Integer" parameterType="Dto" >
+			SELECT
+				count(*)
+			FROM
+				bs_proj_teams
+			WHERE
+				trp_code in (select trp_code from aos_role_type_permission where permission_code = #{permission_code})
+			<if test=" proj_id !=null " >
+	             and   proj_id  = #{proj_id}
+	        </if> 
+			<if test=" team_user_id !=null " >
+	             and   team_user_id  = #{team_user_id}
+	        </if> 
+	</select>
+	<!-- 角色发布功能授权 -->		 
+	<select  id="getmoduleId"  resultType="String" parameterType="Dto" >
+			select  dm_name from re_module_divide where  dm_code=#{module_id} LIMIT 1
+	</select>
+	<!-- 获取任务确认人 -->		 
+	<select  id="getTaskoKUser"  resultType="Integer" parameterType="Dto" >
+			SELECT
+				ifnull(develop_task_user,0)
+			FROM
+				bs_proj_teams
+			<where>
+				<if test=" proj_id !=null " >
+		             and   PROJ_ID  = #{proj_id}
+		        </if> 
+				<if test=" team_user_id !=null " >
+		             and   TEAM_USER_ID  = #{team_user_id}
+		        </if> 
+			</where>
+			limit 1
+	</select>
+	
+	<select id="getProjManager" resultType="Dto" >
+		SELECT
+			team_user_id
+		FROM
+			bs_proj_teams 
+		WHERE
+			TRP_CODE = 26
+			and state = 1
+			and proj_id = #{proj_id}
+	</select>
+	
+	<select id="getProjTprCode" resultType="Integer" >	
+		SELECT
+			count(*)
+		FROM
+			bs_proj_teams
+		WHERE
+			bs_proj_teams.PROJ_ID = #{proj_id}
+			AND bs_proj_teams.TEAM_USER_ID = #{user_id}
+			AND bs_proj_teams.TRP_CODE in (28,26)
+	</select>
+	
+	<select id="getHandlerUserID" resultType="String" parameterType="Dto" >
+		SELECT
+			`name`
+		FROM
+			aos_user
+		WHERE
+			id = #{handler_user_id}
+	</select>
+	
+	<!-- 获取任务确认人名字简写 -->
+	<select  id="getTaskoKUserAccount"  resultType="String" parameterType="Integer" >
+	     SELECT
+		      account
+			FROM
+				aos_user
+		          where id  = #{id}
+			limit 1
+	</select>
+	<!-- 获取是否重复任务消息 -->		 
+	<select  id="getSendMessage"  resultType="Integer" parameterType="Dto" >
+			SELECT
+				count(*)
+			FROM
+				qa_message
+			<where>
+				<if test=" tags !=null and tags !=''" >
+		             and   tags  = #{tags}
+		        </if> 
+				<if test=" user_id !=null " >
+		             and   user_id  = #{user_id}
+		        </if> 
+		        <if test=" theme !=null and theme!='' " >
+		             and   theme  = #{theme}
+		        </if> 
+			</where>
+			limit 1
+	</select>
+	<!-- 获取已读和未读消息数 -->		 
+	<select  id="getmsg_no_yes"  resultType="Dto" parameterType="Dto" >
+			SELECT
+				count(
+					(
+						SELECT
+							1
+						FROM
+							qa_message qm_n
+						WHERE
+							qm_n.msg_id = qm.msg_id
+						AND qm_n.msg_state = 1
+					)
+				) msg_n,
+				count(
+					(
+						SELECT
+							1
+						FROM
+							qa_message qm_y
+						WHERE
+							qm_y.msg_id = qm.msg_id
+						AND qm_y.msg_state = 2
+					)
+				) msg_y,
+				send_id,
+				send_name,
+				msg_id
+			FROM
+				qa_message qm
+			WHERE qm.user_id =#{user_id}
+			GROUP BY
+				qm.send_id
+	</select>
+	<!-- 获取未读消息内容 -->		 
+	<select  id="getmsg_note"  resultType="Dto" parameterType="Dto" >
+			SELECT
+				*
+			FROM
+				qa_message
+			WHERE msg_state = '1'
+			AND send_id = #{send_id}
+			AND user_id = #{user_id}
+			    UNION
+			SELECT
+				*
+			FROM
+				qa_message
+			WHERE msg_state = '1'
+			AND send_id = #{user_id}
+			AND user_id = #{send_id}
+			ORDER BY  create_time
+			
+	</select>
+	
+	<select id="listPrincipalOrg" resultType="Dto"> 
+		select id as value,name as display
+		from aos_org
+		where is_del = 0
+	</select>
+	
+	<select id="meetingAttachmentPage" resultType="dto">
+		SELECT
+			fileid,
+			title,
+			path,
+			filesize,
+			remark,
+			loadurl,
+			manin_id,
+			manage_code
+		FROM
+			aos_upload 
+		WHERE
+			<if test="manin_id != null and manin_id != ''">
+				 manin_id = #{manin_id}
+			</if>
+		
+	</select>
+	
+	<select id="replyDetailPage" resultType="dto">
+		SELECT
+			fileid,
+			title,
+			path,
+			filesize,
+			remark,
+			loadurl,
+			manin_id,
+			manage_code
+		FROM
+			aos_upload 
+		WHERE
+			<if test="manin_id != null and manin_id != ''">
+				 manin_id = #{manin_id}
+			</if>
+		
+	</select>
+	
+</mapper>

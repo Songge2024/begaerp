@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_check_catalog[CheckCatalog]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2019-10-10 13:57:28 -->
+<mapper namespace="com.bl3.pm.process.dao.CheckCatalogDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="check_cata_id" parameterType="CheckCatalogPO">
+		INSERT INTO pr_check_catalog (
+		<if test="type_code != null and type_code != ''">
+	         type_code, <!-- 项目类型ID -->
+		</if>
+		<if test="check_cata_name != null and check_cata_name != ''">
+	         check_cata_name, <!-- 检查单名称 -->
+		</if>
+		<if test="remark != null and remark != ''">
+	         remark, <!-- 说明 -->
+		</if>
+		<if test="sort_no != null">
+	         sort_no, <!-- 排序号 -->
+		</if>
+		<if test="sort_no == null">
+	         sort_no, <!-- 排序号 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 设计人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态(1为启用，0为不启用） -->
+		</if>
+	          check_cata_id
+		)VALUES(
+		<if test="type_code != null and type_code != ''">
+	          #{type_code, jdbcType=VARCHAR}, <!-- 项目类型ID -->
+	    </if>
+		<if test="check_cata_name != null and check_cata_name != ''">
+	          #{check_cata_name, jdbcType=VARCHAR}, <!-- 检查单名称 -->
+	    </if>
+		<if test="remark != null and remark != ''">
+	          #{remark, jdbcType=VARCHAR}, <!-- 说明 -->
+	    </if>
+		<if test="sort_no != null">
+	          #{sort_no, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+	    <if test="sort_no == null">
+	    	(SELECT ifnull(max(sort_no),0) FROM pr_check_catalog a WHERE state != -1 AND type_code = #{type_code})+1,
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 设计人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态(1为启用，0为不启用） -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="check_cata_id" parameterType="CheckCatalogPO">
+		INSERT INTO pr_check_catalog (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{check_cata_id, jdbcType=INTEGER},  <!-- 检查单目录ID -->
+		    #{type_code, jdbcType=VARCHAR},  <!-- 项目类型ID -->
+		    #{check_cata_name, jdbcType=VARCHAR},  <!-- 检查单名称 -->
+		    #{remark, jdbcType=VARCHAR},  <!-- 说明 -->
+		    #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态(1为启用，0为不启用） -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="CheckCatalogPO">
+		UPDATE pr_check_catalog
+		<set>
+			<if test="check_cata_id != null">
+		          check_cata_id = #{check_cata_id, jdbcType=INTEGER},  <!-- 检查单目录ID -->
+			</if>
+			<if test="type_code != null">
+		          type_code = #{type_code, jdbcType=VARCHAR},  <!-- 项目类型ID -->
+			</if>
+			<if test="check_cata_name != null">
+		          check_cata_name = #{check_cata_name, jdbcType=VARCHAR},  <!-- 检查单名称 -->
+			</if>
+			<if test="remark != null">
+		          remark = #{remark, jdbcType=VARCHAR},  <!-- 说明 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态(1为启用，0为不启用） -->
+			</if>
+		</set>
+		WHERE  check_cata_id = #{check_cata_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+<!-- 	<update id="deleteByKey"> -->
+<!-- 		DELETE FROM pr_check_catalog WHERE  check_cata_id = #{check_cata_id} -->
+<!-- 		update pr_check_catalog  -->
+<!-- 		set state = '-1' -->
+<!-- 		where check_cata_id = #{check_cata_id} -->
+<!-- 	</update> -->
+	
+    <delete id="deleteByKey">
+        DELETE FROM pr_check_catalog WHERE  check_cata_id = #{check_cata_id}
+    </delete>
+	
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="CheckCatalogPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_check_catalog WHERE  check_cata_id = #{check_cata_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="CheckCatalogPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_check_catalog
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="CheckCatalogPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_catalog
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="CheckCatalogPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_catalog
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="CheckCatalogPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_catalog
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="CheckCatalogPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_catalog
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="CheckCatalogPO" useCache="false">
+	    SELECT
+	   		(		
+				CASE
+				WHEN state = 0 THEN
+					'未启用'
+				WHEN state = 1 THEN
+					'已启用'
+				ELSE
+					'已作废'
+				END
+			)state_name,
+			<include refid="column" />
+		FRoM pr_check_catalog
+		<where>
+<!-- 			state != '-1' -->
+		    <include refid="like" />
+		</where>
+		order by sort_no
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="CheckCatalogPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_catalog
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_check_catalog
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_check_catalog
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 判断是否存在重名的检查项 -->
+	<select id="catalogCount" parameterType="Dto" resultType="Integer">
+		select COUNT(check_cata_id) from pr_check_catalog where type_code = #{type_code} and check_cata_name = #{check_cata_name}
+	</select>
+	
+	<!-- 判断是否存在其他重名的检查项 -->
+	<select id="catalogOtCount" parameterType="Dto" resultType="Integer" >
+		select COUNT(check_cata_id) from pr_check_catalog where type_code = #{type_code} and check_cata_name = #{check_cata_name} and check_cata_id != #{check_cata_id}
+	</select>
+	
+	<!-- 停用检查项 -->
+	<update id="cataStopByKey">
+		update pr_check_catalog a
+		set a.state = 0
+		where a.check_cata_id = #{check_cata_id}
+	</update>
+	
+	<!-- 停用检查项下检查单 -->
+	<update id="itemStopByKey">
+		update pr_check_item a
+		set a.state = 0
+		where a.check_cata_id = #{check_cata_id}
+	</update>
+	
+	<!-- 启用检查项 -->
+	<update id="cataRunByKey">
+		update pr_check_catalog a
+		set a.state = 1
+		where a.check_cata_id = #{check_cata_id}
+	</update>
+	
+	<!-- 启用检查项下检查单 -->
+	<update id="itemRunByKey">
+		update pr_check_item a
+		set a.state = 1
+		where a.check_cata_id = #{check_cata_id}
+	</update>
+	
+	<!-- 删除检查项下的检查单 -->
+<!-- 	<update id="deleteItemByKey"> -->
+<!-- 		DELETE FROM pr_check_item WHERE  check_cata_id = #{check_cata_id} -->
+<!-- 		update pr_check_item  -->
+<!-- 		set state = '-1' -->
+<!-- 		where check_cata_id = #{check_cata_id} -->
+<!-- 	</update> -->
+    <select id="deleteItemByKey">
+        DELETE FROM pr_check_item WHERE  check_cata_id = #{check_cata_id}
+    </select>
+	
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  check_cata_id,  <!-- 检查单目录ID -->
+		  type_code,  <!-- 项目类型ID -->
+		  check_cata_name,  <!-- 检查单名称 -->
+		  remark,  <!-- 说明 -->
+		  sort_no,  <!-- 排序号 -->
+		  create_user_id,  <!-- 设计人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态(1为启用，0为不启用） -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_check_catalog.check_cata_id,  <!-- 检查单目录ID -->
+		  pr_check_catalog.type_code,  <!-- 项目类型ID -->
+		  pr_check_catalog.check_cata_name,  <!-- 检查单名称 -->
+		  pr_check_catalog.remark,  <!-- 说明 -->
+		  pr_check_catalog.sort_no,  <!-- 排序号 -->
+		  pr_check_catalog.create_user_id,  <!-- 设计人 -->
+		  pr_check_catalog.create_time,  <!-- 创建时间 -->
+		  pr_check_catalog.update_user_id,  <!-- 更新人 -->
+		  pr_check_catalog.update_time,  <!-- 更新时间 -->
+		  pr_check_catalog.state  <!-- 状态(1为启用，0为不启用） -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="check_cata_id != null ">
+		      AND check_cata_id = #{check_cata_id}  <!-- 检查单目录ID -->
+		</if>
+	    <if test="type_code != null and type_code != ''">
+		      AND type_code = #{type_code}  <!-- 项目类型ID -->
+		</if>
+	    <if test="check_cata_name != null and check_cata_name != ''">
+		      AND check_cata_name = #{check_cata_name}  <!-- 检查单名称 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark = #{remark}  <!-- 说明 -->
+		</if>
+	   <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 设计人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态(1为启用，0为不启用） -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="type_code != null and type_code != ''">
+		      AND type_code like '${type_code}%'  <!-- 项目类型ID -->
+		</if>
+	    <if test="check_cata_name != null and check_cata_name != ''">
+		      AND check_cata_name like '${check_cata_name}%'  <!-- 检查单名称 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark like '${remark}%'  <!-- 说明 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态(1为启用，0为不启用） -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="type_code != null and type_code != ''">
+		      Or type_code like '${type_code}%'  <!-- 项目类型ID -->
+		</if>
+	    <if test="check_cata_name != null and check_cata_name != ''">
+		      Or check_cata_name like '${check_cata_name}%'  <!-- 检查单名称 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      Or remark like '${remark}%'  <!-- 说明 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态(1为启用，0为不启用） -->
+		</if>
+	</sql>
+	
+</mapper>

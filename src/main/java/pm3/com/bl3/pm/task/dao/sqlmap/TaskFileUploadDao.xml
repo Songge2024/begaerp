@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ta_task_file_upload[TaskFileUpload]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2019-01-12 15:37:07 -->
+<mapper namespace="com.bl3.pm.task.dao.TaskFileUploadDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="TaskFileUploadPO">
+		INSERT INTO ta_task_file_upload (
+		<if test="task_id != null">
+	         task_id, <!-- 过程ID -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="task_file_type != null">
+	         task_file_type, <!-- 任务文件类型（1 发布文件 2 回复文件） -->
+		</if>
+		<if test="file_code != null and file_code != ''">
+	         file_code, <!-- 文件编码 -->
+		</if>
+		<if test="file_title != null and file_title != ''">
+	         file_title, <!-- 上传文件标题 -->
+		</if>
+		<if test="file_path != null and file_path != ''">
+	         file_path, <!-- 上传文件路径 -->
+		</if>
+		<if test="file_url != null and file_url != ''">
+	         file_url, <!-- 上传文件URL -->
+		</if>
+		<if test="file_size != null and file_size != ''">
+	         file_size, <!-- 上传文件大小 -->
+		</if>
+		<if test="version_num != null and version_num != ''">
+	         version_num, <!-- 版本号 -->
+		</if>
+		<if test="file_remark != null and file_remark != ''">
+	         file_remark, <!-- 上传文件备注 -->
+		</if>
+		<if test="sortno != null">
+	         sortno, <!-- 排序号 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state <!-- 状态 -->
+		</if>
+<!-- 		<if test="file_id != null"> -->
+<!-- 	          file_id  文件ID -->
+<!-- 	   </if> -->
+		)VALUES(
+		<if test="task_id != null">
+	          #{task_id, jdbcType=INTEGER}, <!-- 过程ID -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="task_file_type != null">
+	          #{task_file_type, jdbcType=INTEGER}, <!-- 任务文件类型（1 发布文件 2 回复文件） -->
+	    </if>
+		<if test="file_code != null and file_code != ''">
+	          #{file_code, jdbcType=VARCHAR}, <!-- 文件编码 -->
+	    </if>
+		<if test="file_title != null and file_title != ''">
+	          #{file_title, jdbcType=VARCHAR}, <!-- 上传文件标题 -->
+	    </if>
+		<if test="file_path != null and file_path != ''">
+	          #{file_path, jdbcType=VARCHAR}, <!-- 上传文件路径 -->
+	    </if>
+		<if test="file_url != null and file_url != ''">
+	          #{file_url, jdbcType=VARCHAR}, <!-- 上传文件URL -->
+	    </if>
+		<if test="file_size != null and file_size != ''">
+	          #{file_size, jdbcType=VARCHAR}, <!-- 上传文件大小 -->
+	    </if>
+		<if test="version_num != null and version_num != ''">
+	          #{version_num, jdbcType=VARCHAR}, <!-- 版本号 -->
+	    </if>
+		<if test="file_remark != null and file_remark != ''">
+	          #{file_remark, jdbcType=VARCHAR}, <!-- 上传文件备注 -->
+	    </if>
+		<if test="sortno != null">
+	          #{sortno, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR} <!-- 状态 -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="TaskFileUploadPO">
+		INSERT INTO ta_task_file_upload (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{file_id, jdbcType=INTEGER},  <!-- 文件ID -->
+		    #{task_id, jdbcType=INTEGER},  <!-- 过程ID -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{task_file_type, jdbcType=INTEGER},  <!-- 任务文件类型（1 发布文件 2 回复文件） -->
+		    #{file_code, jdbcType=VARCHAR},  <!-- 文件编码 -->
+		    #{file_title, jdbcType=VARCHAR},  <!-- 上传文件标题 -->
+		    #{file_path, jdbcType=VARCHAR},  <!-- 上传文件路径 -->
+		    #{file_url, jdbcType=VARCHAR},  <!-- 上传文件URL -->
+		    #{file_size, jdbcType=VARCHAR},  <!-- 上传文件大小 -->
+		    #{version_num, jdbcType=VARCHAR},  <!-- 版本号 -->
+		    #{file_remark, jdbcType=VARCHAR},  <!-- 上传文件备注 -->
+		    #{sortno, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="TaskFileUploadPO">
+		UPDATE ta_task_file_upload
+		<set>
+			<if test="file_id != null">
+		          file_id = #{file_id, jdbcType=INTEGER},  <!-- 文件ID -->
+			</if>
+			<if test="task_id != null">
+		          task_id = #{task_id, jdbcType=INTEGER},  <!-- 过程ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="task_file_type != null">
+		          task_file_type = #{task_file_type, jdbcType=INTEGER},  <!-- 任务文件类型（1 发布文件 2 回复文件） -->
+			</if>
+			<if test="file_code != null">
+		          file_code = #{file_code, jdbcType=VARCHAR},  <!-- 文件编码 -->
+			</if>
+			<if test="file_title != null">
+		          file_title = #{file_title, jdbcType=VARCHAR},  <!-- 上传文件标题 -->
+			</if>
+			<if test="file_path != null">
+		          file_path = #{file_path, jdbcType=VARCHAR},  <!-- 上传文件路径 -->
+			</if>
+			<if test="file_url != null">
+		          file_url = #{file_url, jdbcType=VARCHAR},  <!-- 上传文件URL -->
+			</if>
+			<if test="file_size != null">
+		          file_size = #{file_size, jdbcType=VARCHAR},  <!-- 上传文件大小 -->
+			</if>
+			<if test="version_num != null">
+		          version_num = #{version_num, jdbcType=VARCHAR},  <!-- 版本号 -->
+			</if>
+			<if test="file_remark != null">
+		          file_remark = #{file_remark, jdbcType=VARCHAR},  <!-- 上传文件备注 -->
+			</if>
+			<if test="sortno != null">
+		          sortno = #{sortno, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  file_id = #{file_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM ta_task_file_upload WHERE  file_id = #{file_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="TaskFileUploadPO">
+		SELECT
+		<include refid="column" />
+		FROM ta_task_file_upload WHERE  file_id = #{file_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="TaskFileUploadPO">
+		SELECT
+		    <include refid="column" />
+		FROM ta_task_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="TaskFileUploadPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_task_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="TaskFileUploadPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_task_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="TaskFileUploadPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_task_file_upload
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="TaskFileUploadPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_task_file_upload
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="TaskFileUploadPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_task_file_upload
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="TaskFileUploadPO" useCache="false">
+	    SELECT
+			<include refid="column2" />,
+			tt.task_name, 
+			bpc.proj_name, 
+			au.name as create_user_name
+		from ta_task_file_upload
+		LEFT JOIN ta_task tt ON tt.task_id = ta_task_file_upload.task_id
+		LEFT JOIN bs_proj_commons bpc ON bpc.proj_id = ta_task_file_upload.proj_id
+		LEFT JOIN aos_user au ON au.id = ta_task_file_upload.create_user_id
+		<where>
+<!-- 		     (ta_task_file_upload.task_id is NULL or ta_task_file_upload.task_id = '') -->
+			ta_task_file_upload.temp_task_id like '${temp_task_id}%'
+			and ta_task_file_upload.proj_id = #{proj_id}
+		</where>	
+	</select>	
+	
+	<select id="likeCreatePage" parameterType="Dto" resultType="TaskFileUploadPO" useCache="false">
+	    SELECT
+			<include refid="column2" />,
+			tt.task_name, 
+			bpc.proj_name, 
+			au.name as create_user_name
+		from ta_task_file_upload
+		LEFT JOIN ta_task tt ON tt.task_id = ta_task_file_upload.task_id
+		LEFT JOIN bs_proj_commons bpc ON bpc.proj_id = ta_task_file_upload.proj_id
+		LEFT JOIN aos_user au ON au.id = ta_task_file_upload.create_user_id
+		<where>
+	        ta_task_file_upload.task_id = #{task_id}
+         	and ta_task_file_upload.proj_id = #{proj_id}
+            <include refid="likeOr" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM ta_task_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM ta_task_file_upload
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  file_id,  <!-- 文件ID -->
+		  task_id,  <!-- 过程ID -->
+		  proj_id,  <!-- 项目ID -->
+		  task_file_type,  <!-- 任务文件类型（1 发布文件 2 回复文件） -->
+		  file_code,  <!-- 文件编码 -->
+		  file_title,  <!-- 上传文件标题 -->
+		  file_path,  <!-- 上传文件路径 -->
+		  file_url,  <!-- 上传文件URL -->
+		  file_size,  <!-- 上传文件大小 -->
+		  version_num,  <!-- 版本号 -->
+		  file_remark,  <!-- 上传文件备注 -->
+		  sortno,  <!-- 排序号 -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  ta_task_file_upload.file_id,  <!-- 文件ID -->
+		  ta_task_file_upload.task_id,  <!-- 过程ID -->
+		  ta_task_file_upload.proj_id,  <!-- 项目ID -->
+		  ta_task_file_upload.task_file_type,  <!-- 任务文件类型（1 发布文件 2 回复文件） -->
+		  ta_task_file_upload.file_code,  <!-- 文件编码 -->
+		  ta_task_file_upload.file_title,  <!-- 上传文件标题 -->
+		  ta_task_file_upload.file_path,  <!-- 上传文件路径 -->
+		  ta_task_file_upload.file_url,  <!-- 上传文件URL -->
+		  ta_task_file_upload.file_size,  <!-- 上传文件大小 -->
+		  ta_task_file_upload.version_num,  <!-- 版本号 -->
+		  ta_task_file_upload.file_remark,  <!-- 上传文件备注 -->
+		  ta_task_file_upload.sortno,  <!-- 排序号 -->
+		  ta_task_file_upload.create_user_id,  <!-- 创建人 -->
+		  ta_task_file_upload.create_time,  <!-- 创建时间 -->
+		  ta_task_file_upload.update_user_id,  <!-- 更新人 -->
+		  ta_task_file_upload.update_time,  <!-- 更新时间 -->
+		  ta_task_file_upload.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="file_id != null ">
+		      AND file_id = #{file_id}  <!-- 文件ID -->
+		</if>
+	   <if test="task_id != null ">
+		      AND task_id = #{task_id}  <!-- 过程ID -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="task_file_type != null ">
+		      AND task_file_type = #{task_file_type}  <!-- 任务文件类型（1 发布文件 2 回复文件） -->
+		</if>
+	    <if test="file_code != null and file_code != ''">
+		      AND file_code = #{file_code}  <!-- 文件编码 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      AND file_title = #{file_title}  <!-- 上传文件标题 -->
+		</if>
+	    <if test="file_path != null and file_path != ''">
+		      AND file_path = #{file_path}  <!-- 上传文件路径 -->
+		</if>
+	    <if test="file_url != null and file_url != ''">
+		      AND file_url = #{file_url}  <!-- 上传文件URL -->
+		</if>
+	    <if test="file_size != null and file_size != ''">
+		      AND file_size = #{file_size}  <!-- 上传文件大小 -->
+		</if>
+	    <if test="version_num != null and version_num != ''">
+		      AND version_num = #{version_num}  <!-- 版本号 -->
+		</if>
+	    <if test="file_remark != null and file_remark != ''">
+		      AND file_remark = #{file_remark}  <!-- 上传文件备注 -->
+		</if>
+	   <if test="sortno != null ">
+		      AND sortno = #{sortno}  <!-- 排序号 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="file_code != null and file_code != ''">
+		      AND file_code like '${file_code}%'  <!-- 文件编码 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      AND file_title like '${file_title}%'  <!-- 上传文件标题 -->
+		</if>
+	    <if test="file_path != null and file_path != ''">
+		      AND file_path like '${file_path}%'  <!-- 上传文件路径 -->
+		</if>
+	    <if test="file_url != null and file_url != ''">
+		      AND file_url like '${file_url}%'  <!-- 上传文件URL -->
+		</if>
+	    <if test="file_size != null and file_size != ''">
+		      AND file_size like '${file_size}%'  <!-- 上传文件大小 -->
+		</if>
+	    <if test="version_num != null and version_num != ''">
+		      AND version_num like '${version_num}%'  <!-- 版本号 -->
+		</if>
+	    <if test="file_remark != null and file_remark != ''">
+		      AND file_remark like '${file_remark}%'  <!-- 上传文件备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="file_code != null and file_code != ''">
+		      Or file_code like '${file_code}%'  <!-- 文件编码 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      Or file_title like '${file_title}%'  <!-- 上传文件标题 -->
+		</if>
+	    <if test="file_path != null and file_path != ''">
+		      Or file_path like '${file_path}%'  <!-- 上传文件路径 -->
+		</if>
+	    <if test="file_url != null and file_url != ''">
+		      Or file_url like '${file_url}%'  <!-- 上传文件URL -->
+		</if>
+	    <if test="file_size != null and file_size != ''">
+		      Or file_size like '${file_size}%'  <!-- 上传文件大小 -->
+		</if>
+	    <if test="version_num != null and version_num != ''">
+		      Or version_num like '${version_num}%'  <!-- 版本号 -->
+		</if>
+	    <if test="file_remark != null and file_remark != ''">
+		      Or file_remark like '${file_remark}%'  <!-- 上传文件备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+</mapper>

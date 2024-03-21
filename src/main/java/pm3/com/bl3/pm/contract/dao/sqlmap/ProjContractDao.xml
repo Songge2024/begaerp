@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_proj_contract[ProjContract]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-17 17:29:20 -->
+<mapper namespace="com.bl3.pm.contract.dao.ProjContractDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ProjContractPO">
+		INSERT INTO bs_proj_contract (
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="ct_id != null">
+	         ct_id, <!-- 合同ID -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="create_date != null and create_date != ''">
+	         create_date, <!-- 创建日期 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 修改人 -->
+		</if>
+		<if test="update_date != null and update_date != ''">
+	         update_date, <!-- 修改日期 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+	          proj_ct_id  <!-- 项目合同ID -->
+		)VALUES(
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="ct_id != null">
+	          #{ct_id, jdbcType=INTEGER}, <!-- 合同ID -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="create_date != null and create_date != ''">
+	          #{create_date, jdbcType=VARCHAR}, <!-- 创建日期 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 修改人 -->
+	    </if>
+		<if test="update_date != null and update_date != ''">
+	          #{update_date, jdbcType=VARCHAR}, <!-- 修改日期 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ProjContractPO">
+		INSERT INTO bs_proj_contract (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{proj_ct_id, jdbcType=INTEGER},  <!-- 项目合同ID -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{ct_id, jdbcType=INTEGER},  <!-- 合同ID -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{create_date, jdbcType=VARCHAR},  <!-- 创建日期 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 修改人 -->
+		    #{update_date, jdbcType=VARCHAR},  <!-- 修改日期 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProjContractPO">
+		UPDATE bs_proj_contract
+		<set>
+			<if test="proj_ct_id != null">
+		          proj_ct_id = #{proj_ct_id, jdbcType=INTEGER},  <!-- 项目合同ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="ct_id != null">
+		          ct_id = #{ct_id, jdbcType=INTEGER},  <!-- 合同ID -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_date != null">
+		          create_date = #{create_date, jdbcType=VARCHAR},  <!-- 创建日期 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 修改人 -->
+			</if>
+			<if test="update_date != null">
+		          update_date = #{update_date, jdbcType=VARCHAR},  <!-- 修改日期 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		
+		</set>
+		WHERE  proj_ct_id = #{proj_ct_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_proj_contract WHERE  proj_ct_id = #{proj_ct_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProjContractPO">
+		SELECT
+		<include refid="column" />
+		FROM bs_proj_contract WHERE  proj_ct_id = #{proj_ct_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProjContractPO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_proj_contract
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProjContractPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_contract
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProjContractPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_contract
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProjContractPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_contract
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProjContractPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_contract
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProjContractPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_contract
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ProjContractPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_contract
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_proj_contract
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_proj_contract
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  proj_ct_id,  <!-- 项目合同ID -->
+		  proj_id,  <!-- 项目ID -->
+		  ct_id,  <!-- 合同ID -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_date,  <!-- 创建日期 -->
+		  update_user_id,  <!-- 修改人 -->
+		  update_date,  <!-- 修改日期 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_proj_contract.proj_ct_id,  <!-- 项目合同ID -->
+		  bs_proj_contract.proj_id,  <!-- 项目ID -->
+		  bs_proj_contract.ct_id,  <!-- 合同ID -->
+		  bs_proj_contract.create_user_id,  <!-- 创建人 -->
+		  bs_proj_contract.create_date,  <!-- 创建日期 -->
+		  bs_proj_contract.update_user_id,  <!-- 修改人 -->
+		  bs_proj_contract.update_date,  <!-- 修改日期 -->
+		  bs_proj_contract.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="proj_ct_id != null ">
+		      AND proj_ct_id = #{proj_ct_id}  <!-- 项目合同ID -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="ct_id != null ">
+		      AND ct_id = #{ct_id}  <!-- 合同ID -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_date != null and create_date != ''">
+		      AND create_date = #{create_date}  <!-- 创建日期 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 修改人 -->
+		</if>
+	    <if test="update_date != null and update_date != ''">
+		      AND update_date = #{update_date}  <!-- 修改日期 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="create_date != null and create_date != ''">
+		      AND create_date like '${create_date}%'  <!-- 创建日期 -->
+		</if>
+	    <if test="update_date != null and update_date != ''">
+		      AND update_date like '${update_date}%'  <!-- 修改日期 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="create_date != null and create_date != ''">
+		      Or create_date like '${create_date}%'  <!-- 创建日期 -->
+		</if>
+	    <if test="update_date != null and update_date != ''">
+		      Or update_date like '${update_date}%'  <!-- 修改日期 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+</mapper>

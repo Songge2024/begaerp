@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProjCommonsDao">	
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="listComboBoxProjId" resultType="Dto">
+			SELECT 
+			  bpt.`TEAM_USER_ID` AS value,
+			  CONCAT(au.`name`,'-',bpt.`TEAM_USER_ID` )AS display,	
+			  bpt.`state` as state
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au 
+			WHERE bpt.`TEAM_USER_ID` = au.`id`
+			and state = 1
+			<if test="proj_id != null and proj_id != ''">
+				    AND bpt.`PROJ_ID` = ${proj_id}
+			</if>
+			  GROUP BY value
+	</select>
+	<!-- 公共下拉框 查询对应成员的项目包括离职人员 -->
+	<select id="listAllComboBoxProjId" resultType="Dto">
+			SELECT 
+			  bpt.`TEAM_USER_ID` AS value,
+			  CONCAT(au.`name`,'-',bpt.`TEAM_USER_ID` )AS display 
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au 
+			WHERE bpt.`TEAM_USER_ID` = au.`id`
+			<if test="proj_id != null and proj_id != ''">
+				    AND bpt.`PROJ_ID` = ${proj_id}
+			</if>
+			  GROUP BY value
+	</select>
+		<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="listComboBoxProjUserId" resultType="Dto">
+			SELECT 
+			  bpt.`TEAM_USER_ID` AS value,
+			 au.`name` AS display 
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au 
+			WHERE bpt.`TEAM_USER_ID` = au.`id`
+			<if test="proj_id != null and proj_id != ''">
+				    AND bpt.`PROJ_ID` = ${proj_id}
+			</if>
+			and au.id!=-1
+			  GROUP BY value
+	</select>
+	
+	<!-- 公共下拉框 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="listComboBoxData" resultType="Dto">
+		SELECT
+		${cb_id} AS value, ${cd_name} AS display
+		FROM
+		${cb_table}
+		<if test="queryDate != null and queryDate != ''">
+		      where ${queryDate}  <!-- 查询条件 -->
+		</if>
+		order by ${cb_id} desc
+	</select>
+	
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="listComboBoxUerid" resultType="Dto">
+		SELECT 
+		  bpc.`PROJ_ID` AS value,
+			bpc.PROJ_NAME AS display
+		FROM
+		  `bs_proj_commons` bpc
+		<if test="team_user_id != 'null' and team_user_id != ''">
+		  	,`bs_proj_teams` bpt 
+		</if>
+		WHERE bpc.`STATE` = '1' 
+		<if test="team_user_id != 'null' and team_user_id != ''">
+			and bpt.`state` = '1'
+		  	and bpt.`PROJ_ID` = bpc.`PROJ_ID`
+		  	AND bpt.`TEAM_USER_ID`=${team_user_id}
+		</if>
+		GROUP BY bpc.`PROJ_ID` 
+		order by CREATE_TIME desc
+	</select>
+	
+	<!-- 查询项目经理待办事宜 -->
+	<select id="queryTodo" resultType="Dto">
+		SELECT 
+		  tt.`task_id` as id,
+		  tt.`task_name` as name,
+		  bpc.PROJ_NAME as proj_name,
+		  DATE_FORMAT(tt.`plan_begin_time`,'%Y-%d-%m') AS plan_begin_time,
+		  DATE_FORMAT(tt.`plan_end_time`,'%Y-%d-%m') AS plan_end_time,
+		  tt.`state`
+		FROM
+		  `ta_task` tt,
+		  `bs_proj_commons` bpc 
+		WHERE bpc.proj_id = tt.proj_id
+	</select>
+	
+	<!-- 查询项目待处理缺陷 -->
+	<select id="queryBug" resultType="Dto">
+		SELECT 
+			qbm.`bug_id` as id,
+			qbm.`bug_name` as name,
+			qbm.`bug_detail`,
+			qbm.`deal_man`,
+			qbm.`state`,
+			bpc.`PROJ_NAME` AS proj_name
+			
+		FROM
+		  `qa_bug_manage` qbm,
+		  `bs_proj_commons` bpc
+		  WHERE bpc.`PROJ_ID` = qbm.`proj_id`
+	</select>
+	
+	<!-- 查询项目日报 -->
+	<select id="queryDaily" resultType="Dto">
+		SELECT 
+			tdr.`name`,
+			tdr.`state`,
+			tdr.`descc`,
+			CONCAT(DATE_FORMAT(tdr.`update_time`,'%d-%m')," ",tdr.`week_day`) AS update_time
+		FROM
+		  `ta_daily_report` tdr 
+		  GROUP BY update_time
+	</select>
+	
+	<!-- 查询项目周报 -->
+	<select id="queryWeekly" resultType="Dto">
+		SELECT 
+			tdr.`name`,
+			tdr.`state`,
+			tdr.`descc`,
+			CONCAT(DATE_FORMAT(tdr.`update_time`,'%d-%m')," ",tdr.`week_day`) AS update_time
+		FROM
+		  `ta_daily_report` tdr 
+		  GROUP BY update_time
+	</select>
+	
+	<!-- 查询进行中的项目 -->
+	<select id="queryProjectProgress" resultType="Dto">
+		SELECT
+       tt.task_code,
+       tt.state,tt.proj_id,tt.task_id,
+		IF (
+			tt.`percent` IS NULL,
+			0,
+			tt.percent
+		) AS percent,
+		 tt.`task_name`,
+		 DATE_FORMAT(
+			tt.plan_begin_time,
+			'%Y-%m-%d'
+		) AS plan_begin_time,
+		 DATE_FORMAT(
+			tt.plan_end_time,
+			'%Y-%m-%d'
+		) AS plan_end_time,
+		 DATE_FORMAT(
+			tt.real_begin_time,
+			'%Y-%m-%d'
+		) AS real_begin_time,
+		 DATE_FORMAT(
+			tt.real_end_time,
+			'%Y-%m-%d'
+		) AS real_end_time,
+		 tt.real_wastage,
+		 ad.`dic_desc`,
+		aa.group_id,
+		(select name from aos_user where id=tt.handler_user_id)handler_user_name,
+		aa.group_name
+		FROM
+			`ta_task` tt,
+			`aos_dic` ad,
+		   ta_task_group aa
+		WHERE tt.`proj_id` = ${proj_id} 
+		and tt.group_id=aa.group_id
+		AND tt.`state`=ad.`code`
+		AND ad.`dic_key` = 'task_state'
+		AND tt.`state` != '1006'
+		AND tt.`state` != '1001'
+		<if test="state != null and state != ''">
+		      AND tt.state = #{state}  <!-- 状态 -->
+		</if>
+		<if test="begin_time != null and begin_time != ''">
+				AND ((DATE_FORMAT(tt.real_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 开始时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+			and   DATE_FORMAT(tt.real_end_time,'%Y-%m-%d') <![CDATA[   <=  ]]>
+				'${end_time}') <!-- 结束时间 -->
+			</if>
+			<if test="begin_time != null and begin_time != ''">
+				or (DATE_FORMAT( tt.plan_begin_time,'%Y-%m-%d') <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 开始时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				and DATE_FORMAT(tt.plan_end_time,'%Y-%m-%d')  <![CDATA[   <=  ]]>
+				'${end_time}' )) <!-- 结束时间 -->
+			</if>
+			<if test="hander_user_id != null and hander_user_id != ''">
+		   AND tt.handler_user_id=#{hander_user_id}  <!-- 处理人 -->
+		</if>
+		<if test="task_type != null and task_type != ''">
+		   AND tt.task_type=#{task_type}  <!-- 任务类型 -->
+		</if>
+		<if test="group_name != null and group_name != ''">
+		   AND tt.group_id=#{group_name}  <!--任务组id -->
+		</if>
+	</select>
+	
+	<!-- 查询系统人员的系统角色 -->
+	<select id="queryRole" resultType="Dto">
+		SELECT 
+			 MIN(ar.id)as id,
+			ar.`name`
+		FROM
+			`aos_user` au,
+			`aos_user_role` aur,
+			`aos_role` ar
+		WHERE  au.`id` = ${userid}
+		AND au.id=aur.`user_id`
+		AND aur.`role_id` = ar.`id`
+	</select>
+	
+	<!-- 查询项目人员的项目角色 -->
+	<select id="queryProrole" resultType="Dto">
+		SELECT 
+			bprt.`TRP_CODE`,
+			bprt.`TRP_NAME` as name
+		FROM
+		  `bs_proj_teams` bpt,
+		  `bs_proj_role_types` bprt
+		  WHERE bpt.`PROJ_ID` = ${proj_id}
+		  AND bpt.`TEAM_USER_ID` = ${userid}
+		  AND bpt.`TRP_CODE` =bprt.`TRP_CODE`
+		  and bpt.state=1
+	</select>
+	
+	<!-- 查询人员项目角色树 -->
+	<select id="queryProjectRoleTree" resultType="Dto">
+		SELECT 
+			bpc.proj_name AS proj_name,
+			bpc.`PROJ_ID` as proj_id,
+			bpc.`TYPE_CODE` as type_code,
+			bprt.TRP_NAME as trp_name
+		FROM
+		  `bs_proj_commons` bpc,
+		  `bs_proj_teams` bpt,
+		  `bs_proj_role_types` bprt
+		 WHERE bpt.`TEAM_USER_ID` = ${userid}
+		 AND bpt.`PROJ_ID` = bpc.`PROJ_ID`
+		 AND bprt.`TRP_CODE` = bpt.`TRP_CODE`
+	</select>
+	
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="listTree" parameterType="Dto" resultType="Dto">
+		SELECT 
+			bpt.`TYPE_CODE` as type_code,
+			bpt.`TYPE_NAME` as type_name,
+			0 AS parentid
+			FROM
+			  `bs_proj_types` bpt 
+			  where bpt.state='1'
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="queryMaxid" resultType="Integer">
+		SELECT 
+	  IF(MAX(proj_id) IS NULL,0,MAX(proj_id))AS max_id
+	FROM
+	  `bs_proj_commons` 
+	</select>
+	
+	<select id="querymy_project_tree" resultType="Dto">
+		SELECT 
+			  bpc.* 
+			FROM
+			  `bs_proj_commons` bpc,
+			  `bs_proj_teams` bpt 
+			WHERE bpt.`state` = '1' 
+			  <if test="proj_name != null and proj_name != ''">
+			  	AND proj_name like '%${proj_name}%'
+			  </if>
+			  AND bpt.`TEAM_USER_ID` = ${userid}
+			  AND bpt.`PROJ_ID` = bpc.`PROJ_ID` 
+			  AND (bpc.`STATE` = 1 
+			  OR bpc.`STATE` = 2)
+			  GROUP BY bpc.`PROJ_ID`
+	</select>
+	<!--查询测试人员Id  -->
+	<select id="queryTestUserid" resultType="Dto">
+		SELECT DISTINCT
+			TEAM_USER_ID as id
+		FROM
+			bs_proj_teams
+		WHERE
+			TRP_CODE IN (23,24)
+		AND state = 1
+	</select>
+	<!--测试人员登陆查看待办  -->
+		<select id="query_to_do_test" resultType="Dto">
+		SELECT 
+			  tv.`proj_id`,
+			  tv.`name`,
+			  tv.code,
+			  tv.`id`,
+			  tv.`end_time`,
+			  tv.`state`,
+			  tv.`type_name`,
+			  tv.`fb_time`,
+			  tv.bug_severity,
+			  tv.bug_priority,
+			  tv.find_time,
+			  tv.level,
+			  tv.`handler_user_id`,
+			  tv.`type_code`,
+			  tv.plan_begin_time,
+			  IFNULL(CONCAT(
+				pbc.`PROJ_NAME`,
+				'_',
+				tv. NAME
+			),tv. NAME) AS to_do_name,
+			  DATE_FORMAT(tv.`start_time`,'%Y-%m-%d') AS start_time
+			FROM
+			  `table_test_view` tv
+			  LEFT JOIN `bs_proj_commons` pbc ON tv.proj_id = pbc.proj_id
+			  WHERE 
+			   tv.handler_user_id like '%${userid}%'
+			<if test="name != null and name != ''">
+				and tv.NAME like '%${name}%'
+			</if>
+			<if test="type_code != null and type_code != ''">
+				and tv.type_code = ${type_code}
+			</if>
+			<if test="begin_time != null and begin_time != ''">
+				AND tv.start_time <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 工作时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				AND tv.start_time <![CDATA[   <=  ]]>
+				'${end_time}'  <!-- 工作时间 -->
+			</if>
+			order by tv.level desc,tv.plan_begin_time asc,
+			  tv.bug_priority desc,tv.find_time asc
+	</select>
+	
+	<!--开发人员登陆查看待办  -->
+	<select id="query_to_do_task" resultType="Dto">
+		SELECT 
+			  tv.`proj_id`,
+			  tv.`name`,
+			  tv.code,
+			  tv.`id`,
+			  tv.`end_time`,
+			  tv.`state`,
+			  tv.`type_name`,
+			  tv.`fb_time`,
+			  tv.bug_severity,
+			  tv.bug_priority,
+			  tv.find_time,
+			  tv.level,
+			  tv.`handler_user_id`,
+			  tv.`type_code`,
+			  tv.`percent`,
+			  tv.plan_begin_time,
+			  IFNULL(CONCAT(
+				pbc.`PROJ_NAME`,
+				'_',
+				tv. NAME
+			),tv. NAME) AS to_do_name,
+			  DATE_FORMAT(tv.`start_time`,'%Y-%m-%d') AS start_time
+			FROM
+			  `table_view` tv
+			  LEFT JOIN `bs_proj_commons` pbc ON tv.proj_id = pbc.proj_id
+			  WHERE 
+			   tv.handler_user_id = #{userid}
+			<if test="name != null and name != ''">
+				and tv.NAME like '%${name}%'
+			</if>
+			<if test="type_code != null and type_code != ''">
+				and tv.type_code = ${type_code}
+			</if>
+			<if test="begin_time != null and begin_time != ''">
+				AND tv.start_time <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 工作时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				AND tv.start_time <![CDATA[   <=  ]]>
+				'${end_time}'  <!-- 工作时间 -->
+			</if>
+			order by tv.level desc,tv.plan_begin_time asc,
+			  tv.bug_priority desc,tv.find_time asc
+	</select>
+	
+	<select id="queryOneProjectInformation" resultType="Dto">
+	SELECT 
+		  bs_proj_commons.`PROJ_ID`,
+		  bs_proj_commons.`TYPE_CODE`,
+		  bs_proj_commons.`PROJ_CODE`,
+		  bs_proj_commons.`PROJ_NAME`,
+		  bs_proj_commons.`project_for_short`,
+		  bs_proj_commons.`CLIENT_NAME`,
+		  bs_proj_commons.`PROJ_NAME`,
+		  DATE_FORMAT(bs_proj_commons.`ACCEPT_DATE`,'%Y-%m-%d') as accept_date,
+		  bs_proj_commons.`CLIENT_ADDRESS`,
+		  bs_proj_commons.`CLIENT_OUT_NAME`,
+		  DATE_FORMAT(bs_proj_commons.`CREATE_TIME`,'%Y-%m-%d') as create_time,
+		  bs_proj_commons.`PERIOD`,
+		  DATE_FORMAT(bs_proj_commons.`BEGIN_DATE`,'%Y-%m-%d') as begin_date,
+		  (SELECT 
+		    GROUP_CONCAT(au.`name`) AS NAME 
+		  FROM
+		    `bs_proj_teams` bpt,
+		    `aos_user` au 
+		  WHERE bpt.`PROJ_ID` = bs_proj_commons.`PROJ_ID` 
+		    AND bpt.`TRP_CODE` = '26' 
+		    AND au.id = bpt.`TEAM_USER_ID`
+		    AND state = 1) pm_user_name,
+		  (SELECT 
+		    GROUP_CONCAT(au.`name`) AS NAME 
+		  FROM
+		    `bs_proj_teams` bpt,
+		    `aos_user` au 
+		  WHERE bpt.`PROJ_ID` = bs_proj_commons.`PROJ_ID` 
+		    AND bpt.`TRP_CODE` = '10' 
+		    AND au.id = bpt.`TEAM_USER_ID`
+		    AND state = 1) pm2_user_name 
+		FROM
+		  `bs_proj_commons` bs_proj_commons
+		  WHERE bs_proj_commons.`PROJ_ID` = ${proj_id}
+ 
+	
+	</select>
+</mapper>

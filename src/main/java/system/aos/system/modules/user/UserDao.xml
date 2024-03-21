@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户管理模块使用的SQL语句 -->
+<mapper namespace="User">
+<!-- 公共下拉框 查询所有有效的考核人员 -->
+	<select id="listComboBoxcheckUserId" resultType="Dto">
+			SELECT 
+			  au.id AS value,
+			  CONCAT(au.`name`,'-',au.id )AS display 
+			FROM
+			  `aos_user` au 
+			WHERE au.is_del=0
+			and  au.id !=-1  
+			 <if test="name != null and name != ''">
+				    AND (au.name LIKE '%${name}%' OR au.account LIKE '%${name}%')
+				</if>
+			  GROUP BY value
+	</select>
+	<!-- 查询用户列表 -->
+	<select id="listUsersPage" resultType="Dto" parameterType="Dto">
+			SELECT
+			     aos_org.name AS org_name,(
+					SELECT
+						name
+					FROM
+						aos_user b
+					WHERE
+						aos_user.check_user_id = b.id
+				) check_user_name,
+                <include refid="aos.framework.dao.AosUserDao.column2" />
+            FROM  aos_org, aos_user LEFT JOIN aos_user b ON aos_user.check_user_id = b.id
+            WHERE aos_user.org_id = aos_org.id
+            	AND aos_user.status != 3
+			    <if test="na != null and na != ''">
+				    AND (aos_user.name LIKE '%${na}%' OR aos_user.account LIKE '%${na}%')
+				</if>
+			    <if test="cascade == 'false'">
+				    AND aos_user.org_id = #{org_id, jdbcType=VARCHAR} 
+				</if>
+				<if test="cascade == 'true'">
+				    AND aos_org.cascade_id like '${org_cascade_id}%'
+				</if>
+				<if test="is_del != null and is_del != ''">
+				    AND aos_user.is_del = #{is_del} 
+				</if>
+				<if test="name != null and name != ''">
+					AND aos_user.name = #{name}
+				</if>
+			 ORDER BY aos_user.id DESC
+	</select>
+	
+	<!-- 查询用户所属角色列表 -->
+	<select id="listRolesOfUser" resultType="AosRolePO" parameterType="String">
+			SELECT
+                <include refid="aos.system.dao.AosRoleDao.column" />
+            FROM aos_role
+            WHERE id IN (SELECT role_id FROM aos_user_role WHERE user_id = #{user_id})
+			ORDER BY id DESC
+	</select>
+	
+	<!-- 查询可选角色列表 -->
+	<select id="listToSelectRoles" resultType="Dto" parameterType="Dto">
+	        SELECT * FROM(
+			     SELECT
+			     (SELECT cascade_id FROM aos_org WHERE id = (SELECT org_id FROM aos_user WHERE id = aos_role.create_by)) AS org_cascade_id,
+                <include refid="aos.system.dao.AosRoleDao.column" />
+	            FROM aos_role
+	          WHERE id NOT IN (SELECT role_id FROM aos_user_role WHERE user_id = #{user_id})
+                 <if test="name != null and name != ''">
+			        AND name LIKE '%${name}%'
+				</if>	          
+				ORDER BY id DESC
+			) t WHERE t.org_cascade_id LIKE '${org_cascade_id}%'
+	</select>
+	
+	<!-- 查询已选角色列表 -->
+	<select id="listSelectedRoles" resultType="Dto" parameterType="Dto">
+			     SELECT
+			        aos_user_role.id as user_role_id,
+                   <include refid="aos.system.dao.AosRoleDao.column2" />
+                 FROM  aos_role
+                 LEFT JOIN aos_user_role ON aos_user_role.role_id = aos_role.id
+                 WHERE aos_user_role.user_id = #{user_id}
+                 <if test="name != null and name != ''">
+			        AND aos_role.name LIKE '%${name}%'
+				</if>
+	</select>	
+
+	<!-- 查询已删除用户列表 -->
+	<select id="listUsersDeletePage" resultType="Dto" parameterType="Dto">
+			SELECT
+			     aos_org.name AS org_name,(
+					SELECT
+						name
+					FROM
+						aos_user b
+					WHERE
+						aos_user.check_user_id = b.id
+				) check_user_name,
+                <include refid="aos.framework.dao.AosUserDao.column2" />
+            FROM  aos_org, aos_user LEFT JOIN aos_user b ON aos_user.check_user_id = b.id
+            WHERE aos_user.org_id = aos_org.id
+			    <if test="name != null and name != ''">
+				    AND (aos_user.name LIKE '%${name}%' OR aos_user.account LIKE '%${name}%')
+				</if>
+			    <if test="cascade == 'false'">
+				    AND aos_user.org_id = #{org_id, jdbcType=VARCHAR} 
+				</if>
+				<if test="cascade == 'true'">
+				    AND aos_org.cascade_id like '${org_cascade_id}%'
+				</if>
+				<if test="is_del != null and is_del != ''">
+				    AND aos_user.is_del = #{is_del} 
+				</if>
+			 ORDER BY aos_user.id DESC
+	</select>
+	
+	<!-- 根据人员id删除项目人员表信息 -->
+	<update id="deleteByUserID" parameterType="Integer">
+	UPDATE `bs_proj_teams` SET state='0' , quit_date=NOW() ,JP_DESC='部门成员删除' WHERE TEAM_USER_ID =#{id}
+	</update>
+	<!-- 根据人员id恢复删除项目人员表信息 -->
+	<update id="undeleteByUserID" parameterType="Integer">
+	UPDATE `bs_proj_teams` SET state='1' , quit_date=NOW() ,JP_DESC='部门成员删除恢复' WHERE TEAM_USER_ID =#{id}
+	</update>
+</mapper>

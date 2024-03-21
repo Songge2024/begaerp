@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- aos_upload[AosUpload]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-21 15:53:01 -->
+<mapper namespace="aos.demo.dao.AosUploadDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="FILEID" parameterType="AosUploadPO">
+		INSERT INTO aos_upload (
+		<if test="title != null and title != ''">
+	         title, <!-- 文件标题 -->
+		</if>
+		<if test="path != null and path != ''">
+	         path, <!-- 文件存储相对路径 -->
+		</if>
+		<if test="filesize != null and filesize != ''">
+	         filesize, <!-- 文件大小(字节) -->
+		</if>
+		<if test="remark != null and remark != ''">
+	         remark, <!-- 文件描述 -->
+		</if>
+		<if test="loadurl != null and loadurl != ''">
+	         loadurl, <!-- 文件访问路径 -->
+		</if>
+		<if test="manin_id != null and manin_id != ''">
+	         manin_id, <!-- 评审附件关联字段 -->
+		</if>
+	          FILEID
+		)VALUES(
+		<if test="title != null and title != ''">
+	          #{title, jdbcType=VARCHAR}, <!-- 文件标题 -->
+	    </if>
+		<if test="path != null and path != ''">
+	          #{path, jdbcType=VARCHAR}, <!-- 文件存储相对路径 -->
+	    </if>
+		<if test="filesize != null and filesize != ''">
+	          #{filesize, jdbcType=VARCHAR}, <!-- 文件大小(字节) -->
+	    </if>
+		<if test="remark != null and remark != ''">
+	          #{remark, jdbcType=VARCHAR}, <!-- 文件描述 -->
+	    </if>
+		<if test="loadurl != null and loadurl != ''">
+	          #{loadurl, jdbcType=VARCHAR}, <!-- 文件访问路径 -->
+	    </if>
+		<if test="manin_id != null and manin_id != ''">
+	          #{manin_id, jdbcType=VARCHAR}, <!-- 评审附件关联字段 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="FILEID" parameterType="AosUploadPO">
+		INSERT INTO aos_upload (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{fileid, jdbcType=INTEGER},  <!-- 文件ID -->
+		    #{title, jdbcType=VARCHAR},  <!-- 文件标题 -->
+		    #{path, jdbcType=VARCHAR},  <!-- 文件存储相对路径 -->
+		    #{filesize, jdbcType=VARCHAR},  <!-- 文件大小(字节) -->
+		    #{remark, jdbcType=VARCHAR},  <!-- 文件描述 -->
+		    #{loadurl, jdbcType=VARCHAR},  <!-- 文件访问路径 -->
+		    #{manin_id, jdbcType=VARCHAR}  <!-- 评审附件关联字段 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="AosUploadPO">
+		UPDATE aos_upload
+		<set>
+			<if test="fileid != null">
+		          fileid = #{fileid, jdbcType=INTEGER},  <!-- 文件ID -->
+			</if>
+			<if test="title != null">
+		          title = #{title, jdbcType=VARCHAR},  <!-- 文件标题 -->
+			</if>
+			<if test="path != null">
+		          path = #{path, jdbcType=VARCHAR},  <!-- 文件存储相对路径 -->
+			</if>
+			<if test="filesize != null">
+		          filesize = #{filesize, jdbcType=VARCHAR},  <!-- 文件大小(字节) -->
+			</if>
+			<if test="remark != null">
+		          remark = #{remark, jdbcType=VARCHAR},  <!-- 文件描述 -->
+			</if>
+			<if test="loadurl != null">
+		          loadurl = #{loadurl, jdbcType=VARCHAR},  <!-- 文件访问路径 -->
+			</if>
+			<if test="manin_id != null">
+		          manin_id = #{manin_id, jdbcType=VARCHAR},  <!-- 评审附件关联字段 -->
+			</if>
+		</set>
+		WHERE  fileid = #{fileid}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM aos_upload WHERE  fileid = #{fileid}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="AosUploadPO">
+		SELECT
+		<include refid="column" />
+		FROM aos_upload WHERE  fileid = #{fileid}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="AosUploadPO">
+		SELECT
+		    <include refid="column" />
+		FROM aos_upload
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="AosUploadPO">
+		SELECT
+			<include refid="column" />	
+		FROM aos_upload
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="AosUploadPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM aos_upload
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="AosUploadPO">
+		SELECT
+			<include refid="column" />	
+		FROM aos_upload
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="AosUploadPO">
+		SELECT
+			<include refid="column" />	
+		FROM aos_upload
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="AosUploadPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM aos_upload
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="AosUploadPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM aos_upload
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM aos_upload
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM aos_upload
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  fileid,  <!-- 文件ID -->
+		  title,  <!-- 文件标题 -->
+		  path,  <!-- 文件存储相对路径 -->
+		  filesize,  <!-- 文件大小(字节) -->
+		  remark,  <!-- 文件描述 -->
+		  loadurl,  <!-- 文件访问路径 -->
+		  manin_id  <!-- 评审附件关联字段 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  aos_upload.fileid,  <!-- 文件ID -->
+		  aos_upload.title,  <!-- 文件标题 -->
+		  aos_upload.path,  <!-- 文件存储相对路径 -->
+		  aos_upload.filesize,  <!-- 文件大小(字节) -->
+		  aos_upload.remark,  <!-- 文件描述 -->
+		  aos_upload.loadurl,  <!-- 文件访问路径 -->
+		  aos_upload.manin_id  <!-- 评审附件关联字段 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="fileid != null ">
+		      AND fileid = #{fileid}  <!-- 文件ID -->
+		</if>
+	    <if test="title != null and title != ''">
+		      AND title = #{title}  <!-- 文件标题 -->
+		</if>
+	    <if test="path != null and path != ''">
+		      AND path = #{path}  <!-- 文件存储相对路径 -->
+		</if>
+	    <if test="filesize != null and filesize != ''">
+		      AND filesize = #{filesize}  <!-- 文件大小(字节) -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark = #{remark}  <!-- 文件描述 -->
+		</if>
+	    <if test="loadurl != null and loadurl != ''">
+		      AND loadurl = #{loadurl}  <!-- 文件访问路径 -->
+		</if>
+	    <if test="manin_id != null and manin_id != ''">
+		      AND manin_id = #{manin_id}  <!-- 评审附件关联字段 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="title != null and title != ''">
+		      AND title like '${title}%'  <!-- 文件标题 -->
+		</if>
+	    <if test="path != null and path != ''">
+		      AND path like '${path}%'  <!-- 文件存储相对路径 -->
+		</if>
+	    <if test="filesize != null and filesize != ''">
+		      AND filesize like '${filesize}%'  <!-- 文件大小(字节) -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark like '${remark}%'  <!-- 文件描述 -->
+		</if>
+	    <if test="loadurl != null and loadurl != ''">
+		      AND loadurl like '${loadurl}%'  <!-- 文件访问路径 -->
+		</if>
+	    <if test="manin_id != null and manin_id != ''">
+		      AND manin_id like '${manin_id}%'  <!-- 评审附件关联字段 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="title != null and title != ''">
+		      Or title like '${title}%'  <!-- 文件标题 -->
+		</if>
+	    <if test="path != null and path != ''">
+		      Or path like '${path}%'  <!-- 文件存储相对路径 -->
+		</if>
+	    <if test="filesize != null and filesize != ''">
+		      Or filesize like '${filesize}%'  <!-- 文件大小(字节) -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      Or remark like '${remark}%'  <!-- 文件描述 -->
+		</if>
+	    <if test="loadurl != null and loadurl != ''">
+		      Or loadurl like '${loadurl}%'  <!-- 文件访问路径 -->
+		</if>
+	    <if test="manin_id != null and manin_id != ''">
+		      Or manin_id like '${manin_id}%'  <!-- 评审附件关联字段 -->
+		</if>
+	</sql>
+	
+</mapper>

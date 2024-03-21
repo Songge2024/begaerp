@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="puff09.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="44.8"
+     inkscape:cx="409.37501"
+     inkscape:cy="557.47536"
+     inkscape:document-units="mm"
+     inkscape:current-layer="g3717"
+     showgrid="false"
+     inkscape:window-width="1304"
+     inkscape:window-height="746"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       style="stroke:#ffffff"
+       id="g3730"
+       transform="matrix(0.26458333,0,0,0.26458333,100.0125,143.0125)">
+      <g
+         id="g3717"
+         style="fill:none;fill-rule:evenodd;stroke-width:2">
+        <circle
+           id="circle3713"
+           r="1"
+           cy="22"
+           cx="22">
+          <animate
+             repeatCount="indefinite"
+             keySplines="0.165, 0.84, 0.44, 1"
+             keyTimes="0; 1"
+             calcMode="spline"
+             values="1; 20"
+             dur="1.8s"
+             begin="0s"
+             attributeName="r" />
+          <animate
+             repeatCount="indefinite"
+             keySplines="0.3, 0.61, 0.355, 1"
+             keyTimes="0; 1"
+             calcMode="spline"
+             values="1; 0"
+             dur="1.8s"
+             begin="0s"
+             attributeName="stroke-opacity" />
+        </circle>
+        <circle
+           id="circle3715"
+           r="1"
+           cy="22"
+           cx="22"
+           style="fill:#008000;opacity:0">
+          <animate
+             repeatCount="indefinite"
+             keySplines="0.165, 0.84, 0.44, 1"
+             keyTimes="0; 1"
+             calcMode="spline"
+             values="1; 20"
+             dur="1.8s"
+             begin="-0.9s"
+             attributeName="r" />
+          <animate
+             repeatCount="indefinite"
+             keySplines="0.3, 0.61, 0.355, 1"
+             keyTimes="0; 1"
+             calcMode="spline"
+             values="1; 0"
+             dur="1.8s"
+             begin="-0.9s"
+             attributeName="stroke-opacity" />
+        </circle>
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:5.16704607px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.25835231"
+           x="20.226669"
+           y="23.660292"
+           id="text3734"
+           transform="scale(0.99659762,1.003414)"><tspan
+             sodipodi:role="line"
+             id="tspan3732"
+             x="20.226669"
+             y="23.660292"
+             style="stroke-width:0.25835231">F</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>

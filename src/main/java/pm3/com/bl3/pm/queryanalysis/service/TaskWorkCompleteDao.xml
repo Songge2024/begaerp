@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-18 11:03:34 -->
+<mapper namespace="TaskWorkCompleteDao">
+    <select id="orgSelectBox"  resultType="Dto">
+	   	SELECT
+			id,  <!-- 流水号 -->
+			cascade_id,  <!-- 节点语义ID -->
+			name,  <!-- 组织名称 -->
+			hotkey,  <!-- 热键 -->
+			parent_id,  <!-- 父节点流水号 -->
+			is_leaf,  <!-- 是否叶子节点 -->
+			is_auto_expand,  <!-- 是否自动展开 -->
+			icon_name,  <!-- 节点图标文件名称 -->
+			type,  <!-- 组织类型 -->
+			biz_code,  <!-- 扩展码 -->
+			sort_no,  <!-- 排序号 -->
+			remark,  <!-- 备注 -->
+			is_del,  <!-- 是否已删除 -->
+			create_time,  <!-- 创建时间 -->
+			create_by  <!-- 创建人ID -->
+		FROM 
+			aos_org
+		WHERE 
+			is_del = 0
+    </select>
+
+	<select id="principalOrgName" resultType="String">
+		SELECT
+			ao.name
+		FROM
+			aos_org ao,
+			aos_user au
+		WHERE 
+			ao.id = au.org_id
+			AND au.id = #{user_id}
+	</select>  
+	
+	<select id="principalOrgID" resultType="Integer">
+		SELECT
+			ao.id
+		FROM
+			aos_org ao,
+			aos_user au
+		WHERE 
+			ao.id = au.org_id
+			AND au.id = #{user_id}
+	</select>  
+	
+	<select id="exportALLExcel" resultType="Dto">
+		SELECT
+			aos_user.id,
+			aos_user.NAME,
+			aos_org.`name` AS subordinate_departments,
+			CONCAT( aos_user.`name`, '-', aos_user.id ) account_number_name,
+			sum( CASE WHEN ta_task.state = '1002' THEN 1 ELSE 0 END ) yfb_num,
+			sum( CASE WHEN ta_task.state = '1003' THEN 1 ELSE 0 END ) yjs_num,
+			sum( CASE WHEN ta_task.state = '1004' THEN 1 ELSE 0 END ) ywc_num,
+			IF(sum( (case when (ta_task.state = '1003' or ta_task.state = '1004') and (ta_task.update_time <![CDATA[  >=  ]]> '${yesterDate}') then 1 else 0 end)) > 0,1,0) as ygx_num
+		FROM
+			aos_user LEFT JOIN ta_task ON ta_task.handler_user_id = aos_user.id AND ta_task.state IN ( '1002', '1003', '1004' ) ,
+			aos_org 
+		WHERE
+			aos_user.org_id = aos_org.id
+			AND aos_user.is_check = 1
+			<if test="account_number_name != null and account_number_name != ''">
+				and (aos_user.NAME like '%${account_number_name}%' or aos_user.id like '%${account_number_name}%'  )
+			</if>
+			<if test="subordinate_departments_id != null and subordinate_departments_id != ''">
+				and aos_org.id in 
+				<foreach collection="subordinate_departments_id" item="value" index="index" open="(" close=")" separator=",">
+					#{value,jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		GROUP BY
+			aos_user.id,
+			aos_user.NAME
+	</select>
+    
+    <select id="taskWorkloadReportListPage" resultType="Dto">
+    	SELECT
+			aos_user.id,
+			aos_user.NAME,
+			aos_org.`name` AS subordinate_departments,
+			CONCAT( aos_user.`name`, '-', aos_user.id ) account_number_name,
+			sum( CASE WHEN ta_task.state = '1002' THEN 1 ELSE 0 END ) yfb_num,
+			sum( CASE WHEN ta_task.state = '1003' THEN 1 ELSE 0 END ) yjs_num,
+			sum( CASE WHEN ta_task.state = '1004' THEN 1 ELSE 0 END ) ywc_num,
+			IF(sum( (case when (ta_task.state = '1003' or ta_task.state = '1004') and (ta_task.update_time <![CDATA[  >=  ]]> '${yesterDate}') then 1 else 0 end)) > 0,1,0) as ygx_num
+		FROM
+			aos_user LEFT JOIN ta_task ON ta_task.handler_user_id = aos_user.id AND ta_task.state IN ( '1002', '1003', '1004' ) ,
+			aos_org 
+		WHERE
+			aos_user.org_id = aos_org.id
+			AND aos_user.is_check = 1
+			<if test="account_number_name != null and account_number_name != ''">
+				and (aos_user.NAME like '%${account_number_name}%' or aos_user.id like '%${account_number_name}%'  )
+			</if>
+			<if test="subordinate_departments_id != null and subordinate_departments_id != ''">
+				and aos_org.id in 
+				<foreach collection="subordinate_departments_id" item="value" index="index" open="(" close=")" separator=",">
+					#{value,jdbcType=VARCHAR}
+				</foreach>
+			</if>
+		GROUP BY
+			aos_user.id,
+			aos_user.NAME
+    </select>
+</mapper>

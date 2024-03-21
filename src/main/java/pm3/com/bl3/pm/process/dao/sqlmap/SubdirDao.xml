@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_subdir[Subdir]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-12 14:18:36 -->
+<mapper namespace="com.bl3.pm.process.dao.SubdirDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="SubdirPO">
+		INSERT INTO pr_subdir (
+		<if test="rootdir_id != null">
+	         rootdir_id, <!-- 根目录ID -->
+		</if>
+		<if test="subdir_name != null and subdir_name != ''">
+	         subdir_name, <!-- 子目录名称 -->
+		</if>
+		<if test="sort_no != null and sort_no != ''">
+	         sort_no, <!-- 排序号 -->
+		</if>
+			<if test="sort_no == null">
+	         sort_no, <!-- 排序号 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_date != null and update_date != ''">
+	         update_date, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+			subdir_id,	<!-- 子目录ID -->
+			create_date <!-- 创建时间 -->
+		)VALUES(
+		<if test="rootdir_id != null">
+	          #{rootdir_id, jdbcType=INTEGER}, <!-- 根目录ID -->
+	    </if>
+		<if test="subdir_name != null and subdir_name != ''">
+	          #{subdir_name, jdbcType=VARCHAR}, <!-- 子目录名称 -->
+	    </if>
+		<if test="sort_no != null and sort_no != ''">
+	          #{sort_no, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+	     <if test="sort_no == null">
+		 (SELECT ifnull(max(sort_no),0) FROM pr_subdir a WHERE  rootdir_id = #{rootdir_id} and state != -1)+1,
+		 </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_date != null and update_date != ''">
+	          #{update_date, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+	    	null, <!-- 子目录ID -->
+	    	sysdate() <!-- 创建时间 -->
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="SubdirPO">
+		INSERT INTO pr_subdir (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{subdir_id, jdbcType=INTEGER},  <!-- 子目录ID -->
+		    #{rootdir_id, jdbcType=INTEGER},  <!-- 根目录ID -->
+		    #{subdir_name, jdbcType=VARCHAR},  <!-- 子目录名称 -->
+		    #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		     sysdate(),  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_date, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="SubdirPO">
+		UPDATE pr_subdir
+		<set>
+			<if test="subdir_id != null">
+		          subdir_id = #{subdir_id, jdbcType=INTEGER},  <!-- 子目录ID -->
+			</if>
+			<if test="rootdir_id != null">
+		          rootdir_id = #{rootdir_id, jdbcType=INTEGER},  <!-- 根目录ID -->
+			</if>
+			<if test="subdir_name != null">
+		          subdir_name = #{subdir_name, jdbcType=VARCHAR},  <!-- 子目录名称 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_date != null">
+		          create_date = #{create_date, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_date != null">
+		          update_date = #{update_date, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  subdir_id = #{subdir_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		update pr_subdir  
+		   set state = 0
+		where subdir_id = #{subdir_id} 
+		  and state != -1
+	</delete>
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey1">
+		update pr_filetype  
+		   set state = 0
+		where subdir_id = #{subdir_id} 
+		  and state != -1
+	</delete>
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey12">
+		update pr_subdir  
+		   set state = -1
+		where subdir_id = #{subdir_id} 
+	</delete>
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey13">
+		update pr_filetype  
+		   set state = -1
+		where subdir_id = #{subdir_id} 
+	</delete>
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey41">
+		update pr_subdir  
+		   set state = 1
+		where subdir_id = #{subdir_id} 
+		  and state != -1
+	</delete>
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey51">
+		update pr_filetype  
+		   set state = 1
+		where subdir_id = #{subdir_id} 
+		  and state != -1
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="SubdirPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_subdir WHERE  subdir_id = #{subdir_id}
+	</select>
+	
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey1" resultType="Integer">
+		SELECT
+		count(templet_id)
+		FROM pr_templet_process WHERE  subdir_id = #{subdir_id} and state=1
+	</select>
+	
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey2" resultType="Integer">
+		SELECT
+		count(templet_id)
+		FROM pr_templet_filetype WHERE  subdir_id = #{subdir_id} and state=1
+	</select>
+	
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey3" resultType="String">
+		SELECT
+		state
+		FROM pr_subdir WHERE  subdir_id = #{subdir_id}
+	</select>
+	
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey4" resultType="Integer">
+		SELECT
+		rootdir_id
+		FROM pr_subdir WHERE  subdir_id = #{subdir_id}
+	</select>
+	
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey5" resultType="java.lang.String">
+		SELECT
+		state
+		FROM pr_rootdir WHERE  rootdir_id = #{rootdir_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="SubdirPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_subdir
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="SubdirPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_subdir
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="SubdirPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_subdir
+		<where>
+		    <include refid="equal" />
+		</where>	
+		order by sort_no
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="SubdirPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_subdir
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="SubdirPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_subdir
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="SubdirPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_subdir
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="SubdirPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_subdir
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_subdir
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_subdir
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  subdir_id,  <!-- 子目录ID -->
+		  rootdir_id,  <!-- 根目录ID -->
+		  subdir_name,  <!-- 子目录名称 -->
+		  sort_no,  <!-- 排序号 -->
+		  create_user_id,  <!-- 创建人 -->
+		  (select name from aos_user where id =create_user_id)create_user_name,<!-- 创建人名称 -->
+		  create_date,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_date,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_subdir.subdir_id,  <!-- 子目录ID -->
+		  pr_subdir.rootdir_id,  <!-- 根目录ID -->
+		  pr_subdir.subdir_name,  <!-- 子目录名称 -->
+		  pr_subdir.sort_no,  <!-- 排序号 -->
+		  pr_subdir.create_user_id,  <!-- 创建人 -->
+		  pr_subdir.create_date,  <!-- 创建时间 -->
+		  pr_subdir.update_user_id,  <!-- 更新人 -->
+		  pr_subdir.update_date,  <!-- 更新时间 -->
+		  pr_subdir.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="subdir_id != null ">
+		      AND subdir_id = #{subdir_id}  <!-- 子目录ID -->
+		</if>
+	   <if test="rootdir_id != null ">
+		      AND rootdir_id = #{rootdir_id}  <!-- 根目录ID -->
+		</if>
+	    <if test="subdir_name != null and subdir_name != ''">
+		      AND subdir_name = #{subdir_name}  <!-- 子目录名称 -->
+		</if>
+	   <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_date != null and create_date != ''">
+		      AND create_date = #{create_date}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_date != null and update_date != ''">
+		      AND update_date = #{update_date}  <!-- 更新时间 -->
+		</if>
+	    
+		      AND state != -1  <!-- 状态 -->
+		
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="subdir_name != null and subdir_name != ''">
+		      AND subdir_name like '${subdir_name}%'  <!-- 子目录名称 -->
+		</if>
+	    <if test="create_date != null and create_date != ''">
+		      AND create_date like '${create_date}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_date != null and update_date != ''">
+		      AND update_date like '${update_date}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="subdir_name != null and subdir_name != ''">
+		      Or subdir_name like '${subdir_name}%'  <!-- 子目录名称 -->
+		</if>
+	    <if test="create_date != null and create_date != ''">
+		      Or create_date like '${create_date}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_date != null and update_date != ''">
+		      Or update_date like '${update_date}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+</mapper>

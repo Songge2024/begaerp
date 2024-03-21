@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="TestExampleDao">
+	
+	<!-- 查询测试用例编码 -->
+	<select id="queryStandardCode" resultType="String">
+		SELECT
+			a.TEST_CODE
+		FROM
+			re_module_divide a
+		<where>
+			<if test="DM_CODE != null and DM_CODE != ''">
+				and a.DM_CODE = #{DM_CODE} 
+			</if>
+		</where>
+		GROUP BY
+			TEST_CODE
+	</select>
+	<!-- 修改当前测试编码下的所有公共信息 -->
+	<update id="updateCommonalityInfo">
+		update qa_test_example q 
+		set q.test_environment = #{test_environment},
+			q.demand_id = ${demand_id},
+			q.precondition = #{precondition},
+			q.data_sql = #{data_sql}
+		where q.proj_id = #{proj_id} and q.standard_code = #{standard_code}
+	</update>
+	<!-- 查询项目版本号 -->
+	<select id="selectVersionId" resultType="int">
+		SELECT
+			version_id
+		FROM
+			bs_proj_test_version
+		WHERE
+			test_version_id = #{test_version_id}
+	</select>
+	<!-- 查询需求id -->
+	<select id="queryDemandID" resultType="String"> 
+		select rea.ad_id
+		from re_demand_action rea
+		where rea.ad_name = #{demand_site} and rea.proj_id = #{proj_id}
+	</select>
+	<!-- 根据id数组查找数据 -->
+	<select id="testExampleArrayList_3" resultType="dto">  
+        select c.*,rda.ad_name as demand_site from (
+        select * from(select a.*, d.dm_name from(SELECT
+        	<include refid="column" />
+        	,proj_name	 
+        FROM qa_test_example q,bs_proj_commons c
+        <where>
+        c.proj_id = q.proj_id
+        <if test="standard_code != null and standard_code != ''">
+       	 	and q.standard_code = #{standard_code}
+        </if> 
+         <if test="stand_id == ''">
+       	 	and (q.stand_id is null or q.stand_id ='')
+        </if> 
+        <if test="standard_id != null and standard_id != ''">
+       	 	 and q.standard_id in
+	        <foreach collection="standard_id" item="id" index="index" open="("
+				close=")" separator=",">
+				#{id}
+			</foreach>
+        </if>
+        </where> 
+        )a left join re_module_divide d 
+        on a.stand_id=d.DM_code) b order by  b.execute_code asc
+        ) c left join re_demand_action rda on rda.AD_ID = c.demand_id
+    </select> 
+    
+    <!-- 根据id数组查找数据 -->
+	<select id="testExampleArrayList" resultType="dto">  
+        select 
+        	c.*,rda.ad_name as demand_site 
+        from 
+        	(select 
+       			* 
+   			from
+   				(select 
+   					a.*, 
+   					d.dm_name,
+   					f.name as tester_name,
+   					h.test_version_number 
+				from
+					(SELECT
+			        	<include refid="column" />,
+			        	q.test_time,proj_name	 
+		        	FROM 
+		        		qa_test_example q,
+		        		bs_proj_commons c
+			        <where>
+				        c.proj_id = q.proj_id
+				        <if test="standard_code != null and standard_code != ''">
+				       	 	and q.standard_code = #{standard_code}
+				        </if> 
+				         <if test="stand_id == ''">
+				       	 	and (q.stand_id is null or q.stand_id ='')
+				        </if> 
+				        <if test="standard_id != null and standard_id != ''">
+				       	 	 and q.standard_id in
+					        <foreach collection="standard_id" item="id" index="index" open="("
+								close=")" separator=",">
+								#{id}
+							</foreach>
+				        </if>
+			        </where> 
+			        )a left join re_module_divide d on a.stand_id=d.DM_code
+			        LEFT JOIN aos_user f ON a.tester_id = f.id
+			        LEFT JOIN bs_proj_test_version h ON a.test_version_id = h.test_version_id 
+		        ) b order by  b.execute_code asc
+	        ) c left join re_demand_action rda on rda.AD_ID = c.demand_id
+    </select> 
+    
+    	<!-- 根据Dto查询已启用的项目需求 -->
+	<select id="listDemandSite" parameterType="Dto" resultType="Dto" useCache="false">
+		select a.AD_NAME as display,a.AD_ID as value
+		from re_demand_action a
+		where a.proj_id = #{proj_id} and a.STATE = 1
+		ORDER BY a.AD_ID DESC
+	</select>
+		<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="Dto" useCache="false">
+	    select b.*,rda.ad_name as demand_site,
+	    (SELECT count(*) from qa_bug_manage where standard_id=b.standard_id) AS bug_counts,
+	    (SELECT count(*) from qa_bug_manage where standard_id=b.standard_id and (state = 1000 or state = 1002 or state = 1005)) AS unsolve_counts,
+	    (SELECT count(*) from qa_bug_manage where standard_id=b.standard_id and state = 1001) AS resolved_counts,
+	    (SELECT count(*) from qa_bug_manage where standard_id=b.standard_id and state = 1003) AS close_counts,
+	    (SELECT count(*) from qa_bug_manage where standard_id=b.standard_id and (state = 1004 or state = 1006)) AS other_counts,
+	    (SELECT count(*) from qa_bug_manage where standard_id=b.standard_id and state = 1002 ) AS delay_counts,
+	    (SELECT count(*) from qa_bug_manage where standard_id=b.standard_id and state = 1005 ) AS reopen_counts
+	    from (
+	    select a.*,d.dm_name,f.test_version_number from(
+	    SELECT e.* ,c.proj_name 
+	    FROM qa_test_example e,bs_proj_commons c
+		<where>
+		    <include refid="like" />
+		  	and  e.proj_id = c.proj_id
+		    <if test="proj_id != null and proj_id != ''">
+		    	AND e.proj_id=#{proj_id}  <!-- 项目ID -->
+			</if>
+			<if test="is_execute == 1" >
+				AND e.execute_number &gt; 0  
+			</if>
+			<if test="is_execute == 2">
+				AND e.execute_number = 0 
+			</if>
+			<if test="pass_or_fail != null and pass_or_fail != ''">
+		    	AND e.pass_or_fail=#{pass_or_fail}  <!-- 是否通过-->
+			</if>
+			<if test="query_demand_id != null and query_demand_id != ''">
+		    	AND e.demand_id = #{query_demand_id}  <!-- 对应的需求id -->
+			</if>
+			<if test="test_version_id != null and test_version_id != ''">
+		    	AND e.test_version_id = #{test_version_id}  <!-- 对应的需求id -->
+			</if>
+			<if test="priority != null and priority != ''">
+		    	AND e.priority = #{priority}  <!-- 对应的需求id -->
+			</if>
+			<if test="tester_name != null and tester_name != ''">
+		    	AND e.tester_name like '%${tester_name}%'  <!-- 执行人 -->
+			</if>
+			order by e.stand_id,e.execute_code ASC)a
+			left join re_module_divide d on d.DM_CODE = a.stand_id
+			left join bs_proj_test_version f on a.test_version_id = f.test_version_id) b
+			left join re_demand_action rda on rda.AD_ID = b.demand_id
+		</where>	
+	</select>
+		
+		<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select	id="likeExportShow" parameterType="Dto" resultType="Dto">
+		SELECT
+			a.*,c.dm_name
+		FROM
+			qa_test_example a
+		LEFT JOIN re_module_divide c ON a.standard_code = c.TEST_CODE and a.stand_id = c.DM_CODE
+		<where>
+			<if test="proj_id != null and proj_id != ''">
+				and a.proj_id = #{proj_id}
+			</if>
+			<if test="stand_id != null and stand_id != ''">
+				and a.stand_id like '${stand_id}%'
+			</if>
+			<if test="priority != null and priority != ''">
+				and a.priority = #{priority}
+			</if>
+				and a.test_version_id = #{test_version_id}
+		</where>
+		AND a.standard_id NOT IN (
+			SELECT
+				b.from_standard_id
+			FROM
+				qa_test_example b
+			<where>
+				<if test="b_proj_id != null and b_proj_id != ''">
+					and b.proj_id = #{b_proj_id}
+				</if>
+				<if test="b_stand_id != null and b_stand_id != ''">
+					and b.stand_id like '${b_stand_id}%'
+				</if>
+					and b.test_version_id = #{b_test_version_id}
+					AND b.from_standard_id IS NOT NULL
+			</where>
+		)
+	</select>
+		
+		<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select	id="likeImportShow" parameterType="Dto" resultType="Dto">
+		SELECT
+			a.*,c.dm_name
+		FROM
+			qa_test_example a 
+		LEFT JOIN re_module_divide c ON a.standard_code = c.TEST_CODE and a.stand_id = c.DM_CODE
+		<where>
+			<if test="proj_id != null and proj_id != ''">
+				and a.proj_id = #{proj_id}
+			</if>
+			<if test="stand_id != null and stand_id != ''">
+				and a.stand_id like '${stand_id}%'
+			</if>
+				and a.test_version_id = #{test_version_id}
+			<if test="priority != null and priority != ''">
+				and a.priority = #{priority}
+			</if>
+		</where>
+	</select>
+	
+		<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="logPage" parameterType="Dto" resultType="Dto" useCache="false">
+	    select *
+	    FROM qa_testexample_log 
+		<where>
+		   standard_id=#{standard_id}
+		</where>	
+		order by test_time desc
+	</select>
+	
+	<!-- 测试用例编码查询 -->
+	<select id="standardCodeTwo" parameterType="Dto" resultType="Dto" useCache="false">
+		select test_code as display,dm_code as value 
+		from re_module_divide
+	   <where>
+	   	<if test="proj_id != null and proj_id != ''">
+	   		and proj_id = #{proj_id}
+	   	</if>
+	   </where>
+	</select>
+	
+	<!-- 测试用例编码查询 -->
+	<select id="standardCodeOne" parameterType="Dto" resultType="Dto" useCache="false">
+		SELECT standard_code as display,standard_code as value 
+		FROM qa_test_example q 
+	   <where>
+	   	(stand_id is null or stand_id = '')
+	   	<if test="proj_id != null and proj_id != ''">
+	   		and proj_id = #{proj_id}
+	   	</if>
+	   		<if test="version != null and version != ''">
+	   		and version = #{version}
+	   	</if>
+	   </where>
+	   group by q.standard_code
+	</select>
+	
+	<!-- 导出模板下拉框 -->
+	<select id="ListexportTestVersionId" parameterType="Dto" resultType="Dto">
+		SELECT
+			test_version_id AS value,
+			test_version_number AS display
+		FROM
+			bs_proj_test_version
+		WHERE
+			state = 1
+		and
+			proj_id = #{proj_id}
+	</select>
+	
+		<!-- 模块查询 -->
+	<select id="listModuleDivideComboBox" resultType="Dto">
+		SELECT
+		rmd.`DM_NAME` AS display,
+		rmd.`DM_CODE` AS value
+		FROM
+		`re_module_divide` rmd
+		where rmd.state = '1' and rmd.DM_IS_LEAF = '1'
+		<if test="proj_id != null and proj_id != ''">
+			and  rmd.`PROJ_ID` = ${proj_id}
+		</if>
+	</select>
+	<!-- 按编码和序号查询用例 -->
+	<select id="ListExecuteCode" resultType="TestExamplePO">
+		select q.*
+		from qa_test_example q
+		where q.standard_code = #{standard_code} 
+		AND q.execute_code >= ${execute_code}
+	</select>
+	<!-- 按编码和序号查询用例 -->
+	<select id="ListExecuteCodeDelete" resultType="TestExamplePO">
+		select q.*
+		from qa_test_example q
+		where q.standard_code = #{standard_code} 
+		AND q.execute_code > ${execute_code}
+	</select>
+	<!-- 按编码和序号查询用例 -->
+	<select id="ListExecuteCodeMix" resultType="Dto">
+		select q.*
+		from qa_test_example q
+		where q.standard_code = #{standard_code} 
+		AND q.execute_code > ${raw_execute_code}
+		and q.execute_code <![CDATA[<=]]> ${execute_code}
+	</select>
+	
+		<!-- 按编码和序号查询用例 -->
+	<select id="ListExecuteCodeMax" resultType="Dto">
+		select q.*
+		from qa_test_example q
+		where q.standard_code = #{standard_code} 
+		AND q.execute_code >= ${execute_code}
+		and q.execute_code <![CDATA[<]]> ${raw_execute_code}
+	</select>
+	<!-- 根据项目id和测试编码查询模块dm_code -->
+	<select id="queryTestCode"  resultType="java.lang.String" >
+		select r.dm_code
+		from re_module_divide r
+		where r.proj_id = #{proId} and r.test_code = #{testCode} and r.state = 1
+	</select>
+	
+	<!-- 根据版本号下拉框 -->
+	<select id="queryVersion" resultType="Dto">
+	SELECT DISTINCT version as display ,version as value from qa_test_example 
+	 <where>
+	   	<if test="proj_id != null and proj_id != ''">
+	   		and proj_id = #{proj_id}
+	   	</if>
+	   	<if test="stand_id != null and stand_id != ''">
+	   		and stand_id like '${stand_id}%'
+	   	</if>
+	 </where>
+	</select>
+	
+	<select id="queryExecuteCode" resultType="Integer">
+		select IFNULL(max(execute_code),0) as execute_code
+		from qa_test_example q
+		where q.proj_id = #{proj_id} and q.standard_code = #{test_code} and q.test_version_id = #{test_version_id}
+	</select>
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="Dto">
+		UPDATE qa_test_example
+		<set>
+			<if test="standard_id != null">
+		          standard_id = #{standard_id, jdbcType=INTEGER},  <!-- 测试用例ID -->
+			</if>
+			<if test="standard_code != null">
+		          standard_code = #{standard_code, jdbcType=VARCHAR},  <!-- 测试用例编码 -->
+			</if>
+			<if test="standard_name != null">
+		          standard_name = #{standard_name, jdbcType=VARCHAR},  <!-- 测试用例名称 -->
+			</if>
+			<if test="execute_code != null">
+		          execute_code = #{execute_code, jdbcType=INTEGER},  <!-- 执行序号 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=VARCHAR},  <!-- 项目ID -->
+			</if>
+			<if test="stand_id != null">
+		          stand_id = #{stand_id, jdbcType=VARCHAR},  <!-- 模块ID -->
+			</if>
+			<if test="demand_site != null">
+		          demand_site = #{demand_site, jdbcType=VARCHAR},  <!-- 对应的需求地址 -->
+			</if>
+			<if test="test_environment != null">
+		          test_environment = #{test_environment, jdbcType=VARCHAR},  <!-- 测试环境 -->
+			</if>
+			<if test="data_sql != null">
+		          data_sql = #{data_sql, jdbcType=VARCHAR},  <!-- 测试数据sql -->
+			</if>
+			<if test="precondition != null">
+		          precondition = #{precondition, jdbcType=VARCHAR},  <!-- 前置条件 -->
+			</if>
+			<if test="standard_detail != null">
+		          standard_detail = #{standard_detail, jdbcType=VARCHAR},  <!-- 执行步骤 -->
+			</if>
+			<if test="expected_results != null">
+		          expected_results = #{expected_results, jdbcType=VARCHAR},  <!-- 期望结果 -->
+			</if>
+			<if test="actual_results != null">
+		          actual_results = #{actual_results, jdbcType=VARCHAR},  <!-- 实际结果 -->
+			</if>
+			<if test="pass_or_fail != null">
+		          pass_or_fail = #{pass_or_fail, jdbcType=INTEGER},  <!-- 是否通过（0否，1是） -->
+			</if>
+			<if test="create_name != null">
+		          create_name = #{create_name, jdbcType=VARCHAR},  <!-- 新增人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 新增时间 -->
+			</if>
+			<if test="update_id != null ">
+		         update_id = #{update_id, jdbcType=INTEGER}, <!--修改人id -->
+			</if>
+			<if test="update_name != null">
+		          update_name = #{update_name, jdbcType=VARCHAR},  <!-- 修改人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 修改时间 -->
+			</if>
+			<if test="pass_time != null">
+		          pass_time = #{pass_time, jdbcType=VARCHAR},  <!-- 通过时间 -->
+			</if>
+			<if test="tester_id != null ">
+		         tester_id = #{tester_id, jdbcType=INTEGER}, <!--修改人id -->
+			</if>
+			<if test="tester_name != null">
+		          tester_name = #{tester_name, jdbcType=VARCHAR},  <!-- 执行人 -->
+			</if>
+			<if test="test_time != null">
+		          test_time = #{test_time, jdbcType=VARCHAR},  <!-- 执行时间 -->
+			</if>
+			<if test="test_version_id != null">
+		          test_version_id = #{test_version_id, jdbcType=INTEGER},  <!-- 测试版本号 -->
+			</if>
+			<if test="from_templete_proj_id != null">
+		          from_templete_proj_id = #{from_templete_proj_id, jdbcType=INTEGER},  <!-- 项目来源 -->
+			</if>
+			<if test="from_test_version_id != null">
+		          from_test_version_id = #{from_test_version_id, jdbcType=INTEGER},  <!-- 测试版本号其来源 -->
+			</if>
+			<if test="from_standard_id != null">
+		          from_standard_id = #{from_standard_id, jdbcType=INTEGER},  <!-- 测试用例来源 -->
+			</if>
+		</set>
+		WHERE  standard_id = #{standard_id}
+	</update>
+	
+		<!-- 根据proj_id查询项目测试用例 -->
+	<select id="listdemand" parameterType="Dto" resultType="Dto" useCache="false">
+	   select t.standard_id as value,concat(t.standard_code,'-',t.execute_code) as display
+	   from qa_test_example t 
+	   <where>
+	   	<if test="proj_id != null and proj_id != ''">
+	   		and proj_id = #{proj_id}
+	   	</if>
+	   	<if test="stand_id != null and stand_id != ''">
+	   		and stand_id LIKE '${stand_id}%'
+	   	</if>
+	   	<if test="stand_id == null or stand_id == ''">
+	   		and stand_id is null or stand_id = ''
+	   	</if>
+	   </where>
+	</select>
+	
+		<!-- 测试用例表（供缺陷调用） -->
+	<select id="listdemandgrid" parameterType="Dto" resultType="Dto" useCache="false">
+	   SELECT
+  b.*,
+  rda.ad_name AS demand_site,
+  d.dm_name
+  from qa_test_example b
+  LEFT JOIN re_demand_action rda
+    ON rda.AD_ID = b.demand_id
+    LEFT JOIN re_module_divide d
+          ON d.DM_CODE = b.stand_id
+	   <where>
+	   	<if test="proj_id != null and proj_id != ''">
+	   		and b.proj_id = #{proj_id}
+	   	</if>
+	   	<if test="stand_id != null and stand_id != ''">
+	   		and b.stand_id LIKE '${stand_id}%'
+	   	</if>
+	   	<if test="standard_name != null and standard_name != ''">
+	   		and b.standard_name LIKE '%${standard_name}%'
+	   	</if>
+	   	<if test="stand_id == null or stand_id == ''">
+	   		and b.stand_id is null or b.stand_id = ''
+	   	</if>
+	   	<if test="test_version_id != null and test_version_id != ''">
+	   		and b.test_version_id LIKE '%${test_version_id}%'
+	   	</if>
+	   </where>
+	</select>
+	
+	<select id="listbugnewdemandgrid" parameterType="Dto" resultType="Dto" useCache="false">
+	   SELECT
+  b.*,
+  rda.ad_name AS demand_site,
+  d.dm_name
+  from qa_test_example b
+  LEFT JOIN re_demand_action rda
+    ON rda.AD_ID = b.demand_id
+    LEFT JOIN re_module_divide d
+          ON d.DM_CODE = b.stand_id
+	   <where>
+	   	<if test="proj_id != null and proj_id != ''">
+	   		and b.proj_id = #{proj_id}
+	   	</if>
+	   	<if test="standard_id != null and standard_id != ''">
+	   		and b.standard_id = #{standard_id}
+	   	</if>
+	   </where>
+	</select>
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="standard_code != null and standard_code != ''">
+		      AND standard_code like '${standard_code}%'  <!-- 测试用例编码 -->
+		</if>
+		<if test="standard_name != null and standard_name != ''">
+		      AND standard_name like '${standard_name}%'  <!-- 测试用例名称 -->
+		</if>
+	    <if test="precondition != null and precondition != ''">
+		      AND precondition like '${precondition}%'  <!-- 前置条件 -->
+		</if>
+	    <if test="standard_detail != null and standard_detail != ''">
+		      AND standard_detail like '${standard_detail}%'  <!-- 测试步骤 -->
+		</if>
+	    <if test="expected_results != null and expected_results != ''">
+		      AND expected_results like '${expected_results}%'  <!-- 预期结果 -->
+		</if>
+	    <if test="actual_results != null and actual_results != ''">
+		      AND actual_results like '${actual_results}%'  <!-- 实际结果 -->
+		</if>
+	    <if test="create_name != null and create_name != ''">
+		      AND create_name like '${create_name}%'  <!-- 新增人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 新增时间 -->
+		</if>
+	    <if test="update_name != null and update_name != ''">
+		      AND update_name like '${update_name}%'  <!-- 修改人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+		<if test="stand_id != null and stand_id != ''">
+	     	 AND stand_id like '${stand_id}%'  <!-- 模块ID -->
+		</if>
+		<if test="test_version_id != null and test_version_id != ''">
+	     	 AND test_version_id = #{test_version_id}  <!-- 测试版本号 -->
+		</if>
+		<if test="from_templete_proj_id != null and from_templete_proj_id != ''">
+	     	 AND from_templete_proj_id like '${from_templete_proj_id}%'  <!-- 项目来源 -->
+		</if>
+		<if test="from_test_version_id != null and from_test_version_id != ''">
+	     	 AND from_test_version_id like '${from_test_version_id}%'  <!-- 测试版本号来源 -->
+		</if>
+		<if test="from_standard_id != null and from_standard_id != ''">
+	     	 AND from_standard_id like '${from_standard_id}%'  <!-- 测试用例来源 -->
+		</if>
+		 <if test="dim_search != null and dim_search != ''">
+	      	 AND (e.standard_name like '%${dim_search}%' OR e.test_premise like '%${dim_search}%' OR e.standard_detail like '%${dim_search}%' OR e.actual_results like '%${dim_search}%') <!-- 用例标题、测试前提、测试步骤、实际结果 -->
+		</if>
+	</sql>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  q.standard_id,  <!-- 测试用例ID -->
+		  q.standard_code,  <!-- 测试用例编码 -->
+		  q.standard_name,  <!-- 测试用例名称 -->
+		  q.execute_code,  <!-- 执行序号 -->
+		  q.proj_id,  <!-- 项目ID -->
+		  q.stand_id,  <!-- 模块ID -->
+		  q.test_environment,<!-- 测试环境 -->
+		  q.demand_id,  <!-- 对应的需求id -->
+		  q.data_sql,  <!-- 测试数据sql -->
+		  q.precondition,  <!-- 前置条件 -->
+		  q.standard_detail,  <!-- 执行步骤 -->
+		  q.expected_results,  <!-- 期望结果 -->
+		  q.actual_results,  <!-- 实际结果 -->
+		  q.pass_or_fail,  <!-- 是否通过（0否，1是） -->
+		  q.create_name,  <!-- 新增人 -->
+		  q.create_time,  <!-- 新增时间 -->
+		  q.update_name,  <!-- 修改人 -->
+		  q.update_time,  <!-- 修改时间 -->
+		  q.create_id,  <!-- 新增人id -->
+		  q.update_id,  <!-- 修改时间 -->
+		  q.tester_id, <!-- 通过时间 -->
+		  q.pass_time,
+		  q.priority,  <!-- 优先级 -->
+		  q.function_module,  <!-- 功能模块 -->
+		  q.test_premise,  <!-- 测试前提 -->
+		  q.test_version_id,  <!-- 测试版本号 -->
+		  q.from_templete_proj_id,  <!-- 项目来源 -->
+		  q.from_test_version_id,  <!-- 测试版本号来源 -->
+		  q.from_standard_id  <!-- 测试用例来源 -->
+	</sql>
+	
+	
+	<!-- 修改当前测试编码下的所有公共信息 -->
+
+</mapper>

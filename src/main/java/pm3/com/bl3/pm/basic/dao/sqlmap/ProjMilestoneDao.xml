@@ -1,0 +1,770 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_proj_milestone[ProjMilestone]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-23 17:29:37 -->
+<mapper namespace="com.bl3.pm.basic.dao.ProjMilestoneDao">
+<!--查询名称  -->
+<select id="queryMilestonName" resultType="Dto">
+	SELECT
+	milest_name
+	from
+		bs_proj_milestone
+	where
+		   proj_id=#{proj_id}
+			and state !=- 1
+			and milest_code=#{milest_code}
+			</select>
+<!--查询项目启动时间  -->
+	<select id="queryStarttime" resultType="Dto">
+	SELECT
+	CONCAT(begin_date, ' 08:30:00')begin_time
+	from
+		bs_proj_commons
+	where
+		   proj_id=#{proj_id}
+			and state !=- 1
+			</select>
+			
+			
+					<!-- 查重复数据 -->
+	<select id="querySameOrderList" resultType="Dto" parameterType="Dto">
+		SELECT
+		ifnull(sort_no,0)sort_no
+	 FROM bs_proj_milestone  WHERE   proj_id=#{proj_id} and state!=-1
+	</select>
+	
+	<!-- 查重复数据 -->
+	<select id="querybeforeSort" resultType="Dto" parameterType="Dto">
+		SELECT
+		sort_no
+	 FROM bs_proj_milestone 
+	  WHERE   
+	  proj_id=#{proj_id} 
+	  and state!=-1 
+	  and milest_code=#{milest_code}
+	</select>
+				<!-- 查重复数据 -->
+	<select id="querySameOrder" resultType="Dto" parameterType="Dto">
+		SELECT
+		sort_no
+	 FROM bs_proj_milestone  WHERE   proj_id=#{proj_id} and state!=-1
+	  <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- sort_no -->
+		</if>
+	</select>
+				<!-- 查选中的节点数据 -->
+	<select id="queryMaxOrder" resultType="Dto" parameterType="Dto">
+		SELECT
+		ifnull(max(sort_no+1),1)sort_no
+	 FROM bs_proj_milestone  WHERE   proj_id=#{proj_id} and state!=-1
+	</select>
+			<!-- 查选中的节点数据 -->
+	<select id="ChooseTreeData" resultType="Dto" parameterType="Dto">
+		SELECT
+		<include refid="column" />
+	 FROM bs_proj_milestone  WHERE  milest_code=#{milest_code}  and proj_id=#{proj_id} and state!=-1
+	</select>
+		<!-- edit查选中的节点数据 -->
+	<select id="ChooseTreeProjData" resultType="Dto" parameterType="Dto">
+		SELECT
+		<include refid="column" />
+	 FROM bs_proj_milestone  WHERE  milest_code=#{milest_code} and state!=-1 and  proj_id=#{proj_id}
+	</select>
+<!-- 查询父节点数据 -->
+	<select id="selectParentData" resultType="Dto" parameterType="Dto">
+		SELECT
+		<include refid="column" />
+	 FROM bs_proj_milestone B WHERE B.milest_code=(
+				SELECT parent_id FROM bs_proj_milestone WHERE milest_code=#{milest_code} and state!=-1)
+	</select>
+<!-- 查询任务数据 -->
+	<select id="selectTaskData" resultType="Dto" parameterType="Dto">
+		SELECT
+		<include refid="com.bl3.pm.task.dao.TaskDao.column" />
+		FROM ta_task WHERE  group_id = #{group_id} 
+	</select>
+	<select id="queryWeekDay" resultType="Dto" parameterType="Dto">
+		SELECT
+			max(end_date)max_plan_end_date,
+			max(weekday)weekday,
+			CONCAT(
+		DATE_FORMAT(
+			subdate(
+				max(end_date),
+				date_format(max(end_date), '%w')- 1
+			),
+			'%Y-%m-%d'
+		),
+		' 08:30:00'
+	)monday,
+		  CONCAT(
+				DATE_FORMAT(
+					subdate(
+						max(end_date),
+						date_format(max(end_date), '%w')- 7
+					),
+					'%Y-%m-%d'
+				),
+				' 17:30:00'
+			)saturday
+		FROM
+			bs_proj_milestone
+		WHERE
+		type = 1
+		and state !="-1"
+	</select>
+	<!-- 查询下级节点 -->
+	<select id="getNextCode" resultType="String" parameterType="Dto">
+			select 
+		IFNULL((select CONCAT(xm,zj,code) code from(
+		select LPAD(PROJ_ID,4,'0') xm,
+				IFNULL((case when LENGTH(milest_code)>7 
+					then (SUBSTR((select r2.milest_code from bs_proj_milestone r2 
+									where r2.milest_code=r.parent_id limit 1),5)) end),'') zj,
+				IFNULL(LPAD((select max(SUBSTR(r1.milest_code,-3))+1 from bs_proj_milestone r1 
+				        			where r1.parent_id=r.parent_id),3,0) ,'001') code
+		  from bs_proj_milestone r
+			where proj_id='${proj_id}' and parent_id='${parent_id}' limit 1) a),
+			(case
+			 when '${parent_id}'=1 then CONCAT(LPAD('${proj_id}',4,'0'),'001')
+				else
+					CONCAT((SELECT milest_code FROM bs_proj_milestone
+						WHERE milest_code = '${parent_id}' and proj_id='${proj_id}' limit 1 ),'001')
+			 end
+			)
+		) milest_code
+		from dual
+	</select>
+	<!-- 删除任务分组 -->
+	<delete id="deleteTaGroup" parameterType="Dto">
+	delete from ta_task_group where group_id='${group_id}' 
+	</delete>
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="milest_id" parameterType="ProjMilestonePO">
+		INSERT INTO bs_proj_milestone (
+		<if test="milest_code != null and milest_code != ''">
+	         milest_code, <!-- 里程碑编码 -->
+		</if>
+		<if test="milest_name != null and milest_name != ''">
+	         milest_name, <!-- 里程碑名称 -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="weekday != null">
+	         weekday, <!-- 第几周 -->
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+	         parent_id, <!-- 父ID -->
+		</if>
+		<if test="is_leaf != null and is_leaf != ''">
+	         is_leaf, <!-- is_leaf -->
+		</if>
+		<if test="sort_no != null">
+	         sort_no, <!-- sort_no -->
+		</if>
+		<if test="plan_wastage != null">
+	         plan_wastage, <!-- plan_wastage -->
+		</if>
+		<if test="type != null and type != ''">
+	         type, <!-- 类型 -->
+		</if>
+		<if test="plan_begin_date != null and plan_begin_date != ''">
+	         plan_begin_date, <!-- 计划开始时间 -->
+		</if>
+		<if test="plan_end_date != null and plan_end_date != ''">
+	         plan_end_date, <!-- 计划结束时间 -->
+		</if>
+		<if test="real_begin_date != null and real_begin_date != ''">
+	         real_begin_date, <!-- 实际开始时间 -->
+		</if>
+		<if test="real_end_date != null and real_end_date != ''">
+	         real_end_date, <!-- 实际结束时间 -->
+		</if>
+		<if test="real_jobamount != null and real_jobamount != ''">
+	         real_jobamount, <!-- 实际工作量 -->
+		</if>
+		<if test="plan_jobamount != null and plan_jobamount != ''">
+	         plan_jobamount, <!-- 计划工作量 -->
+		</if>
+		<if test="earned_value != null and earned_value != ''">
+	         earned_value, <!-- 挣值 -->
+		</if>
+		<if test="comment != null and comment != ''">
+	         comment, <!-- 说明 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 设计人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="group_id != null">
+	         group_id, <!-- group_id -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+	          milest_id
+		)VALUES(
+		<if test="milest_code != null and milest_code != ''">
+	          #{milest_code, jdbcType=VARCHAR}, <!-- 里程碑编码 -->
+	    </if>
+		<if test="milest_name != null and milest_name != ''">
+	          #{milest_name, jdbcType=VARCHAR}, <!-- 里程碑名称 -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+	    <if test="weekday != null">
+	          #{weekday, jdbcType=INTEGER}, <!-- 第几周 -->
+	    </if>
+		<if test="parent_id != null and parent_id != ''">
+	          #{parent_id, jdbcType=VARCHAR}, <!-- 父ID -->
+	    </if>
+		<if test="is_leaf != null and is_leaf != ''">
+	          #{is_leaf, jdbcType=VARCHAR}, <!-- is_leaf -->
+	    </if>
+		<if test="sort_no != null">
+	          #{sort_no, jdbcType=INTEGER}, <!-- sort_no -->
+	    </if>
+		<if test="plan_wastage != null">
+	          #{plan_wastage, jdbcType=NUMERIC}, <!-- plan_wastage -->
+	    </if>
+		<if test="type != null and type != ''">
+	          #{type, jdbcType=VARCHAR}, <!-- 类型 -->
+	    </if>
+		<if test="plan_begin_date != null and plan_begin_date != ''">
+	          #{plan_begin_date, jdbcType=VARCHAR}, <!-- 计划开始时间 -->
+	    </if>
+		<if test="plan_end_date != null and plan_end_date != ''">
+	          #{plan_end_date, jdbcType=VARCHAR}, <!-- 计划结束时间 -->
+	    </if>
+		<if test="real_begin_date != null and real_begin_date != ''">
+	           #{real_begin_date, jdbcType=VARCHAR}, <!-- 实际开始时间 -->
+		</if>
+		<if test="real_end_date != null and real_end_date != ''">
+	        #{real_end_date, jdbcType=VARCHAR},<!-- 实际结束时间 -->
+		</if>
+		<if test="real_jobamount != null and real_jobamount != ''">
+	         #{real_jobamount, jdbcType=NUMERIC}, <!-- 实际工作量 -->
+		</if>
+		<if test="plan_jobamount != null and plan_jobamount != ''">
+	        #{plan_jobamount, jdbcType=NUMERIC},  <!-- 计划工作量 -->
+		</if>
+		<if test="earned_value != null and earned_value != ''">
+	         #{earned_value, jdbcType=NUMERIC},<!-- 挣值 -->
+		</if>
+	    
+		<if test="comment != null and comment != ''">
+	          #{comment, jdbcType=VARCHAR}, <!-- 说明 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 设计人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="group_id != null">
+	          #{group_id, jdbcType=INTEGER}, <!-- group_id -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+	          null
+		)
+	</insert>
+		<!-- 检查删除节点中是否包含根节点 -->
+	<select id="checkRootNode" resultType="ProjMilestonePO" parameterType="Dto">
+	     SELECT 
+	         <include refid="column" />
+	      FROM bs_proj_milestone WHERE milest_code IN (${ids}) AND parent_id = '0'
+	</select>
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="milest_id" parameterType="ProjMilestonePO">
+		INSERT INTO bs_proj_milestone (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{milest_id, jdbcType=INTEGER},  <!-- 里程碑ID -->
+		    #{milest_code, jdbcType=VARCHAR},  <!-- 里程碑编码 -->
+		    #{milest_name, jdbcType=VARCHAR},  <!-- 里程碑名称 -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{plan_wastage, jdbcType=NUMERIC},  <!-- plan_wastage -->
+		    #{parent_id, jdbcType=VARCHAR},  <!-- 父ID -->
+		    #{is_leaf, jdbcType=VARCHAR},  <!-- is_leaf -->
+		    #{sort_no, jdbcType=INTEGER},  <!-- sort_no -->
+		    #{type, jdbcType=VARCHAR},  <!-- 类型 -->
+		    #{plan_begin_date, jdbcType=VARCHAR},  <!-- 计划开始时间 -->
+		    #{plan_end_date, jdbcType=VARCHAR},  <!-- 计划结束时间 -->
+		    #{comment, jdbcType=VARCHAR},  <!-- 说明 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+		    #{real_begin_date, jdbcType=VARCHAR}, <!-- 实际开始时间 -->
+		    #{real_end_date, jdbcType=VARCHAR}, <!-- 实际结束时间 -->
+		    #{real_jobamount, jdbcType=NUMERIC}, <!-- 实际工作量 -->
+		    #{plan_jobamount, jdbcType=NUMERIC}, <!-- 计划工作量 -->
+		    #{earned_value, jdbcType=NUMERIC}<!-- 挣值 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProjMilestonePO">
+		UPDATE bs_proj_milestone
+		<set>
+			<if test="milest_id != null">
+		          milest_id = #{milest_id, jdbcType=INTEGER},  <!-- 里程碑ID -->
+			</if>
+			<if test="weekday != null">
+		          weekday = #{weekday, jdbcType=INTEGER},  <!-- 第几周 -->
+			</if>
+			<if test="milest_code != null">
+		          milest_code = #{milest_code, jdbcType=VARCHAR},  <!-- 里程碑编码 -->
+			</if>
+			<if test="milest_name != null">
+		          milest_name = #{milest_name, jdbcType=VARCHAR},  <!-- 里程碑名称 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="parent_id != null">
+		          parent_id = #{parent_id, jdbcType=VARCHAR},  <!-- 父ID -->
+			</if>
+			<if test="real_begin_date != ''">
+	          real_begin_date= #{real_begin_date, jdbcType=VARCHAR}, <!-- 实际开始时间 -->
+		</if>
+		<if test="real_end_date != ''">
+	        real_end_date=#{real_end_date, jdbcType=VARCHAR},<!-- 实际结束时间 -->
+		</if>
+		<if test="real_jobamount != ''">
+	         real_jobamount=#{real_jobamount, jdbcType=NUMERIC}, <!-- 实际工作量 -->
+		</if>
+		<if test="plan_jobamount != null">
+	       plan_jobamount= #{plan_jobamount, jdbcType=NUMERIC},  <!-- 计划工作量 -->
+		</if>
+		<if test="earned_value != ''">
+	        earned_value= #{earned_value, jdbcType=NUMERIC},<!-- 挣值 -->
+		</if>
+			<if test="is_leaf != null">
+		          is_leaf = #{is_leaf, jdbcType=VARCHAR},  <!-- is_leaf -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- sort_no -->
+			</if>
+			<if test="plan_wastage != null">
+		          plan_wastage = #{plan_wastage, jdbcType=NUMERIC},  <!-- plan_wastage -->
+			</if>
+			<if test="type != null">
+		          type = #{type, jdbcType=VARCHAR},  <!-- 类型 -->
+			</if>
+			<if test="plan_begin_date != null">
+		          plan_begin_date = #{plan_begin_date, jdbcType=VARCHAR},  <!-- 计划开始时间 -->
+			</if>
+			<if test="plan_end_date != null">
+		          plan_end_date = #{plan_end_date, jdbcType=VARCHAR},  <!-- 计划结束时间 -->
+			</if>
+			<if test="comment != null">
+		          comment = #{comment, jdbcType=VARCHAR},  <!-- 说明 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="group_id != null">
+		          group_id = #{group_id, jdbcType=INTEGER},  <!-- group_id -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  milest_code = #{milest_code}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_proj_milestone WHERE  milest_id = #{milest_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProjMilestonePO">
+		SELECT
+		<include refid="column" />
+		FROM bs_proj_milestone WHERE  milest_code = #{milest_code}  and state!="-1"
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProjMilestonePO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_proj_milestone
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProjMilestonePO">
+		SELECT
+			 milest_id,  
+		  milest_code, 
+		  plan_wastage,  
+		  proj_id, 
+		  group_id,  
+		  weekday,
+		  parent_id, 
+		  is_leaf,  
+		  sort_no,  
+		  type,  
+		 real_begin_date,
+	     real_end_date, 
+	      real_jobamount, 
+	      plan_jobamount, 
+	      earned_value,
+		plan_begin_date, 
+		  plan_end_date,  
+		  comment,  
+		  create_user_id,  
+		  create_time,  
+		  update_user_id,  
+		  update_time, 
+		  state,
+		CONCAT(sort_no,'.',	
+		milest_name,
+		'(',
+		DATE_FORMAT(plan_begin_date, '%Y/%m/%d'),
+		'-',
+		DATE_FORMAT(plan_end_date, '%Y/%m/%d'),
+		')'
+	) milest_name
+		FROM bs_proj_milestone
+		<where>
+		<include refid="equal" />
+		 and state!="-1"
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProjMilestonePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_milestone
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProjMilestonePO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_milestone
+		<where>
+		    <include refid="like" />
+		    and state!=-1
+		</where>	
+		ORDER BY LENGTH(parent_id) DESC
+	</select>
+	
+		<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeCode" parameterType="Dto" resultType="ProjMilestonePO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_milestone
+		<where>
+		    <include refid="like" />
+		    and state!=-1
+		</where>	
+		ORDER BY LENGTH(parent_id)ASC
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProjMilestonePO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_milestone
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProjMilestonePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_milestone
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="Dto" >
+	    SELECT
+		 milest_id, 
+		 group_id,
+		  milest_code, 
+		  milest_name,  
+		  proj_id,  
+		  parent_id, 
+		  weekday,
+		  is_leaf, 
+		  sort_no,  
+		  type, 
+		   DATE_FORMAT(real_begin_date, '%Y/%m/%d')real_begin_date,
+	      DATE_FORMAT(real_end_date, '%Y/%m/%d')real_end_date, 
+	      real_jobamount, 
+	      plan_jobamount, 
+	      earned_value,
+		  date_format(plan_begin_date,'%Y-%m-%d')plan_begin_date,  
+		  date_format(plan_end_date,'%Y-%m-%d')plan_end_date,  
+		  plan_wastage,
+		  comment,  
+		  create_user_id, 
+		  create_time,  
+		  update_user_id,  
+		  update_time, 
+		  state ,
+	(
+		CASE
+		WHEN state = 0 THEN
+			'未启用'
+		WHEN state = 1 THEN
+			'已启用'
+		ELSE
+			'已作废'
+		END
+	)state_name,
+	(
+		CASE
+		WHEN type = 0 THEN
+			'否'
+		WHEN type = 1 THEN
+			'是'
+		END
+	)type_name,
+		(select proj_name 
+		from bs_proj_commons a 
+		where a.state=1 
+		 and a.proj_id=bs_proj_milestone.proj_id )proj_name
+		FRoM bs_proj_milestone
+		<where>
+				 <if test="milest_code != null and milest_code != ''">
+				 and  ( milest_code LIKE '${milest_code}%' or parent_id = '${parent_id}' )
+				</if>
+					<if test="proj_id != null and proj_id != ''">
+				    AND proj_id = '${proj_id}' 
+				</if>
+				and state!="-1"
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_proj_milestone
+		<where>
+		    <include refid="equal" />
+		    and state!="-1"
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_proj_milestone
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  milest_id,  <!-- 里程碑ID -->
+		  milest_code,  <!-- 里程碑编码 -->
+		  milest_name,  <!-- 里程碑名称 -->
+		  plan_wastage,  <!-- plan_wastage -->
+		  proj_id,  <!-- 项目ID -->
+		  weekday,
+		  group_id,  <!-- 分组ID -->
+		  parent_id,  <!-- 父ID -->
+		  is_leaf,  <!-- is_leaf -->
+		  sort_no,  <!-- sort_no -->
+		  type,  <!-- 类型 -->
+		  plan_begin_date,  <!-- 计划开始时间 -->
+		  plan_end_date,  <!-- 计划结束时间 -->
+		  comment,  <!-- 说明 -->
+		  create_user_id,  <!-- 设计人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state, <!-- 状态 -->
+	      real_begin_date, <!-- 实际开始时间 -->
+	      real_end_date, <!-- 实际结束时间 -->
+	      real_jobamount, <!-- 实际工作量 -->
+	      plan_jobamount, <!-- 计划工作量 -->
+	      earned_value<!-- 挣值 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_proj_milestone.milest_id,  <!-- 里程碑ID -->
+		  bs_proj_milestone.milest_code,  <!-- 里程碑编码 -->
+		  bs_proj_milestone.milest_name,  <!-- 里程碑名称 -->
+		  bs_proj_milestone.proj_id,  <!-- 项目ID -->
+		  bs_proj_milestone.parent_id,  <!-- 父ID -->
+		  bs_proj_milestone.is_leaf,  <!-- is_leaf -->
+		  bs_proj_milestone.sort_no,  <!-- sort_no -->
+		  bs_proj_milestone.type,  <!-- 类型 -->
+		  bs_proj_milestone.plan_begin_date,  <!-- 计划开始时间 -->
+		  bs_proj_milestone.plan_end_date,  <!-- 计划结束时间 -->
+		  bs_proj_milestone.comment,  <!-- 说明 -->
+		  bs_proj_milestone.create_user_id,  <!-- 设计人 -->
+		  bs_proj_milestone.create_time,  <!-- 创建时间 -->
+		  bs_proj_milestone.update_user_id,  <!-- 更新人 -->
+		  bs_proj_milestone.update_time,  <!-- 更新时间 -->
+		  bs_proj_milestone.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="milest_id != null ">
+		      AND milest_id = #{milest_id}  <!-- 里程碑ID -->
+		</if>
+	    <if test="milest_code != null and milest_code != ''">
+		      AND milest_code = #{milest_code}  <!-- 里程碑编码 -->
+		</if>
+	    <if test="milest_name != null and milest_name != ''">
+		      AND milest_name = #{milest_name}  <!-- 里程碑名称 -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="parent_id != null ">
+		      AND parent_id = #{parent_id}  <!-- 父ID -->
+		</if>
+	    <if test="is_leaf != null and is_leaf != ''">
+		      AND is_leaf = #{is_leaf}  <!-- is_leaf -->
+		</if>
+	   <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- sort_no -->
+		</if>
+	    <if test="type != null and type != ''">
+		      AND type = #{type}  <!-- 类型 -->
+		</if>
+	    <if test="plan_begin_date != null and plan_begin_date != ''">
+		      AND plan_begin_date = #{plan_begin_date}  <!-- 计划开始时间 -->
+		</if>
+	    <if test="plan_end_date != null and plan_end_date != ''">
+		      AND plan_end_date = #{plan_end_date}  <!-- 计划结束时间 -->
+		</if>
+	    <if test="comment != null and comment != ''">
+		      AND comment = #{comment}  <!-- 说明 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 设计人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="milest_code != null and milest_code != ''">
+		      AND milest_code like '${milest_code}%'  <!-- 里程碑编码 -->
+		</if>
+	    <if test="milest_name != null and milest_name != ''">
+		      AND milest_name like '${milest_name}%'  <!-- 里程碑名称 -->
+		</if>
+	    <if test="is_leaf != null and is_leaf != ''">
+		      AND is_leaf like '${is_leaf}%'  <!-- is_leaf -->
+		</if>
+	    <if test="type != null and type != ''">
+		      AND type like '${type}%'  <!-- 类型 -->
+		</if>
+	    <if test="plan_begin_date != null and plan_begin_date != ''">
+		      AND plan_begin_date like '${plan_begin_date}%'  <!-- 计划开始时间 -->
+		</if>
+	    <if test="plan_end_date != null and plan_end_date != ''">
+		      AND plan_end_date like '${plan_end_date}%'  <!-- 计划结束时间 -->
+		</if>
+	    <if test="comment != null and comment != ''">
+		      AND comment like '${comment}%'  <!-- 说明 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="milest_code != null and milest_code != ''">
+		      Or milest_code like '${milest_code}%'  <!-- 里程碑编码 -->
+		</if>
+	    <if test="milest_name != null and milest_name != ''">
+		      Or milest_name like '${milest_name}%'  <!-- 里程碑名称 -->
+		</if>
+	    <if test="is_leaf != null and is_leaf != ''">
+		      Or is_leaf like '${is_leaf}%'  <!-- is_leaf -->
+		</if>
+	    <if test="type != null and type != ''">
+		      Or type like '${type}%'  <!-- 类型 -->
+		</if>
+	    <if test="plan_begin_date != null and plan_begin_date != ''">
+		      Or plan_begin_date like '${plan_begin_date}%'  <!-- 计划开始时间 -->
+		</if>
+	    <if test="plan_end_date != null and plan_end_date != ''">
+		      Or plan_end_date like '${plan_end_date}%'  <!-- 计划结束时间 -->
+		</if>
+	    <if test="comment != null and comment != ''">
+		      Or comment like '${comment}%'  <!-- 说明 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+</mapper>

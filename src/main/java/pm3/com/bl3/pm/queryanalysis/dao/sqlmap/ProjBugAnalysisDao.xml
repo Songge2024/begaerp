@@ -1,0 +1,904 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--项目缺陷分析表  -->
+<mapper namespace="ProjBugAnalysisDao">
+
+<!-- 查询分析按项目周统计 -->
+	<select id="queryProjBugAnalysisWeekPage" parameterType="Dto" resultType="Dto"> 
+			SELECT
+			r.milest_name name,
+			count(a.find_time) value
+		FROM
+			qa_bug_manage a
+		LEFT JOIN bs_proj_milestone r ON r.proj_id = a.proj_id
+		AND r.state = 1
+		AND(
+			a.find_time BETWEEN r.plan_begin_date
+			AND r.plan_end_date
+		)
+	 <where>
+		<if test="proj_id != null and proj_id != ''"> 
+	   		AND a.proj_id = #{proj_id} 
+		</if>
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="test_version_ids != null and test_version_ids != ''">
+			and test_version_id in 
+			<foreach collection="test_version_ids" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+			AND a.state != 1001
+	</where>
+		and r.milest_name is not null
+		GROUP BY
+		r.milest_name
+	    </select> 
+
+
+<!-- 查询项目缺陷按需求分析数据 -->
+	<select id="queryProjBugAnalysisDemandPage" parameterType="Dto" resultType="Dto"> 
+	select * from(
+	SELECT
+	(select r.ad_name from re_demand_action r where ad_id=demand_id
+		and r.proj_id= proj_id and r.state=1)name ,
+	count(demand_id)value
+	FROM
+	qa_bug_manage
+	
+	 <where>
+		<if test="proj_id != null and proj_id != ''"> 
+		      AND proj_id = #{proj_id} 
+		</if>
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="test_version_ids != null and test_version_ids != ''">
+			and test_version_id in 
+			<foreach collection="test_version_ids" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		AND state != 1001
+	</where>
+		GROUP BY
+		demand_id)aa
+where name is not NULL
+	    </select> 
+
+		<!-- 查询项目缺陷按模块分析数据 -->
+	<select id="queryProjBugAnalysisModulePage" parameterType="Dto" resultType="Dto"> 
+				SELECT*FROM
+				(SELECT(SELECT
+					r.dm_name
+					FROM
+					re_module_divide r
+				WHERE
+					dm_code = stand_id
+				AND r.proj_id = proj_id
+				AND r.state = 1
+				) name,
+				count(stand_id)value
+			from	qa_bug_manage
+	 <where>
+		<if test="proj_id != null and proj_id != ''"> 
+		      AND proj_id = #{proj_id} 
+		</if>
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="test_version_ids != null and test_version_ids != ''">
+			and test_version_id in 
+			<foreach collection="test_version_ids" item="value" index="index" open="(" close=")" separator=",">
+            	#{value,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		AND state != 1001
+	</where>
+		GROUP BY
+				stand_id)aa
+		where value is not NULL
+	    </select> 
+	<!-- 查询项目缺陷按类型分析数据 -->
+	<select id="queryProjBugAnalysisTypePage" parameterType="Dto" resultType="Dto"> 
+		select  (
+		CASE
+		WHEN bug_type = 1000 THEN
+			'缺陷'
+		WHEN bug_type = 1001 THEN
+			'非缺陷'
+		WHEN bug_type = 1002 THEN
+			'改进建议'
+		WHEN bug_type = 1003 THEN
+			'代码走查问题'
+		WHEN bug_type = 1004 THEN
+		    '文档评审问题'
+		ELSE
+			'其它'
+		END
+	)bug_type,
+	count(bug_type) s,
+		      (select proj_name from bs_proj_commons a 
+      where a.proj_id=qa_bug_manage.proj_id
+      )proj_name
+	from qa_bug_manage
+	 <where>
+		 <if test="proj_id != null and proj_id != ''"> 
+		      AND proj_id = #{proj_id} 
+		</if>
+		<if test="find_begin_time !=null and find_begin_time != ''">
+			and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="find_end_time !=null and find_end_time != ''">
+			and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="test_version_ids != null and test_version_ids != ''">
+			and test_version_id in 
+			<foreach collection="test_version_ids" item="value" index="index" open="(" close=")" separator=",">
+	           	#{value,jdbcType=VARCHAR}
+	       	</foreach>
+		</if>
+	</where>
+	GROUP BY (
+		CASE
+		WHEN bug_type = 1000 THEN
+			'缺陷'
+		WHEN bug_type = 1001 THEN
+			'非缺陷'
+		WHEN bug_type = 1002 THEN
+			'改进建议'
+		WHEN bug_type = 1003 THEN
+			'代码走查问题'
+		WHEN bug_type = 1004 THEN
+			'文档评审问题'
+		ELSE
+			'其它'
+		END
+	)
+    </select> 
+	
+	<!-- 查询项目缺陷按状态分析数据 -->
+	<select id="queryProjBugAnalysisStatePage" parameterType="Dto" resultType="Dto"> 
+		select state,count(state) s,
+		      (select proj_name from bs_proj_commons a 
+      where a.proj_id=qa_bug_manage.proj_id
+      )proj_name,
+      (
+		CASE
+		WHEN state = 1000 THEN
+			'未解决'
+		WHEN state = 1001 THEN
+			'已解决'
+		WHEN state = 1002 THEN
+			'延期处理'
+		WHEN state = 1003 THEN
+			'关闭'
+		WHEN state = 1004 THEN
+			'拒绝'
+		WHEN state = 1005 THEN
+			'重新打开'	
+		WHEN state = 1006 THEN
+			'无法复现'
+		ELSE
+			'其它'
+		END
+	)state_name
+	from qa_bug_manage
+	 <where>
+	 <if test="proj_id != null and proj_id != ''"> 
+			      AND proj_id = #{proj_id} 
+			</if>
+			<if test="find_begin_time !=null and find_begin_time != ''">
+				and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="find_end_time !=null and find_end_time != ''">
+				and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+			</if>
+			<if test="test_version_ids != null and test_version_ids != ''">
+				and test_version_id in 
+				<foreach collection="test_version_ids" item="value" index="index" open="(" close=")" separator=",">
+	            	#{value,jdbcType=VARCHAR}
+	        	</foreach>
+			</if>
+			</where>
+	GROUP BY (
+		CASE
+		WHEN state = 1000 THEN
+			'未解决'
+		WHEN state = 1001 THEN
+			'已解决'
+		WHEN state = 1002 THEN
+			'延期处理'
+		WHEN state = 1003 THEN
+			'关闭'
+		WHEN state = 1004 THEN
+			'拒绝'
+		WHEN state = 1005 THEN
+			'重新打开'	
+		WHEN state = 1006 THEN
+			'无法复现'
+		ELSE
+			'其它'
+		END
+	)
+    </select> 
+    	<!-- 查询项目缺陷按人员分析数据 -->
+	<select id="queryProjBugAnalysisManPage" parameterType="Dto" resultType="Dto"> 
+		SELECT *
+		FROM
+		(SELECT
+				b.`name` name,
+				count(c.deal_man)value,
+				(
+					SELECT
+						proj_name
+					FROM
+						bs_proj_commons d
+					WHERE
+						d.proj_id = a.proj_id
+				)proj_name
+			FROM
+				aos_user b,
+				bs_proj_teams a
+			LEFT OUTER JOIN qa_bug_manage c ON a.PROJ_ID = c.proj_id
+			AND a.TEAM_USER_ID = c.deal_man
+	 <where>
+	 <if test="proj_id != null and proj_id != ''"> 
+			      AND a.proj_id = #{proj_id} 
+			</if>
+			AND a.TEAM_USER_ID = b.id
+			AND a.TEAM_USER_ID != '-1'
+			</where>
+	GROUP BY
+	b.id)bb
+ORDER BY
+	bb.value DESC
+    </select> 
+    
+    <!-- 项目子模块下拉框 -->
+    <select id="selectStardCode" resultType="Dto">
+    	SELECT dm_code as value,
+    		   DM_NAME as display 
+    	FROM re_module_divide 
+    	<where>
+    		DM_PARENT_CODE = 1 AND STATE = 1
+    		<if test="proj_id != null and proj_id != ''">
+    			and proj_id = #{proj_id}
+    		</if>
+    	</where>
+    </select>
+    
+    <select id="bugTypeCount" resultType="BugManagePO" useCache="false">
+		select a.dm_name as stard_name, t.* from 
+			(
+			SELECT
+				left(stand_id,7) as stand_id, 
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1000 THEN 1 ELSE 0 END ) as slight,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1001 THEN 1 ELSE 0 END ) as general,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1002 THEN 1 ELSE 0 END ) as severitys,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1003 THEN 1 ELSE 0 END ) as deadly,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) THEN 1 ELSE 0 END ) as subtotal,
+				sum(CASE WHEN state = 1005 THEN 1 ELSE 0 END ) as open,
+				sum(CASE WHEN state = 1002 THEN 1 ELSE 0 END ) as postpone,
+				sum(CASE WHEN state = 1001 THEN 1 ELSE 0 END ) as resolved,
+				sum(CASE WHEN state = 1003 THEN 1 ELSE 0 END ) as close,
+				sum(CASE WHEN state = 1004 THEN 1 ELSE 0 END ) as refuse,
+				sum(CASE WHEN state = 1006 THEN 1 ELSE 0 END ) as reappear
+			FROM
+				qa_bug_manage
+			<where>
+				<if test="proj_id != null and proj_id != ''">
+					and proj_id = #{proj_id}
+				</if>
+				<if test="dm_codes != null and dm_codes != ''">
+					and left(stand_id,7) in 
+					<foreach collection="dm_codes" item="value" index="index" open="(" close=")" separator=",">
+		            	#{value,jdbcType=VARCHAR}
+		        	</foreach>
+				</if>
+				<if test="test_version_id != null and test_version_id != ''">
+				    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+				</if>
+				<if test="find_begin_time !=null and find_begin_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+				</if>
+				<if test="find_end_time !=null and find_end_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+				</if>
+			</where>
+			group by proj_id, left(stand_id,7)
+			) t 
+		left join re_module_divide a on a.dm_code = t.stand_id
+	</select>
+	
+	<select id="bugDealCount" resultType="BugManagePO" >
+		select a.name as deal_name, t.*, sum_num.* from 
+			(
+			SELECT
+				deal_man, 
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1000 THEN 1 ELSE 0 END ) as slight,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1001 THEN 1 ELSE 0 END ) as general,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1002 THEN 1 ELSE 0 END ) as severitys,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) AND severity = 1003 THEN 1 ELSE 0 END ) as deadly,
+				sum(CASE WHEN (state = 1000 or state = 1005 or state = 1002) THEN 1 ELSE 0 END ) as subtotal,
+				sum(CASE WHEN state = 1005 THEN 1 ELSE 0 END ) as open,
+				sum(CASE WHEN state = 1002 THEN 1 ELSE 0 END ) as postpone,
+				sum(CASE WHEN state = 1001 THEN 1 ELSE 0 END ) as resolved,
+				sum(CASE WHEN state = 1003 THEN 1 ELSE 0 END ) as close,
+				sum(CASE WHEN state = 1004 THEN 1 ELSE 0 END ) as refuse,
+				sum(CASE WHEN state = 1006 THEN 1 ELSE 0 END ) as reappear
+			FROM
+				qa_bug_manage
+			<where>
+				<if test="proj_id != null and proj_id != ''">
+					and proj_id = #{proj_id}
+				</if>
+				<if test="stand_id != null and stand_id != ''">
+				      and stand_id like '${stand_id}%'  <!-- 模块ID -->
+				</if>
+				<if test="deal_mans != null and deal_mans != ''">
+					and deal_man in 
+					<foreach collection="deal_mans" item="value" index="index" open="(" close=")" separator=",">
+		            	#{value,jdbcType=VARCHAR}
+		        	</foreach>
+				</if>
+				<if test="test_version_id != null and test_version_id != ''">
+				    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+				</if>
+				<if test="find_begin_time !=null and find_begin_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+				</if>
+				<if test="find_end_time !=null and find_end_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+				</if>
+			</where>
+			group by proj_id, deal_man
+			) t 
+		left join aos_user a on a.id = t.deal_man,
+		(SELECT
+			IFNULL((t.unresolved + t.reopen),0) AS to_be_solved,
+			IFNULL(t.resolved ,0) AS resolved,
+			IFNULL(t.closed ,0) AS closed,
+			IFNULL(t.total_bug_num ,0) AS total_bug_num
+		FROM
+			(
+				SELECT
+					sum(CASE WHEN state = 1000 THEN 1 ELSE 0 END ) AS unresolved,
+					sum(CASE WHEN state = 1001 THEN 1 ELSE 0 END ) AS resolved,
+					sum(CASE WHEN state = 1002 THEN 1 ELSE 0 END ) AS postponement,
+					sum(CASE WHEN state = 1003 THEN 1 ELSE 0 END ) AS closed,
+					sum(CASE WHEN state = 1004 THEN 1 ELSE 0 END ) AS refuse,
+					sum(CASE WHEN state = 1005 THEN 1 ELSE 0 END ) AS reopen,
+					sum(CASE WHEN state = 1006 THEN 1 ELSE 0 END ) AS unReproduce,
+					COUNT(*) AS total_bug_num
+				FROM
+					qa_bug_manage
+				<where>
+					<if test="proj_id != null and proj_id != ''">
+						and proj_id = #{proj_id}
+					</if>
+					<if test="stand_id != null and stand_id != ''">
+					      and stand_id like '${stand_id}%'  <!-- 模块ID -->
+					</if>
+					<if test="deal_mans != null and deal_mans != ''">
+						and deal_man in 
+						<foreach collection="deal_mans" item="value" index="index" open="(" close=")" separator=",">
+			            	#{value,jdbcType=VARCHAR}
+			        	</foreach>
+					</if>
+					<if test="test_version_id != null and test_version_id != ''">
+					    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+					</if>
+					<if test="find_begin_time !=null and find_begin_time != ''">
+						and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+					</if>
+					<if test="find_end_time !=null and find_end_time != ''">
+						and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+					</if>
+				</where>
+			) t
+			)sum_num
+	</select>
+	
+	<select id="bugSolveCount" resultType="BugManagePO" >
+		SELECT
+			a.dic_descs,
+			a.solve_severitys,
+			count(bug_id) AS bug_total,
+			sum(
+				CASE
+				WHEN state = 1001
+				OR state = 1003 THEN
+					1
+				ELSE
+					0
+				END
+			) AS solved,
+			sum(
+				CASE
+				WHEN state = 1000
+				OR state = 1002
+				OR state = 1005 THEN
+					1
+				ELSE
+					0
+				END
+			) AS tobesolve,
+			sum(
+				CASE
+				WHEN state = 1004
+				OR state = 1006 THEN
+					1
+				ELSE
+					0
+				END
+			) AS other,
+			concat(
+				(
+					round(
+						(
+							sum(
+								CASE
+								WHEN state = 1001
+								OR state = 1003 THEN
+									1
+								ELSE
+									0
+								END
+							) + sum(
+								CASE
+								WHEN state = 1004
+								OR state = 1006 THEN
+									1
+								ELSE
+									0
+								END
+							)
+						) / count(bug_id) * 100,
+						0
+					)
+				),
+				'%'
+			) AS resolution
+		FROM
+			(
+				SELECT
+					qa.*, CASE
+				WHEN severity IN ('1002', '1003') THEN
+					'1002'
+				ELSE
+					severity
+				END AS solve_severitys,
+				CASE
+			WHEN aos_dic.dic_desc IN ('严重', '致命') THEN
+				'严重、致命'
+			ELSE
+				aos_dic.dic_desc
+			END AS dic_descs
+			FROM
+				qa_bug_manage qa
+			LEFT JOIN aos_dic ON aos_dic.dic_key = 'bug_severity'
+			AND aos_dic.`code` = severity
+			<where>
+				<if test="proj_id != null and proj_id != ''">
+					and proj_id = #{proj_id}
+				</if>
+				<if test="test_version_id != null and test_version_id != ''">
+				    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+				</if>
+				<if test="find_begin_time !=null and find_begin_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+				</if>
+				<if test="find_end_time !=null and find_end_time != ''">
+					and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+				</if>
+			</where>
+			) a
+		GROUP BY
+			a.solve_severitys
+	</select>
+	
+	<select id="testExampleCount" resultType="TestExamplePO" >
+		SELECT
+			a.dm_name AS stard_name,
+			t.*
+		FROM
+			(
+				SELECT
+					LEFT (stand_id, 7) AS stand_id,
+					sum(
+						CASE
+						WHEN pass_or_fail = 1 THEN
+							1
+						ELSE
+							0
+						END
+					)as all_example,
+					sum(
+						CASE
+						WHEN pass_or_fail = 1 THEN
+							1
+						ELSE
+							0
+						END
+					)as pass_example,
+					NULL as pass_rate
+				FROM
+					qa_test_example
+				<where>
+				<if test="proj_id != null and proj_id != ''">
+					and proj_id = #{proj_id}
+				</if>
+				<if test="test_version_id != null and test_version_id != ''">
+				    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+				</if>
+				<if test="dm_codes != null and dm_codes != ''">
+					and left(stand_id,7) in 
+					<foreach collection="dm_codes" item="value" index="index" open="(" close=")" separator=",">
+		            	#{value,jdbcType=VARCHAR}
+		        	</foreach>
+				</if>
+			</where>
+				GROUP BY
+					proj_id,
+					LEFT (stand_id, 7)
+			) t
+		LEFT JOIN re_module_divide a ON a.dm_code = t.stand_id
+	</select>
+	
+	<!-- 查询当前登录人的部门  -->
+	<select id="principalOrgID" resultType="Integer">
+		SELECT
+			ao.id
+		FROM
+			aos_org ao,
+			aos_user au
+		WHERE 
+			ao.id = au.org_id
+			AND au.id = #{user_id}
+	</select>
+	
+	<select id="exampleStatisticsPage" resultType="dto">
+		SELECT
+			qa_test_example.tester_id,
+			aor. NAME AS subordinate_departments,
+			CONCAT(qa_test_example.tester_name,'-',qa_test_example.tester_id) account_number_name,
+			count(*) AS example_times,
+			SUM(qa_test_example.execute_number) AS total_execution_times,
+			b.statistics_num
+		FROM
+			qa_test_example,
+			aos_user aur,
+			aos_org aor,
+			(SELECT
+				a.tester_name,
+				COUNT(a.tester_name)AS statistics_num
+			FROM
+			(SELECT
+				tester_name
+			FROM
+				aos_user aur,
+				aos_org aor,
+				qa_test_example
+			WHERE
+				qa_test_example.tester_id = aur.id
+			AND aur.org_id = aor.id
+			<if test="plan_begin_time !=null and plan_begin_time != ''">
+				and DATE_FORMAT(qa_test_example.test_time,'%Y-%m-%d %h-%m-%s') &gt;= #{plan_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="plan_end_time !=null and plan_end_time != ''">
+				and DATE_FORMAT(qa_test_example.test_time,'%Y-%m-%d %h-%m-%s') &lt;= #{plan_end_time, jdbcType=VARCHAR}
+			</if>
+			<if test="account_number_name != null and account_number_name != ''">
+	            and (qa_test_example.tester_name like '%${account_number_name}%' or qa_test_example.tester_id like '%${account_number_name}%'  )
+	        </if>
+	        <if test="subordinate_departments != null and subordinate_departments != ''">
+	            and aor.id = #{subordinate_departments}
+	      	</if>
+			GROUP BY
+				aor. NAME,
+				qa_test_example.tester_name,
+				qa_test_example.proj_id)a
+			GROUP BY
+				a.tester_name)b
+		WHERE
+			qa_test_example.tester_id = aur.id
+		AND aur.org_id = aor.id
+		AND b.tester_name = qa_test_example.tester_name
+		<if test="plan_begin_time !=null and plan_begin_time != ''">
+			and DATE_FORMAT(qa_test_example.test_time,'%Y-%m-%d %h-%m-%s') &gt;= #{plan_begin_time, jdbcType=VARCHAR}
+		</if>
+		<if test="plan_end_time !=null and plan_end_time != ''">
+			and DATE_FORMAT(qa_test_example.test_time,'%Y-%m-%d %h-%m-%s') &lt;= #{plan_end_time, jdbcType=VARCHAR}
+		</if>
+		<if test="account_number_name != null and account_number_name != ''">
+            and (qa_test_example.tester_name like '%${account_number_name}%' or qa_test_example.tester_id like '%${account_number_name}%'  )
+        </if>
+        <if test="subordinate_departments != null and subordinate_departments != ''">
+            and aor.id = #{subordinate_departments}
+      	</if>
+		GROUP BY 
+			qa_test_example.tester_name
+		ORDER BY
+			aor.name,
+			qa_test_example.test_time DESC
+	</select>
+	
+	<select id="examplePage" resultType="dto">
+		SELECT
+			qa_test_example.pass_or_fail,
+			qa_test_example.tester_name,
+			qa_test_example.test_time,
+			qa_test_example.standard_name,
+			qa_test_example.priority,
+			qa_test_example.function_module,
+			qa_test_example.proj_id,
+			qa_test_example.test_version_id,
+			qa_test_example.execute_number,
+			f.test_version_number,
+			bs_proj_commons.proj_name AS proj_name
+		FROM
+			qa_test_example
+			LEFT JOIN bs_proj_test_version f ON qa_test_example.test_version_id = f.test_version_id,
+		 	bs_proj_commons
+		WHERE
+			bs_proj_commons.proj_id = qa_test_example.proj_id
+			<if test="tester_id != null and tester_id != ''">
+				and qa_test_example.tester_id = #{tester_id}
+			</if>
+			<if test="pass_or_fail != null and pass_or_fail != ''">
+				and qa_test_example.pass_or_fail = #{pass_or_fail}
+			</if>
+			<if test="proj_name != null and proj_name != ''">
+				and bs_proj_commons.proj_name like '%${proj_name}%'
+			</if>
+			<if test="plan_begin_time !=null and plan_begin_time != ''">
+				and DATE_FORMAT(qa_test_example.test_time,'%Y-%m-%d %h-%m-%s') &gt;= #{plan_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="plan_end_time !=null and plan_end_time != ''">
+				and DATE_FORMAT(qa_test_example.test_time,'%Y-%m-%d %h-%m-%s') &lt;= #{plan_end_time, jdbcType=VARCHAR}
+			</if>
+	</select>
+	
+	<select id="queryExampleSummary" resultType="dto">
+		SELECT
+			count(*) as example_num,
+			sum(qa_test_example.execute_number) as execution_times
+		FROM
+			qa_test_example
+			LEFT JOIN bs_proj_test_version f ON qa_test_example.test_version_id = f.test_version_id,
+			bs_proj_commons
+		WHERE
+			bs_proj_commons.proj_id = qa_test_example.proj_id
+			<if test="tester_id != null and tester_id != ''">
+				and qa_test_example.tester_id = #{tester_id}
+			</if>
+			<if test="pass_or_fail != null and pass_or_fail != ''">
+				and qa_test_example.pass_or_fail = #{pass_or_fail}
+			</if>
+			<if test="proj_name != null and proj_name != ''">
+				and bs_proj_commons.proj_name like '%${proj_name}%'
+			</if>
+			<if test="plan_begin_time !=null and plan_begin_time != ''">
+				and DATE_FORMAT(qa_test_example.test_time,'%Y-%m-%d %h-%m-%s') &gt;= #{plan_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="plan_end_time !=null and plan_end_time != ''">
+				and DATE_FORMAT(qa_test_example.test_time,'%Y-%m-%d %h-%m-%s') &lt;= #{plan_end_time, jdbcType=VARCHAR}
+			</if>
+	</select>
+	
+	<select id="bugSubmitPage" resultType="dto">
+		SELECT
+			qa_bug_manage.create_name,
+			aor. NAME AS subordinate_departments,
+			count(*) AS example_times,
+			CONCAT(aur.`name`, '-', qa_bug_manage.create_name) account_number_name,
+			b.statistics_num
+		FROM
+			qa_bug_manage,
+			aos_user aur,
+			aos_org aor,
+			(SELECT
+				COUNT(a.create_name) AS statistics_num,
+				a.create_name
+			FROM
+				(SELECT
+					qa_bug_manage.create_name
+				FROM
+					qa_bug_manage,
+					aos_user aur,
+					aos_org aor
+				WHERE
+					qa_bug_manage.create_name = aur.id
+				AND aur.org_id = aor.id
+				<if test="plan_begin_time !=null and plan_begin_time != ''">
+					and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &gt;= #{plan_begin_time, jdbcType=VARCHAR}
+				</if>
+				<if test="plan_end_time !=null and plan_end_time != ''">
+					and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &lt;= #{plan_end_time, jdbcType=VARCHAR}
+				</if>
+				<if test="account_number_name != null and account_number_name != ''">
+		            and (aur.`name` like '%${account_number_name}%' or qa_bug_manage.create_name like '%${account_number_name}%'  )
+		        </if>
+		        <if test="subordinate_departments != null and subordinate_departments != ''">
+		            and aor.id = #{subordinate_departments}
+		      	</if>
+				GROUP BY
+					aor. NAME,
+					qa_bug_manage.create_name,
+					qa_bug_manage.proj_id
+				ORDER BY
+					aor. NAME,
+					qa_bug_manage.create_name DESC)a
+			GROUP BY 
+				a.create_name)b
+		WHERE
+			qa_bug_manage.create_name = aur.id
+			AND aur.org_id = aor.id
+			AND b.create_name = qa_bug_manage.create_name
+			<if test="plan_begin_time !=null and plan_begin_time != ''">
+				and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &gt;= #{plan_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="plan_end_time !=null and plan_end_time != ''">
+				and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &lt;= #{plan_end_time, jdbcType=VARCHAR}
+			</if>
+			<if test="account_number_name != null and account_number_name != ''">
+	            and (aur.`name` like '%${account_number_name}%' or qa_bug_manage.create_name like '%${account_number_name}%'  )
+	        </if>
+	        <if test="subordinate_departments != null and subordinate_departments != ''">
+	            and aor.id = #{subordinate_departments}
+	      	</if>
+		GROUP BY
+			aor. NAME,
+			qa_bug_manage.create_name
+		ORDER BY
+			aor. NAME,
+			qa_bug_manage.create_name DESC
+	</select>
+	
+	<select id="bugPage" resultType="dto">
+		SELECT 
+			qa_bug_manage.create_name,
+			qa_bug_manage.create_time,
+			qa_bug_manage.state,
+			qa_bug_manage.bug_code,
+			qa_bug_manage.bug_name,
+			qa_bug_manage.final_deal_man,
+			aur.`name` AS bug_create_name,
+			aer.`name` AS deal_man_name,
+			bs_proj_commons.proj_name AS proj_name
+		FROM
+			qa_bug_manage,
+			aos_user aur,
+			aos_user aer,
+			bs_proj_commons
+		WHERE 
+			qa_bug_manage.create_name = aur.id
+			AND qa_bug_manage.deal_man = aer.id
+			AND bs_proj_commons.proj_id = qa_bug_manage.proj_id
+			<if test="proj_name != null and proj_name != ''">
+				and proj_name like '%${proj_name}%'
+			</if>
+			<if test="plan_begin_time !=null and plan_begin_time != ''">
+				and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &gt;= #{plan_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="plan_end_time !=null and plan_end_time != ''">
+				and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &lt;= #{plan_end_time, jdbcType=VARCHAR}
+			</if>
+			<if test="create_name != null and create_name != ''">
+	            and qa_bug_manage.create_name = #{create_name}
+	        </if>
+	</select>
+	
+	<select id="bugProjPage" resultType="dto">
+		SELECT 
+			aur.`name` AS bug_create_name,
+			bs_proj_commons.proj_name AS proj_name,
+			COUNT(qa_bug_manage.proj_id ) AS bug_initiate_num
+		FROM
+			qa_bug_manage,
+			aos_user aur,
+			aos_user aer,
+			bs_proj_commons
+		WHERE 
+			qa_bug_manage.create_name = aur.id
+			AND qa_bug_manage.deal_man = aer.id
+			AND bs_proj_commons.proj_id = qa_bug_manage.proj_id
+			<if test="proj_name != null and proj_name != ''">
+				and proj_name like '%${proj_name}%'
+			</if>
+			<if test="plan_begin_time !=null and plan_begin_time != ''">
+				and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &gt;= #{plan_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="plan_end_time !=null and plan_end_time != ''">
+				and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &lt;= #{plan_end_time, jdbcType=VARCHAR}
+			</if>
+			<if test="create_name != null and create_name != ''">
+	            and qa_bug_manage.create_name = #{create_name}
+	        </if>
+        GROUP BY
+			qa_bug_manage.proj_id 
+	</select>
+	
+	<select id="queryBugSummary" resultType="dto">
+		SELECT 
+			count(*) as bug_num
+		FROM
+			qa_bug_manage,
+			aos_user aur,
+			aos_user aer,
+			bs_proj_commons
+		WHERE 
+			qa_bug_manage.create_name = aur.id
+			AND qa_bug_manage.deal_man = aer.id
+			AND bs_proj_commons.proj_id = qa_bug_manage.proj_id
+			<if test="proj_name != null and proj_name != ''">
+				and proj_name like '%${proj_name}%'
+			</if>
+			<if test="plan_begin_time !=null and plan_begin_time != ''">
+				and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &gt;= #{plan_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="plan_end_time !=null and plan_end_time != ''">
+				and DATE_FORMAT(qa_bug_manage.create_time,'%Y-%m-%d %h-%m-%s') &lt;= #{plan_end_time, jdbcType=VARCHAR}
+			</if>
+			<if test="create_name != null and create_name != ''">
+	            and qa_bug_manage.create_name = #{create_name}
+	        </if>
+	</select>
+	
+	<select id="bugDealCountSummary" resultType="dto">
+		SELECT
+			IFNULL((t.unresolved + t.reopen),0) AS to_be_solved,
+			IFNULL(t.resolved ,0) AS resolved,
+			IFNULL(t.closed ,0) AS closed,
+			IFNULL(t.total_bug_num ,0) AS total_bug_num
+		FROM
+			(
+				SELECT
+					sum(CASE WHEN state = 1000 THEN 1 ELSE 0 END ) AS unresolved,
+					sum(CASE WHEN state = 1001 THEN 1 ELSE 0 END ) AS resolved,
+					sum(CASE WHEN state = 1002 THEN 1 ELSE 0 END ) AS postponement,
+					sum(CASE WHEN state = 1003 THEN 1 ELSE 0 END ) AS closed,
+					sum(CASE WHEN state = 1004 THEN 1 ELSE 0 END ) AS refuse,
+					sum(CASE WHEN state = 1005 THEN 1 ELSE 0 END ) AS reopen,
+					sum(CASE WHEN state = 1006 THEN 1 ELSE 0 END ) AS unReproduce,
+					COUNT(*) AS total_bug_num
+				FROM
+					qa_bug_manage
+				<where>
+					<if test="proj_id != null and proj_id != ''">
+						and proj_id = #{proj_id}
+					</if>
+					<if test="stand_id != null and stand_id != ''">
+					      and stand_id like '${stand_id}%'  <!-- 模块ID -->
+					</if>
+					<if test="deal_mans != null and deal_mans != ''">
+						and deal_man in 
+						<foreach collection="deal_mans" item="value" index="index" open="(" close=")" separator=",">
+			            	#{value,jdbcType=VARCHAR}
+			        	</foreach>
+					</if>
+					<if test="test_version_id != null and test_version_id != ''">
+					    and test_version_id = #{test_version_id}  <!-- 测试版本号id-->
+					</if>
+					<if test="find_begin_time !=null and find_begin_time != ''">
+						and DATE_FORMAT(find_time,'%Y-%m-%d') &gt;= #{find_begin_time, jdbcType=VARCHAR}
+					</if>
+					<if test="find_end_time !=null and find_end_time != ''">
+						and DATE_FORMAT(find_time,'%Y-%m-%d') &lt;= #{find_end_time, jdbcType=VARCHAR}
+					</if>
+				</where>
+			) t
+	</select>
+</mapper>

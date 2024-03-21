@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_templet_process[TempletProcess]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-11 16:46:36 -->
+<mapper namespace="com.bl3.pm.process.dao.TempletProcessDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="TempletProcessPO">
+		INSERT INTO pr_templet_process (
+		<if test="templet_id != null">
+	         templet_id, <!-- 模板ID -->
+		</if>
+		<if test="subdir_id != null">
+	         subdir_id, <!-- 过程子目录ID -->
+		</if>
+		<if test="temp_proc_name != null and temp_proc_name != ''">
+	         temp_proc_name, <!-- 过程子目录名称 -->
+		</if>
+		<if test="rootdir_id != null">
+	         rootdir_id, <!-- 所属过程根目录ID -->
+		</if>
+		<if test="rootdir_name != null and rootdir_name != ''">
+	         rootdir_name, <!-- 所属过程根目录名称 -->
+		</if>
+	         sort_no, <!-- 排序号 -->
+		<if test="flow_state != null">
+	         flow_state, <!-- 是否必须流程 0 否 1 是 -->
+		</if>
+		<if test="create_user_id != null and create_user_id != ''">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		  create_time <!-- 创建时间 -->
+		)VALUES(
+		<if test="templet_id != null">
+	          #{templet_id, jdbcType=INTEGER}, <!-- 模板ID -->
+	    </if>
+		<if test="subdir_id != null">
+	          #{subdir_id, jdbcType=INTEGER}, <!-- 过程子目录ID -->
+	    </if>
+		<if test="temp_proc_name != null and temp_proc_name != ''">
+	          #{temp_proc_name, jdbcType=VARCHAR}, <!-- 过程子目录名称 -->
+	    </if>
+		<if test="rootdir_id != null">
+	          #{rootdir_id, jdbcType=INTEGER}, <!-- 所属过程根目录ID -->
+	    </if>
+		<if test="rootdir_name != null and rootdir_name != ''">
+	          #{rootdir_name, jdbcType=VARCHAR}, <!-- 所属过程根目录名称 -->
+	    </if>
+	    <if test="sort_no != null and sort_no != ''">
+			#{sort_no, jdbcType=INTEGER},
+		 </if>
+		 <if test="sort_no == null">
+		 (SELECT ifnull(max(sort_no),0) FROM pr_templet_process a WHERE  templet_id = #{templet_id} and state =1)+1,
+		 </if>
+		<if test="flow_state != null">
+	          #{flow_state, jdbcType=INTEGER}, <!-- 是否必须流程 0 否 1 是 -->
+	    </if>
+		<if test="create_user_id != null and create_user_id != ''">
+	          #{create_user_id, jdbcType=VARCHAR}, <!-- 创建人 -->
+	    </if>
+		<if test="update_user_id != null and update_user_id != ''">
+	          #{update_user_id, jdbcType=VARCHAR}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+	     sysdate() <!-- 创建时间 -->
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="Dto">
+		INSERT INTO pr_templet_process (
+		  templet_id,  
+		  subdir_id,  
+		  temp_proc_name,  
+		  rootdir_id,  
+		  rootdir_name,  
+		  <if test="sort_no != null and sort_no != ''">
+	         sort_no, <!-- 排序号 -->
+	    </if>
+	    <if test="sort_no == ''">
+	         sort_no, <!-- 排序号 -->
+	    </if>
+		  flow_state,  
+		  create_user_id,
+		  create_time, 
+		  state  
+		)
+		 select* from (select
+		  #{templet_id},
+		  subdir_id,
+		  subdir_name,
+		  rootdir_id,  
+		  (select rootdir_name from pr_rootdir where rootdir_id = #{rootdir_id}),
+		 
+		  <if test="sort_no != null and sort_no != ''">
+			#{sort_no, jdbcType=INTEGER},
+		 </if>
+		 <if test="sort_no ==''">
+		 (SELECT ifnull(max(sort_no),0) FROM pr_templet_process a WHERE  state =1 and templet_id = #{templet_id})+@rownum:=@rownum+1,
+		 </if>
+		  #{flow_state} AS flow_state,
+		  #{create_user_id},
+		  sysdate(),
+		  state from pr_subdir ,(SELECT @rownum:=0) r
+		   where rootdir_id = #{rootdir_id} and state =1  and subdir_id not in (
+			SELECT  subdir_id FROM pr_templet_process WHERE templet_id = #{templet_id} AND rootdir_id = #{rootdir_id} AND STATE =1 
+			)
+		  ) as tb
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertFiletypeAll"  parameterType="Dto">
+		INSERT INTO pr_templet_filetype (
+		  	 templet_id,
+	         subdir_id, 
+	         filetype_id, 
+	         temp_filetype_name, 
+	         sort_no, 
+	         flow_state, 
+	         create_user_id, 
+	         state, 
+		   	create_time 
+		)
+		 select* from (select
+		  #{templet_id},
+		  subdir_id,
+		  filetype_id,
+		  filetype_name,  
+		  sort_no,
+		  #{flow_state} AS flow_state,
+		  #{create_user_id},
+		  state,
+		  sysdate() from pr_filetype 
+		   where rootdir_id = #{rootdir_id} and state =1  and subdir_id  in (
+			SELECT  subdir_id FROM pr_templet_process WHERE templet_id = #{templet_id} AND rootdir_id = #{rootdir_id} AND STATE =1 
+			)and filetype_id not in (
+			SELECT  filetype_id FROM pr_templet_filetype WHERE templet_id = #{templet_id}  AND STATE =1 
+			)
+		  ) as tb
+	</insert>
+	
+	<!-- 新增过程带入文件 -->
+	<insert id="insertFiletype"  parameterType="Dto">
+	INSERT INTO pr_templet_filetype (
+		  	 templet_id,
+	         subdir_id, 
+	         filetype_id, 
+	         temp_filetype_name, 
+	         sort_no, 
+	         flow_state, 
+	         create_user_id, 
+	         state, 
+		   	create_time 
+		)
+		 select* from (select
+		  #{templet_id},
+		  subdir_id,
+		  filetype_id,
+		  filetype_name,  
+		  sort_no,
+		  1 AS flow_state,
+		  #{create_user_id},
+		  state,
+		  sysdate() from pr_filetype 
+		   where subdir_id = #{subdir_id} and state =1 and filetype_id not in (
+			SELECT  filetype_id FROM pr_templet_filetype WHERE templet_id = #{templet_id} and subdir_id = #{subdir_id}  AND STATE =1 
+			)
+		  ) as tb
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="TempletProcessPO">
+		UPDATE pr_templet_process
+		<set>
+			<if test="temp_proc_id != null">
+		          temp_proc_id = #{temp_proc_id, jdbcType=INTEGER},  <!-- 模板明细ID -->
+			</if>
+			<if test="templet_id != null">
+		          templet_id = #{templet_id, jdbcType=INTEGER},  <!-- 模板ID -->
+			</if>
+			<if test="subdir_id != null">
+		          subdir_id = #{subdir_id, jdbcType=INTEGER},  <!-- 过程子目录ID -->
+			</if>
+			<if test="temp_proc_name != null">
+		          temp_proc_name = #{temp_proc_name, jdbcType=VARCHAR},  <!-- 过程子目录名称 -->
+			</if>
+			<if test="rootdir_id != null">
+		          rootdir_id = #{rootdir_id, jdbcType=INTEGER},  <!-- 所属过程根目录ID -->
+			</if>
+			<if test="rootdir_name != null">
+		          rootdir_name = #{rootdir_name, jdbcType=VARCHAR},  <!-- 所属过程根目录名称 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="flow_state != null">
+		          flow_state = #{flow_state, jdbcType=INTEGER},  <!-- 是否必须流程 0 否 1 是 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=VARCHAR},  <!-- 更新人 -->
+			</if>
+		          update_time = sysdate(),  <!-- 更新时间 -->
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  temp_proc_id = #{temp_proc_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		update pr_templet_process set state = 0 WHERE  temp_proc_id = #{temp_proc_id}
+	</delete>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="updateFiletypeByKey">
+		update pr_templet_filetype set state = 0 WHERE  temp_proc_id = #{temp_proc_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="TempletProcessPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_templet_process WHERE  temp_proc_id = #{temp_proc_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="TempletProcessPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_templet_process
+		<where>
+		    <include refid="equal" />
+		</where>	
+		order by sort_no	
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="TempletProcessPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_templet_process
+		<where>
+		    <include refid="equal" />
+		</where>	
+		order by sort_no
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="TempletProcessPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_templet_process
+		<where>
+		    <include refid="equal" />
+		</where>
+		order by sort_no	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="TempletProcessPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_templet_process
+		<where>
+		    <include refid="like" />
+		</where>
+		order by sort_no	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="TempletProcessPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_templet_process
+		<where>
+		    <include refid="likeOr" />
+		</where>
+		order by sort_no	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="TempletProcessPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_templet_process
+		<where>
+		    <include refid="like" />
+		</where>	
+		order by sort_no
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="TempletProcessPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_templet_process
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+		order by sort_no
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_templet_process
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_templet_process
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  temp_proc_id,  <!-- 模板明细ID -->
+		  templet_id,  <!-- 模板ID -->
+		  subdir_id,  <!-- 过程子目录ID -->
+		  temp_proc_name,  <!-- 过程子目录名称 -->
+		  rootdir_id,  <!-- 所属过程根目录ID -->
+		  rootdir_name,  <!-- 所属过程根目录名称 -->
+		  sort_no,  <!-- 排序号 -->
+		  flow_state,  <!-- 是否必须流程 0 否 1 是 -->
+		  (select name from aos_user where id =create_user_id) create_user_name,  <!-- 创建人 -->
+		  create_user_id,
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_templet_process.temp_proc_id,  <!-- 模板明细ID -->
+		  pr_templet_process.templet_id,  <!-- 模板ID -->
+		  pr_templet_process.subdir_id,  <!-- 过程子目录ID -->
+		  pr_templet_process.temp_proc_name,  <!-- 过程子目录名称 -->
+		  pr_templet_process.rootdir_id,  <!-- 所属过程根目录ID -->
+		  pr_templet_process.rootdir_name,  <!-- 所属过程根目录名称 -->
+		  pr_templet_process.sort_no,  <!-- 排序号 -->
+		  pr_templet_process.flow_state,  <!-- 是否必须流程 0 否 1 是 -->
+		  pr_templet_process.create_user_id,  <!-- 创建人 -->
+		  pr_templet_process.create_time,  <!-- 创建时间 -->
+		  pr_templet_process.update_user_id,  <!-- 更新人 -->
+		  pr_templet_process.update_time,  <!-- 更新时间 -->
+		  pr_templet_process.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="temp_proc_id != null ">
+		      AND temp_proc_id = #{temp_proc_id}  <!-- 模板明细ID -->
+		</if>
+	   <if test="templet_id != null ">
+		      AND templet_id = #{templet_id}  <!-- 模板ID -->
+		</if>
+	   <if test="subdir_id != null ">
+		      AND subdir_id = #{subdir_id}  <!-- 过程子目录ID -->
+		</if>
+	    <if test="temp_proc_name != null and temp_proc_name != ''">
+		      AND temp_proc_name = #{temp_proc_name}  <!-- 过程子目录名称 -->
+		</if>
+	   <if test="rootdir_id != null ">
+		      AND rootdir_id = #{rootdir_id}  <!-- 所属过程根目录ID -->
+		</if>
+	    <if test="rootdir_name != null and rootdir_name != ''">
+		      AND rootdir_name = #{rootdir_name}  <!-- 所属过程根目录名称 -->
+		</if>
+	   <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	   <if test="flow_state != null ">
+		      AND flow_state = #{flow_state}  <!-- 是否必须流程 0 否 1 是 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+		      AND state != 0  <!-- 状态 -->
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="temp_proc_name != null and temp_proc_name != ''">
+		      AND temp_proc_name like '${temp_proc_name}%'  <!-- 过程子目录名称 -->
+		</if>
+		<if test="templet_id != null ">
+		      AND templet_id = #{templet_id}  <!-- 模板ID -->
+		</if>
+	    <if test="rootdir_name != null and rootdir_name != ''">
+		      AND rootdir_name like '${rootdir_name}%'  <!-- 所属过程根目录名称 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	  		  AND state != 0 <!-- 状态 -->
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="temp_proc_name != null and temp_proc_name != ''">
+		      Or temp_proc_name like '${temp_proc_name}%'  <!-- 过程子目录名称 -->
+		</if>
+		<if test="templet_id != null ">
+		      AND templet_id = #{templet_id}  <!-- 模板ID -->
+		</if>
+	    <if test="rootdir_name != null and rootdir_name != ''">
+		      Or rootdir_name like '${rootdir_name}%'  <!-- 所属过程根目录名称 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      Or create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      Or update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	  		  Or state != 0 <!-- 状态 -->
+	</sql>
+	
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="rootdirList" parameterType="Dto" resultType="TempletProcessPO">
+		SELECT
+			DISTINCT rootdir_id, rootdir_name
+		FROM pr_templet_process
+		<where>
+		    templet_id = #{templet_id}
+		 and state = '1'
+		</where>	
+		order by sort_no 
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="subdirList" parameterType="Dto" resultType="TempletProcessPO">
+		SELECT
+			 temp_proc_id,subdir_id, temp_proc_name,rootdir_id,rootdir_name,sort_no,flow_state, CASE flow_state WHEN 1 then '必须' WHEN 0 then '非必须' END flow_state_name
+		FROM pr_templet_process
+		<where>
+		    templet_id = #{templet_id}
+		 and rootdir_id = #{rootdir_id}
+		 and state = '1'
+		</where>	
+		order by sort_no 
+	</select>
+	
+		<!-- 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="listComboBoxRootDirId" resultType="Dto">
+		SELECT
+		rootdir_id AS value, rootdir_name AS display
+		FROM
+		pr_rootdir
+		where state =1
+	</select>
+	
+		<!-- 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="listComboBoxSubDirId" resultType="Dto">
+		SELECT
+		subdir_id AS value, subdir_name AS display
+		FROM
+		pr_subdir
+		where state =1
+		  <if test="rootdir_id != null and rootdir_id != ''">
+		      and rootdir_id = #{rootdir_id}  <!-- 过程子目录名称 -->
+		</if>
+	</select>
+	
+		<!-- 查询是否重复 -->
+	<select id="countRootDirId" resultType="Integer">
+		select count(1) from pr_templet_process 
+		where templet_id = #{templet_id}
+		 and rootdir_id = #{rootdir_id}
+		 and subdir_id =#{subdir_id}
+		 and state = 1
+	</select>
+	
+	<!-- 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="listTemplet" resultType="TempletProcessPO">
+		SELECT
+		* 
+		FROM
+		pr_templet_process
+		where temp_proc_id = #{temp_proc_id} 
+	</select>
+	
+</mapper>

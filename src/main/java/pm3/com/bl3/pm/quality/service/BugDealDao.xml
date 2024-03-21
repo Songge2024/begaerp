@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 部门管理模块使用的SQL语句 -->
+<mapper namespace="BugDealDao">
+
+	<!-- 查询部门列表 -->
+	<select id="listTaskGroupPage" resultType="Dto" parameterType="Dto">
+			SELECT
+            	<include refid="com.bl3.pm.task.dao.TaskGroupDao.column" />
+            FROM ta_task_group
+			<where>
+			    <if test="name != null and name != ''">
+				    AND group_name LIKE '%${name}%' 
+				</if>
+			    <if test="cascade == 'false'">
+				    AND parent_id = #{id} 
+				</if>
+				<if test="cascade == 'true'">
+				    AND cascade_id like '${cascade_id}%'
+				</if>
+				<if test="is_del != null and is_del != ''">
+				    AND is_del = #{is_del} 
+				</if>
+			</where>	
+			 ORDER BY sort_no ASC, group_id DESC
+	</select>
+	
+	<!-- 关闭缺陷-->
+	<update id="closeByBugId" parameterType="Dto">
+	     UPDATE qa_bug_manage 
+	        SET state = '1003' ,
+	            close_time=now() ,
+	            close_name=#{close_name} 
+	      WHERE bug_id = #{bug_id} 
+	</update>
+	
+	<!-- 延期处理-->
+	<update id="delayByBugId" parameterType="Dto">
+	    UPDATE qa_bug_manage SET state = '1002' WHERE bug_id = #{bug_id} 
+	</update>
+	
+	<!-- 提交保存消息并更改主表状态-->
+	<update id="updateCloseState" parameterType="Dto">
+	     UPDATE qa_bug_manage
+			SET state = #{next_state} ,
+				deal_man = #{next_deal_man} ,
+				close_time = now(),
+			 	close_name = #{submit_name}, 
+			 	deal_time = now(),
+			 	plan_wastage = #{plan_wastage, jdbcType=NUMERIC},
+				real_wastage = #{real_wastage, jdbcType=NUMERIC},
+			 	log_id = #{log_id}
+		  WHERE bug_id = #{bug_id} 
+	</update>
+	
+	<update id="updateSolveState" parameterType="Dto">
+	     UPDATE qa_bug_manage
+			SET state = #{next_state} ,
+				deal_man = #{next_deal_man} ,
+				final_deal_time = now(),
+			 	final_deal_man = #{submit_name}, 
+			 	deal_time = now(),
+			 	plan_wastage = #{plan_wastage, jdbcType=NUMERIC},
+				real_wastage = #{real_wastage, jdbcType=NUMERIC},
+			 	log_id = #{log_id}
+		  WHERE bug_id = #{bug_id} 
+	</update>
+	
+	<!-- 提交保存消息并更改主表状态 同时修改计划工作量，实际工作量-->
+	<update id="updateState" parameterType="Dto">
+	     UPDATE qa_bug_manage 
+	        SET state = #{next_state} ,
+	        	deal_man = #{next_deal_man}, 
+	        	log_id = #{log_id}, 
+	        	deal_time = now(),
+				plan_wastage = #{plan_wastage, jdbcType=NUMERIC},
+				real_wastage = #{real_wastage, jdbcType=NUMERIC}
+	      WHERE bug_id = #{bug_id} 
+	</update>
+	
+	<!-- 保存消息-->
+	<insert id="insertByLogId" parameterType="Dto">
+		INSERT INTO qa_bug_news 
+		( 
+			proj_id, 
+			stand_id, 
+			bug_id, 
+			detail, 
+			news_detail, 
+			news_type, 
+			state, 
+			deal_man, 
+			create_name, 
+			create_time,
+			next_state,
+			plan_wastage,
+			real_wastage
+		)
+		VALUES
+		(
+			#{proj_id}, 
+			#{stand_id}, 
+			#{bug_id}, 
+			#{detail}, 
+			#{news_detail}, 
+			#{news_type},  
+			#{state},  
+			#{next_deal_man},  
+			#{submit_name},  
+			now(),
+			#{next_state},
+			#{plan_wastage, jdbcType=NUMERIC},
+			#{real_wastage, jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	 <!-- 内容信息列表 -->
+	<select id="getNewsDate" resultType="Dto" parameterType="Dto" >
+			SELECT *
+			FROM
+			qa_bug_news
+			<where>	
+			<if test="bug_id != null and bug_id != ''">
+		       AND bug_id = #{bug_id}  <!-- 内容code-->
+			</if>
+			</where>
+	</select>
+	
+	 <!-- 查询内容列表最大序列号 -->
+	<select id="selectNewsDetail" resultType="Integer" parameterType="Integer" >
+     	SELECT MAX(DETAIL) as detail FROM qa_bug_news WHERE BUG_ID=#{BUGID}
+	</select>
+	 <!-- 查询最大的日志ID -->
+	<select id="selectMaxLogId" resultType="Integer" parameterType="Integer" >
+     	SELECT MAX(log_id) as max_log_id FROM qa_bug_news WHERE BUG_ID=#{BUGID}
+	</select>
+	<!-- 检查删除节点中是否包含根节点 -->
+	<select id="checkRootNode" resultType="TaskGroupPO" parameterType="Dto">
+	     SELECT 
+	         <include refid="com.bl3.pm.task.dao.TaskGroupDao.column" />
+	      FROM ta_task_group WHERE group_id IN (${ids}) AND parent_id = '0'
+	</select>
+
+</mapper>

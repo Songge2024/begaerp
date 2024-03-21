@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_risk_list[RiskList]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-10 08:27:14 -->
+<mapper namespace="com.bl3.pm.process.dao.RiskListDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="RiskListPO">
+		INSERT INTO pr_risk_list (
+		<if test="risk_cata_id != null">
+	         risk_cata_id, <!-- 风险目录ID -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="risk_cata_name != null and risk_cata_name != ''">
+	         risk_cata_name, <!-- 风险描述 -->
+		</if>
+		<if test="happ_probability != null">
+	         happ_probability, <!-- 发生概率 百分比 -->
+		</if>
+		<if test="influe_degree != null and influe_degree != ''">
+	         influe_degree, <!-- 影响程度 -->
+		</if>
+		<if test="risk_level != null and risk_level != ''">
+	         risk_level, <!-- 风险等级 -->
+		</if>
+		<if test="risk_resp_plan != null and risk_resp_plan != ''">
+	         risk_resp_plan, <!-- 风险响应计划 -->
+		</if>
+		<if test="risk_owner != null and risk_owner != ''">
+	         risk_owner, <!-- 责任人 -->
+		</if>
+		<if test="open_close != null and open_close != ''">
+	         open_close, <!-- 开放或关闭  1开放 0 关闭 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 设计人 -->
+		</if>
+	         create_time, <!-- 创建时间 -->
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state <!-- 状态 -->
+		</if>
+		
+		)VALUES(
+		<if test="risk_cata_id != null">
+	          #{risk_cata_id, jdbcType=INTEGER}, <!-- 风险目录ID -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="risk_cata_name != null and risk_cata_name != ''">
+	          #{risk_cata_name, jdbcType=VARCHAR}, <!-- 风险描述 -->
+	    </if>
+		<if test="happ_probability != null">
+	          #{happ_probability, jdbcType=INTEGER}, <!-- 发生概率 百分比 -->
+	    </if>
+		<if test="influe_degree != null and influe_degree != ''">
+	          #{influe_degree, jdbcType=VARCHAR}, <!-- 影响程度 -->
+	    </if>
+		<if test="risk_level != null and risk_level != ''">
+	          #{risk_level, jdbcType=VARCHAR}, <!-- 风险等级 -->
+	    </if>
+		<if test="risk_resp_plan != null and risk_resp_plan != ''">
+	          #{risk_resp_plan, jdbcType=VARCHAR}, <!-- 风险响应计划 -->
+	    </if>
+		<if test="risk_owner != null and risk_owner != ''">
+	          #{risk_owner, jdbcType=VARCHAR}, <!-- 责任人 -->
+	    </if>
+		<if test="open_close != null and open_close != ''">
+	          #{open_close, jdbcType=VARCHAR}, <!-- 开放或关闭  1开放 0 关闭 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 设计人 -->
+	    </if>
+	         sysdate(), <!-- 创建时间 -->
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR} <!-- 状态 -->
+	    </if>
+		
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="RiskListPO">
+		INSERT INTO pr_risk_list (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{risk_id, jdbcType=INTEGER},  <!-- 风险ID -->
+		    #{risk_cata_id, jdbcType=INTEGER},  <!-- 风险目录ID -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{risk_cata_name, jdbcType=VARCHAR},  <!-- 风险描述 -->
+		    #{happ_probability, jdbcType=INTEGER},  <!-- 发生概率 百分比 -->
+		    #{influe_degree, jdbcType=VARCHAR},  <!-- 影响程度 -->
+		    #{risk_level, jdbcType=VARCHAR},  <!-- 风险等级 -->
+		    #{risk_resp_plan, jdbcType=VARCHAR},  <!-- 风险响应计划 -->
+		    #{risk_owner, jdbcType=VARCHAR},  <!-- 责任人 -->
+		    #{open_close, jdbcType=VARCHAR},  <!-- 开放或关闭  1开放 0 关闭 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="RiskListPO">
+		UPDATE pr_risk_list
+		<set>
+			<if test="risk_id != null">
+		          risk_id = #{risk_id, jdbcType=INTEGER},  <!-- 风险ID -->
+			</if>
+			<if test="risk_cata_id != null">
+		          risk_cata_id = #{risk_cata_id, jdbcType=INTEGER},  <!-- 风险目录ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="risk_cata_name != null">
+		          risk_cata_name = #{risk_cata_name, jdbcType=VARCHAR},  <!-- 风险描述 -->
+			</if>
+			<if test="happ_probability != null">
+		          happ_probability = #{happ_probability, jdbcType=INTEGER},  <!-- 发生概率 百分比 -->
+			</if>
+			<if test="influe_degree != null">
+		          influe_degree = #{influe_degree, jdbcType=VARCHAR},  <!-- 影响程度 -->
+			</if>
+			<if test="risk_level != null">
+		          risk_level = #{risk_level, jdbcType=VARCHAR},  <!-- 风险等级 -->
+			</if>
+			<if test="risk_resp_plan != null">
+		          risk_resp_plan = #{risk_resp_plan, jdbcType=VARCHAR},  <!-- 风险响应计划 -->
+			</if>
+			<if test="risk_owner != null">
+		          risk_owner = #{risk_owner, jdbcType=VARCHAR},  <!-- 责任人 -->
+			</if>
+			<if test="open_close != null">
+		          open_close = #{open_close, jdbcType=VARCHAR},  <!-- 开放或关闭  1开放 0 关闭 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+		          update_time = sysdate(),  <!-- 更新时间 -->
+		</set>
+		WHERE  risk_id = #{risk_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM pr_risk_list WHERE  risk_id = #{risk_id}
+	</delete>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<update id="updateState" parameterType="Dto">
+		update pr_risk_list  set state = -1 ,update_user_id = #{update_user_id} ,update_time= sysdate() WHERE  risk_id = #{risk_id}
+	</update>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="RiskListPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_risk_list WHERE  risk_id = #{risk_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="RiskListPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_risk_list
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="RiskListPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_risk_list
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="RiskListPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_risk_list a
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="RiskListPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_risk_list
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="RiskListPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_risk_list
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="RiskListPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_risk_list
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="RiskListPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_risk_list
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_risk_list
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_risk_list
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  risk_id,  <!-- 风险ID -->
+		  risk_cata_id,  <!-- 风险目录ID -->
+		  (select risk_cata_name from pr_risk_catalog b where b.risk_cata_id = a.risk_cata_id ) risk_cata_id_name,
+		  proj_id,  <!-- 项目ID -->
+		  risk_cata_name,  <!-- 风险描述 -->
+		  happ_probability,  <!-- 发生概率 百分比 -->
+		  influe_degree,  <!-- 影响程度 -->
+		  risk_level,  <!-- 风险等级 -->
+		  risk_resp_plan,  <!-- 风险响应计划 -->
+		  risk_owner,  <!-- 责任人 -->
+		  open_close,  <!-- 开放或关闭  1开放 0 关闭 -->
+		  create_user_id,  <!-- 设计人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_risk_list.risk_id,  <!-- 风险ID -->
+		  pr_risk_list.risk_cata_id,  <!-- 风险目录ID -->
+		  pr_risk_list.proj_id,  <!-- 项目ID -->
+		  pr_risk_list.risk_cata_name,  <!-- 风险描述 -->
+		  pr_risk_list.happ_probability,  <!-- 发生概率 百分比 -->
+		  pr_risk_list.influe_degree,  <!-- 影响程度 -->
+		  pr_risk_list.risk_level,  <!-- 风险等级 -->
+		  pr_risk_list.risk_resp_plan,  <!-- 风险响应计划 -->
+		  pr_risk_list.risk_owner,  <!-- 责任人 -->
+		  pr_risk_list.open_close,  <!-- 开放或关闭  1开放 0 关闭 -->
+		  pr_risk_list.create_user_id,  <!-- 设计人 -->
+		  pr_risk_list.create_time,  <!-- 创建时间 -->
+		  pr_risk_list.update_user_id,  <!-- 更新人 -->
+		  pr_risk_list.update_time,  <!-- 更新时间 -->
+		  pr_risk_list.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="risk_id != null ">
+		      AND risk_id = #{risk_id}  <!-- 风险ID -->
+		</if>
+	   <if test="risk_cata_id != null ">
+		      AND risk_cata_id = #{risk_cata_id}  <!-- 风险目录ID -->
+		</if>
+	    <if test="risk_cata_name != null and risk_cata_name != ''">
+		      AND risk_cata_name = #{risk_cata_name}  <!-- 风险描述 -->
+		</if>
+	   <if test="happ_probability != null ">
+		      AND happ_probability = #{happ_probability}  <!-- 发生概率 百分比 -->
+		</if>
+	    <if test="influe_degree != null and influe_degree != ''">
+		      AND influe_degree = #{influe_degree}  <!-- 影响程度 -->
+		</if>
+	    <if test="risk_level != null and risk_level != ''">
+		      AND risk_level = #{risk_level}  <!-- 风险等级 -->
+		</if>
+	    <if test="risk_resp_plan != null and risk_resp_plan != ''">
+		      AND risk_resp_plan = #{risk_resp_plan}  <!-- 风险响应计划 -->
+		</if>
+	    <if test="risk_owner != null and risk_owner != ''">
+		      AND risk_owner = #{risk_owner}  <!-- 责任人 -->
+		</if>
+	    <if test="open_close != null and open_close != ''">
+		      AND open_close = #{open_close}  <!-- 开放或关闭  1开放 0 关闭 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 设计人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		      AND state = 1
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="risk_cata_name != null and risk_cata_name != ''">
+		      AND risk_cata_name like '${risk_cata_name}%'  <!-- 风险描述 -->
+		</if>
+	    <if test="influe_degree != null and influe_degree != ''">
+		      AND influe_degree like '${influe_degree}%'  <!-- 影响程度 -->
+		</if>
+	    <if test="risk_level != null and risk_level != ''">
+		      AND risk_level like '${risk_level}%'  <!-- 风险等级 -->
+		</if>
+	    <if test="risk_resp_plan != null and risk_resp_plan != ''">
+		      AND risk_resp_plan like '${risk_resp_plan}%'  <!-- 风险响应计划 -->
+		</if>
+	    <if test="risk_owner != null and risk_owner != ''">
+		      AND risk_owner like '${risk_owner}%'  <!-- 责任人 -->
+		</if>
+	    <if test="open_close != null and open_close != ''">
+		      AND open_close like '${open_close}%'  <!-- 开放或关闭  1开放 0 关闭 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		      AND state = 1
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="risk_cata_name != null and risk_cata_name != ''">
+		      Or risk_cata_name like '${risk_cata_name}%'  <!-- 风险描述 -->
+		</if>
+	    <if test="influe_degree != null and influe_degree != ''">
+		      Or influe_degree like '${influe_degree}%'  <!-- 影响程度 -->
+		</if>
+	    <if test="risk_level != null and risk_level != ''">
+		      Or risk_level like '${risk_level}%'  <!-- 风险等级 -->
+		</if>
+	    <if test="risk_resp_plan != null and risk_resp_plan != ''">
+		      Or risk_resp_plan like '${risk_resp_plan}%'  <!-- 风险响应计划 -->
+		</if>
+	    <if test="risk_owner != null and risk_owner != ''">
+		      Or risk_owner like '${risk_owner}%'  <!-- 责任人 -->
+		</if>
+	    <if test="open_close != null and open_close != ''">
+		      Or open_close like '${open_close}%'  <!-- 开放或关闭  1开放 0 关闭 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	
+		<!-- 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="listComboBoxRiskCata" resultType="Dto">
+		SELECT
+		risk_cata_id AS value, risk_cata_name AS display
+		FROM
+		pr_risk_catalog
+		where state =1
+	</select>
+	
+	<!-- 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="riskCataComment" resultType="RiskCatalogPO">
+		SELECT
+		comment 
+		FROM
+		pr_risk_catalog
+		where risk_cata_id = #{risk_cata_id} 
+	</select>
+	
+		<!-- 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="countRiskId" resultType="Integer">
+		SELECT
+		count(1)
+		FROM
+		pr_risk_list
+		where proj_id = #{proj_id} and risk_cata_id = #{risk_cata_id} and state = 1
+	</select>
+	
+</mapper>

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ta_daily_report[DailyReport]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-18 11:03:34 -->
+<mapper namespace="WeekReportDao">
+	
+	
+	<!-- 查找导出数据 -->
+	<select id="TestExampleArrayList" resultType="dto">  
+        SELECT  
+       (SELECT 
+	    CASE
+	      week_class 
+	      WHEN 1040
+	      THEN "测试与缺陷 " 
+	      WHEN 1090 
+	      THEN "其他" 
+	      WHEN 1030
+	      THEN "需求响应" 
+	      WHEN 1
+	      THEN "交流沟通" 
+	      WHEN 2
+	      THEN "成果输出" 
+    END) week_class,
+        a.solve,
+        a.description,
+        t.*,
+        a.begin_date b_time,
+        a.end_date e_time 
+			FROM
+			  ta_week a,
+			   ta_week_report t
+			 <where>
+ 				t.test_code = a.`test_code`  
+ 				and t.week_flag=1
+ 				  <if test="week_id != null and week_id != ''">
+       	 				and a.week_id = #{week_id}
+       			 </if> 
+       			  <if test="test_code != null and test_code != ''">
+ 				AND t.`test_code` in
+		           <foreach collection="test_code" item="test_code" index="index"  
+		            open="(" close=")" separator=",">  
+		            #{test_code}  
+		        </foreach>  
+       	  </if>
+         </where>
+        order by t.begin_date
+    </select> 
+	<!-- 查找导出数据 -->
+	<select id="TestExampleArrayListx" resultType="dto">  
+        SELECT  
+       (SELECT 
+	    CASE
+	      week_class 
+	      WHEN 1040
+	      THEN "测试与缺陷 " 
+	      WHEN 1090 
+	      THEN "其他" 
+	      WHEN 1030
+	      THEN "需求响应" 
+	      WHEN 1
+	      THEN "交流沟通" 
+	      WHEN 2
+	      THEN "成果输出" 
+    END) week_class,
+       
+      		t.remarks ,
+      		t.owner_name ,
+     		t.week_class ,
+     		t.week_name
+			FROM
+			  ta_week a,
+			   ta_week_report t
+			 <where>
+ 				t.test_code = a.`test_code`  
+ 				and t.week_flag=2
+ 				  <if test="week_id != null and week_id != ''">
+       	 				and a.week_id = #{week_id}
+       			 </if> 
+       			  <if test="test_code != null and test_code != ''">
+ 				AND t.`test_code` in
+		           <foreach collection="test_code" item="test_code" index="index"  
+		            open="(" close=")" separator=",">  
+		            #{test_code}  
+		        </foreach>  
+       	  </if>
+         </where>
+        order by t.begin_date
+    </select> 
+    
+    <!-- 本周任务 -->
+    <select id="week_lists" resultType="Dto">
+		SELECT 	
+		  t.* 
+		FROM
+		 ta_week a,
+		  ta_week_report t 
+		 <where>
+ 				t.test_code = a.`test_code`  
+ 				
+ 				  <if test="week_flag != null and week_flag != ''">
+ 			    and 	week_flag = #{week_flag}  
+       	  </if>
+ 				
+ 				
+       			  <if test="test_code != null and test_code != ''">
+ 				AND t.`test_code` = #{test_code}  
+       	  </if>
+       	  order by  week_class
+         </where>
+        
+	</select>
+    <!-- 工时 -->
+    <select id="userHouers" resultType="Dto">
+			SELECT  
+				au.name, twh.work_hours,
+				      twh.business_hours
+				,test_code
+						FROM
+						  `ta_work_hour` twh,
+						  aos_user au 
+				where  twh.user_id=au.id
+       			  <if test="test_code != null and test_code != ''">
+ 			      	and twh.test_code = #{test_code}
+       	          </if>
+	</select>
+    <!-- 查询对应成员的项目 -->
+	<select id="listComboBoxProjId" resultType="dto">
+			SELECT 
+			  au.id AS value,
+			  CONCAT(
+			    au.`name`,
+			    '(',bprt.`TRP_NAME`,')-',
+			    bpt.`TEAM_USER_ID`
+			  ) AS display 
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au,
+			  `bs_proj_role_types` bprt
+			WHERE bpt.`TEAM_USER_ID` = au.`id`
+			AND bpt.`TRP_CODE` = bprt.`TRP_CODE`
+			<if test="proj_id != null and proj_id != ''">
+				    AND bpt.`PROJ_ID` = ${proj_id}
+			</if>
+			  GROUP BY value
+	</select>
+	 <!-- 修改对应成员的项目 -->
+	<select id="listComboBoxProjName" resultType="dto">
+			SELECT 
+			  au.id AS value,
+			  CONCAT(
+			    au.`name`,
+			    '(',bprt.`TRP_NAME`,')-',
+			    bpt.`TEAM_USER_ID`
+			  ) AS display 
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au,
+			  `bs_proj_role_types` bprt
+			WHERE bpt.`TEAM_USER_ID` = au.`id`
+			AND bpt.`TRP_CODE` = bprt.`TRP_CODE`
+			<if test="proj_id != null and proj_id != ''">
+				    AND bpt.`PROJ_ID` = ${proj_id}
+			</if>
+			  GROUP BY value
+	</select>
+	 <!-- 查询周报明细 -->
+	<select id="listWeek" resultType="dto">
+		SELECT * from ta_week
+		<where>
+	    <if test="test_code != null and test_code != ''">
+		       test_code in 
+		              <foreach collection="test_code" item="test_code" index="index"  
+		            open="(" close=")" separator=",">  
+		            #{test_code}  
+		        </foreach>       <!-- 项目编码 -->
+		</if>
+		</where>
+		
+		group by test_code
+	</select>
+	
+	 <!-- 查询周报 -->
+	<select id="pageweek" resultType="dto">
+		SELECT * from ta_week
+			<if test="proj_id != null and proj_id != ''">
+				    where proj_id = ${proj_id}
+			</if>
+			 <if test="plan_begin_time != null and plan_begin_time != ''">
+		       	 	  AND  create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+				</if>
+			    <if test="plan_end_time != null and plan_end_time != ''">
+		        	   AND create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+		and flag=1
+	</select>
+	
+	 <!-- 查询周报 -->
+	<select id="tasks" resultType="dto">
+		SELECT 
+		  t.`task_name` remarks,
+		  t.`assign_user_id` owner_id,
+		  t.`plan_begin_time` begin_date,
+		  t.`plan_end_time` end_date,
+		  t.`real_end_time` finish_time
+		FROM
+		  `ta_task` t 
+			<if test="proj_id != null and proj_id != ''">
+				    where proj_id = ${proj_id}
+			</if>
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="listProj_week"  resultType="Dto">
+		SELECT 
+		  task_plan_num AS value,
+		   task_plan_num AS display
+		FROM
+		  ta_week 
+		  <where>
+		  	 flag=1
+			  <if test="proj_id != null and proj_id != ''">
+				 and    (proj_id = '${proj_id}' or '${proj_id}' in ("A1","A2","0000"))
+			</if>
+			<if test="begin_date != null and begin_date != ''">
+						  and  commit_time &gt;
+								'${begin_date}'   <!-- 开始时间-->
+			  </if>
+			  <if test="end_date != null and end_date != ''">
+						      and commit_time  &lt;
+								'${end_date}' <!-- 结束时间 -->
+			  </if>
+		</where>
+		  GROUP BY task_plan_num
+	</select>
+	
+	<!-- 查询多级联动下拉框数据(第一级) -->
+	<select id="listComboBoxProj" resultType="Dto">
+		SELECT
+		proj_id AS value, proj_name AS display
+		FROM
+		bs_proj_commons 
+		where state ='1'
+		order by proj_id desc
+	</select>
+	
+	<!-- 查询项目成员的工期 -->
+	<select id="work_hours" resultType="Dto">
+		SELECT DISTINCT
+		  au.id user_id,
+		  CONCAT( au.`name`,'-',au.id)name,
+		  au.`account`,
+		th.`work_hours`,
+		th.business_hours,
+		
+		  bpt.proj_id
+		FROM
+		  `bs_proj_teams` bpt,
+		  `aos_user` au 
+		  LEFT JOIN
+		  ( SELECT t.`work_hours`,t.business_hours, t.`user_id`,t.proj_id FROM `ta_work_hour` t 
+		  WHERE t.`test_code`=#{test_code} )th
+		  ON th.user_id=au.`id`
+		WHERE au.`id` = bpt.`TEAM_USER_ID` 
+		and bpt.state=1
+		and bpt.proj_id = bpt.proj_id
+		AND bpt.`PROJ_ID` = #{proj_id}
+	</select>
+	
+	<!-- 查询项目下周工作计划 -->
+	<select id="work_plan" resultType="Dto">
+		select * from ta_week_report where test_code = #{test_code} and week_flag =2
+	</select>
+	<!-- 查询项目下周工作计划   (项目汇总) -->
+	<select id="work_plan_count" resultType="Dto">
+		select * from ta_week_report where test_code = #{test_code} and week_flag =2
+	</select>
+	
+	<!-- 查询项目周报 -->
+	<select id="pageProj" resultType="Dto">
+		 SELECT 
+	    t.*
+		FROM
+		  ta_week_report t
+		  LEFT JOIN 
+		  (SELECT a.id,a.name FROM`aos_user` a)us
+		  ON us.id=t.owner_id
+		<where>
+		   t.week_flag=1
+		      <if test="test_code != null and test_code != ''">
+		      AND test_code = #{test_code}  <!-- 周报编码 -->
+		</if>
+		</where>	
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.bl3.pm.quality.dao.QaStorageDao">
+	<!-- 获取周报编码 -->
+	<select id="weeklyCode" resultType="Integer" >
+		SELECT
+			IFNULL(max(test_code), 0)
+		FROM
+			qa_weekly
+	</select>
+	<!-- 获取项目名称项目编码 -->
+	<select id="getProjN" resultType="Dto" >
+		SELECT
+			proj_id,
+			proj_name
+		FROM
+			bs_proj_commons
+		WHERE
+			STATE = 0
+	</select>
+	<!-- 获取评审编码 -->
+	<select id="getManageCode" resultType="Integer" >
+		SELECT
+					IFNULL(max(manage_code), 0)+1 as manage_code
+				FROM
+					qa_files_manage
+	</select>
+	<!-- 获取意见编码 -->
+	<select id="getOpinionCode" resultType="Integer" >
+		SELECT
+			IFNULL(max(opinion_code), 0)+1 as opinion_code
+		FROM
+			qa_files_manage
+	</select>
+	
+	 <!-- 内容信息列表 -->
+	<select id="userText" resultType="Dto" parameterType="Dto" >
+			SELECT *
+			FROM
+			qa_reply_news
+			<where>	
+			<if test="text_code != null and text_code != ''">
+		       AND text_code = #{text_code}  <!-- 内容code-->
+			</if>
+			</where>
+			ORDER BY text_date     asc
+	</select>
+	<!-- bug 数量总结信息 -->
+	<select id="bugConut" resultType="Dto" parameterType="Dto">
+		    select * from  (	
+		    	select 
+			qbm.proj_id as proj_id, bpc.project_for_short as proj_name,
+			(  select   count(*) from  qa_bug_manage qbma  where state  ='1003' and  qbm.proj_id=qbma.proj_id ) AS close_num,
+			(  select   count(*) from  qa_bug_manage qbmb  where state  ='1001' and  qbm.proj_id=qbmb.proj_id ) AS finish_num, 
+			(  select   count(*) from  qa_bug_manage qbmc  where state in  ('1004','1002','1000') and  qbm.proj_id=qbmc.proj_id ) AS unfinish_num,
+			(  select   count(*) from  qa_bug_manage qbmd  where qbm.proj_id=qbmd.proj_id) AS input_num,
+			(  select   count(*) from  qa_bug_manage qbme  where    qbm.proj_id=qbme.proj_id 
+			       <if test="beginDate_ != null and endDate_ !=null   and  beginDate_ != '' and endDate_ != ''"  >
+	                          and   find_time BETWEEN   #{beginDate_} and DATE_ADD(#{endDate_},INTERVAL 1 DAY )
+	               </if>  and  not ISNULL(find_time)  ) AS lately_add,
+			(  select   count(*) from  qa_bug_manage qbmf  where  qbm.proj_id=qbmf.proj_id 
+			       <if test="beginDate_ != null and endDate_ !=null   and  beginDate_ != '' and endDate_ != ''"  >
+	                        and  close_time BETWEEN  #{beginDate_} and DATE_ADD(#{endDate_},INTERVAL 1 DAY )
+	                </if> 
+	                and  not ISNULL(close_time)   ) AS lately_close,
+	         (select count(*) from 
+	         (select  * from ta_task where state in ('1002','1003') 
+	             <if test="beginDate_ != null and endDate_ !=null   and  beginDate_ != '' and endDate_ != ''"  >
+	                  and  plan_begin_time BETWEEN  #{beginDate_} and DATE_ADD(#{endDate_},INTERVAL 1 DAY )
+	               </if>
+				  UNION
+			  select  * from ta_task where state in ('1004','1005')  
+			        <if test="beginDate_ != null and endDate_ !=null   and  beginDate_ != '' and endDate_ != ''"  >
+                      and  real_end_time BETWEEN  #{beginDate_} and DATE_ADD(#{endDate_},INTERVAL 1 DAY )
+			        </if>
+				)qbmg
+				  where    qbm.proj_id =  qbmg.PROJ_ID 
+				      )as task_num
+							      
+					from  qa_bug_manage  qbm , bs_proj_commons bpc
+						where qbm.proj_id=bpc.PROJ_ID and bpc.state=1
+							GROUP BY
+								qbm.proj_id,bpc.PROJ_NAME
+								) a left join 
+				
+				 (
+					SELECT CONCAT('1.编写用例:', testexample) testexample,proj_id FROM ( 
+					
+					SELECT GROUP_CONCAT(codes,':',sum,'(',sums,')') testexample,proj_id FROM ( 
+					select  a.proj_id,a.codes,sum,sums from 
+																(		SELECT c.proj_name name,  rmd.dm_name codes, '',count(1) sum,a.proj_id FROM qa_test_example a , bs_proj_commons c,re_module_divide rmd
+																    WHERE a.proj_id =c.proj_id 
+					                               and rmd.dm_code=a.stand_id
+																						GROUP BY c.proj_name, rmd.dm_name,a.proj_id) a,
+					
+					                      (
+					                        SELECT c.proj_name name,  rmd.dm_name  codes, count(1) sums,'',a.proj_id FROM qa_test_example a , bs_proj_commons c,re_module_divide rmd
+																    WHERE a.proj_id =c.proj_id 
+																    	<if test="beginDate_ != null and endDate_ !=null   and  beginDate_ != '' and endDate_ != ''"  >
+																				and a.create_time  BETWEEN  #{beginDate_} and DATE_ADD(#{endDate_},INTERVAL 1 DAY )
+						                                           </if>
+					                               and rmd.dm_code=a.stand_id
+																						GROUP BY c.proj_name, rmd.dm_name,a.proj_id
+					                  )b
+					where a.proj_id=b.proj_id 
+					 and a.codes=b.codes
+					group by  a.proj_id , a.codes   
+					        
+					 )  d 
+							             GROUP BY  proj_id
+					)e
+					)b
+				on a.proj_id=b.proj_id   left join 
+				 (
+					SELECT CONCAT('2.执行用例:', testexample) example,proj_id FROM ( 
+					
+					SELECT GROUP_CONCAT(codes,':',sum,'(',sums,')') testexample,proj_id FROM ( 
+					select  a.proj_id,a.codes,sum,sums from 
+																(	SELECT c.proj_name,  rmd.dm_name as codes ,COUNT(1) sum,'',a.proj_id 
+																	FROM qa_test_example a , qa_testexample_log b , bs_proj_commons c ,re_module_divide rmd
+																	WHERE a.standard_id = b.standard_id
+																	AND a.proj_id = c.proj_id
+					                                                   and rmd.dm_code=a.stand_id
+													                  	GROUP BY c.proj_name,a.proj_id ,rmd.dm_name) a,
+					
+					                      (
+					                        SELECT  c.proj_name,  rmd.dm_name as codes ,'',COUNT(1) sums,a.proj_id
+																	FROM qa_test_example a , qa_testexample_log b , bs_proj_commons c ,re_module_divide rmd
+																	WHERE a.standard_id = b.standard_id
+																	AND a.proj_id = c.proj_id
+																	<if test="beginDate_ != null and endDate_ !=null   and  beginDate_ != '' and endDate_ != ''"  >
+																				and b.test_time  BETWEEN  #{beginDate_} and DATE_ADD(#{endDate_},INTERVAL 1 DAY )
+						                                       </if>
+					                               and rmd.dm_code=a.stand_id
+													                  	GROUP BY c.proj_name,a.proj_id ,rmd.dm_name
+					                  )b
+					                  where a.proj_id=b.proj_id 
+													 and a.codes=b.codes
+					group by  a.proj_id , a.codes           
+					 )  d 
+							             GROUP BY  proj_id
+					)e
+						     )c
+				on  a.proj_id=c.proj_id
+	</select>
+	
+	<!-- 查询项目数据 -->
+	<select id="getProjtPage" parameterType="Dto" resultType="Dto" useCache="false">
+				SELECT
+					proj_id,
+					proj_code,
+					project_for_short as proj_name
+				FROM
+					bs_proj_commons
+				WHERE
+					state = 1
+			   <if test="proj_name != null and proj_name != ''">
+		        AND proj_name like '${proj_name}%' <!-- 项目名称 -->
+			   </if>
+				
+	</select>
+	
+	<!-- 根据编码删除数据持久化对象 -->
+	<delete id="deleteTc">
+		DELETE FROM qa_weekly_detail WHERE  test_code = #{test_code}
+	</delete>
+	
+<!-- 插入一个数据持久化对象(插入字段为周报明细传入PO实体的非空属性 ) -->
+	<insert id="insertWd" useGeneratedKeys="true" keyProperty="test_id" parameterType="Dto">
+			INSERT INTO qa_weekly_detail (
+		<if test="test_code != null and test_code != ''">
+	         test_code, <!-- 周报编码 -->
+		</if>
+		<if test="detail != null">
+	         detail, <!-- 序列号 -->
+		</if>
+		<if test="proj_name != null and proj_name != ''">
+	         proj_name, <!-- 项目名称 -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="job_content != null and job_content != ''">
+	         job_content, <!-- 工作内容 -->
+		</if>
+		<if test="input_cond != null">
+	         input_cond, <!-- 本周任务数 -->
+		</if>
+		<if test="accept_cond != null and accept_cond != ''">
+	         accept_cond, <!-- 任务接收情况 -->
+		</if>
+		<if test="finish_cond != null and finish_cond != ''">
+	         finish_cond, <!-- 任务完成情况 -->
+		</if>
+		<if test="charge != null and charge != ''">
+	         charge, <!-- 负责人 -->
+		</if>
+		<if test="add_time != null and add_time != ''">
+	         add_time, <!-- 记录时间 -->
+		</if>
+		<if test="add_name != null and add_name != ''">
+	         add_name, <!-- 记录人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 修改时间 -->
+		</if>
+		<if test="update_name != null and update_name != ''">
+	         update_name, <!-- 修改人 -->
+		</if>
+		<if test="remarks != null and remarks != ''">
+	         remarks, <!-- 备注 -->
+		</if>
+		<if test="trouble_bewrite != null and trouble_bewrite != ''">
+	         trouble_bewrite, <!-- 问题描述 -->
+		</if>
+		<if test="trouble_advise != null and trouble_advise != ''">
+	         trouble_advise, <!-- 建议 -->
+		</if>
+		<if test="job_plan != null and job_plan != ''">
+	         job_plan, <!-- 活动内容 -->
+		</if>
+		<if test="bug_input_num != null">
+	         bug_input_num, <!-- 缺陷总数 -->
+		</if>
+		<if test="bug_add_num != null">
+	         bug_add_num, <!-- 本周新增缺陷数 -->
+		</if>
+		<if test="lately_close_num != null">
+	         lately_close_num, <!-- 本周关闭缺陷数 -->
+		</if>
+		<if test="bug_finish_num != null">
+	         bug_finish_num, <!-- 缺陷已解决总数 -->
+		</if>
+		<if test="bug_unfinish_num != null">
+	         bug_unfinish_num, <!-- 缺陷未解决数 -->
+		</if>
+		<if test="bug_close_num != null">
+	         bug_close_num, <!-- 缺陷关闭数 -->
+		</if>
+	          test_id
+		)VALUES(
+		<if test="test_code != null and test_code != ''">
+	          #{test_code, jdbcType=VARCHAR}, <!-- 周报编码 -->
+	    </if>
+		<if test="detail != null">
+	          #{detail, jdbcType=INTEGER}, <!-- 序列号 -->
+	    </if>
+		<if test="proj_name != null and proj_name != ''">
+	          #{proj_name, jdbcType=VARCHAR}, <!-- 项目名称 -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="job_content != null and job_content != ''">
+	          #{job_content, jdbcType=VARCHAR}, <!-- 工作内容 -->
+	    </if>
+		<if test="input_cond != null">
+	          #{input_cond, jdbcType=INTEGER}, <!-- 本周任务数 -->
+	    </if>
+		<if test="accept_cond != null and accept_cond != ''">
+	          #{accept_cond, jdbcType=VARCHAR}, <!-- 任务接收情况 -->
+	    </if>
+		<if test="finish_cond != null and finish_cond != ''">
+	          #{finish_cond, jdbcType=VARCHAR}, <!-- 任务完成情况 -->
+	    </if>
+		<if test="charge != null and charge != ''">
+	          #{charge, jdbcType=VARCHAR}, <!-- 负责人 -->
+	    </if>
+		<if test="add_time != null and add_time != ''">
+	          #{add_time, jdbcType=VARCHAR}, <!-- 记录时间 -->
+	    </if>
+		<if test="add_name != null and add_name != ''">
+	          #{add_name, jdbcType=VARCHAR}, <!-- 记录人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 修改时间 -->
+	    </if>
+		<if test="update_name != null and update_name != ''">
+	          #{update_name, jdbcType=VARCHAR}, <!-- 修改人 -->
+	    </if>
+		<if test="remarks != null and remarks != ''">
+	          #{remarks, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+		<if test="trouble_bewrite != null and trouble_bewrite != ''">
+	          #{trouble_bewrite, jdbcType=VARCHAR}, <!-- 问题描述 -->
+	    </if>
+		<if test="trouble_advise != null and trouble_advise != ''">
+	          #{trouble_advise, jdbcType=VARCHAR}, <!-- 建议 -->
+	    </if>
+		<if test="job_plan != null and job_plan != ''">
+	          #{job_plan, jdbcType=VARCHAR}, <!-- 活动内容 -->
+	    </if>
+		<if test="bug_input_num != null">
+	          #{bug_input_num, jdbcType=INTEGER}, <!-- 缺陷总数 -->
+	    </if>
+		<if test="bug_add_num != null">
+	          #{bug_add_num, jdbcType=INTEGER}, <!-- 本周新增缺陷数 -->
+	    </if>
+		<if test="lately_close_num != null">
+	          #{lately_close_num, jdbcType=INTEGER}, <!-- 本周关闭缺陷数 -->
+	    </if>
+		<if test="bug_finish_num != null">
+	          #{bug_finish_num, jdbcType=INTEGER}, <!-- 缺陷已解决总数 -->
+	    </if>
+		<if test="bug_unfinish_num != null">
+	          #{bug_unfinish_num, jdbcType=INTEGER}, <!-- 缺陷未解决数 -->
+	    </if>
+		<if test="bug_close_num != null">
+	          #{bug_close_num, jdbcType=INTEGER}, <!-- 缺陷关闭数 -->
+	    </if>
+	          null
+		)
+	</insert>
+	<!-- 是否存在已经插入的数据  -->
+    <select id ="weeklyCount" resultType="Integer" parameterType="String">
+    	select  count(*) from qa_weekly 
+    	     <where>
+    	     	<if test="_parameter != null">
+    	        and test_code=#{test_code}
+    	     	</if>
+    	     </where>
+    </select>
+    <!-- 删除主表一条数据  -->
+    <delete id ="weeklyDel"  >
+    	delete   from qa_weekly 
+    	    where   test_code=#{test_code}
+    	    
+    </delete>	
+    <!-- 删除明细一条数据  -->
+    <delete id ="weeklyDeDel"  >
+    	delete   from qa_weekly_detail 
+    	      where   test_code=#{test_code}
+    </delete>	
+    <!-- 下拉框 查询对应的项目 -->
+	<select id="listComboBoxUerid" resultType="Dto">
+		SELECT 
+		   `PROJ_NAME` AS display,
+		`PROJ_ID`AS value 
+		FROM
+		  `bs_proj_commons` 
+		GROUP BY VALUE
+	</select>
+	<!-- 根据主键返回名称 -->
+	<select id="returnUserName" resultType="String" >
+			SELECT
+				name
+			FROM
+				aos_user
+			WHERE
+		    <if test="id != null">
+				     id = ${id}
+			</if>
+	</select>	
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="listComboBoxProjId" resultType="Dto" parameterType="Dto">
+			SELECT 
+			 `TEAM_USER_ID` AS value,
+			  CONCAT(au.`name`,'-',bpt.`TEAM_USER_ID` )AS display 
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au,
+			  `aos_role` ar,
+			  `aos_org` ao,
+			  `aos_user_role` aur
+			  WHERE bpt.`TEAM_USER_ID` = au.`id`
+			  AND au.id=aur.`user_id`
+			  AND aur.`role_id` = ar.`id`
+			  AND au.`org_id`=ao.`id`
+			  AND au.id !='-1'
+			  GROUP BY au.id 
+	</select>
+	<!-- 公共下拉框 查询对应成员的项目 -->
+	<select id="listMange" resultType="FilesManagePO">
+			select  * from 
+			qa_files_manage 
+			<where>
+			<if test="manage_id != null">
+				     manage_id = ${manage_id}
+			</if>
+			</where> 
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePageMessage" parameterType="Dto" resultType="Dto" useCache="false">
+	    SELECT
+			*	
+		FRoM qa_message
+		<where>
+		    <include refid="messageequal" />
+		</where>	
+	</select>
+	
+	
+	<!-- Where精确匹配字段 -->
+	<sql id="messageequal">
+	   <if test="msg_id != null ">
+		      AND msg_id = #{msg_id}  <!-- 消息ID -->
+		</if>
+	    <if test="msg_note != null and msg_note != ''">
+		      AND msg_note = #{msg_note}  <!-- 消息内容 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      AND begin_date = #{begin_date}  <!-- 接收时间 -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      AND end_date = #{end_date}  <!-- 评审结束时间 -->
+		</if>
+	    <if test="mang_id != null and mang_id != ''">
+		      AND mang_id = #{mang_id}  <!-- 评审入口 -->
+		</if>
+	   <if test="user_id != null ">
+		      AND user_id = #{user_id}  <!-- 接收人ID -->
+		</if>
+	    <if test="user_name != null and user_name != ''">
+		      AND user_name = #{user_name}  <!-- 接收人名称 -->
+		</if>
+	   <if test="send_id != null ">
+		      AND send_id = #{send_id}  <!-- 发送者ID -->
+		</if>
+	    <if test="send_name != null and send_name != ''">
+		      AND send_name = #{send_name}  <!-- 发送者名称 -->
+		</if>
+	    <if test="msg_state != null and msg_state != ''">
+		      AND msg_state = #{msg_state}  <!-- 消息状态 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="create_id != null ">
+		      AND create_id = #{create_id}  <!-- 创建人ID -->
+		</if>
+	    <if test="create_name != null and create_name != ''">
+		      AND create_name = #{create_name}  <!-- 创建人名称 -->
+		</if>
+	    <if test="opinion_code != null and opinion_code != ''">
+		      AND opinion_code = #{opinion_code}  <!-- 意见入口 -->
+		</if>
+	    <if test="flag != null and flag != ''">
+		      AND flag = #{flag}  <!-- 有效标志 -->
+		</if>
+	    <if test="remarks != null and remarks != ''">
+		      AND remarks = #{remarks}  <!-- 综合信息 -->
+		</if>
+	</sql>
+	
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listText" parameterType="Dto" resultType="Dto" >
+	    SELECT *
+		FRoM qa_reply_news
+		<where>
+		     <if test="text_code != null and text_code != ''">
+		      AND text_code = #{text_code}  <!-- 消息编码 -->
+		</if>
+		</where>
+		order by text_date desc	
+	</select>
+	<!-- 获取会议信息 -->
+	<select id="listMsgReply" parameterType="Dto" resultType="Dto">
+		SELECT
+			bpc.proj_name,
+			qm.remarks,
+			qm.theme,
+			qm.msg_id,
+			qm.msg_note,
+			qm.msg_state,
+			qm.pass_flag,
+			qfm.begin_date,
+			qfm.end_date,
+			qfm.workload,
+			qfm.review_addre,
+			(
+				CASE
+				WHEN review_type = 1 THEN
+					'现场会议'
+				WHEN review_type = 2 THEN
+					'远程会议'
+				ELSE
+					'其它'
+				END
+			) review_type,
+			(
+				CASE
+				WHEN meeting_type = 1 THEN
+					'项目周例会'
+				WHEN meeting_type = 2 THEN
+					'评审会议'
+				WHEN meeting_type = 3 THEN
+					'专题会议'
+				ELSE
+					'其它'
+				END
+			) meeting_type,
+			qfm.initiator,
+			qfm.compere,
+			qfm.manage_code,
+			qfm.attende_mans,
+			qfm.attende_mans_out,
+			aou.`name` as initiator_name,
+			aur.`name` as compere_name
+		FROM
+			qa_message qm,
+			qa_files_manage qfm
+			LEFT JOIN aos_user aou ON aou.id = qfm.initiator
+			LEFT JOIN aos_user aur ON aur.id = qfm.compere,
+			bs_proj_commons bpc	
+		<where>
+			qm.mang_id = qfm.manage_code
+			AND bpc.proj_id = qm.proj_id
+		    <if test="mang_id != null ">
+		      	AND mang_id = #{mang_id}  <!-- 消息ID -->
+			</if>
+			<if test="user_id != null ">
+		      	AND user_id = #{user_id}  <!-- 用户ID -->
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listMsgid" parameterType="Dto" resultType="Dto">
+	    SELECT
+			*	
+		FRoM qa_message
+		<where>
+		    <if test="msg_id != null ">
+		      AND msg_id = #{msg_id}  <!-- 消息ID -->
+		</if>
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(周报明细)并集 -->
+	<select id="likeweekOrPage" parameterType="Dto" resultType="WeeklyDetailPO" useCache="false">
+	      SELECT
+	        qwd.*,bpc.PROJ_NAME as proj_name
+		    FRoM qa_weekly_detail qwd  left join bs_proj_commons bpc on
+			 qwd.proj_id=bpc.PROJ_id
+			 <where>
+			 <if test="test_code != null and test_code!=''  ">
+		        test_code = #{test_code}  <!-- 消息ID -->
+		     </if>
+		     </where>
+			ORDER BY add_time DESC 
+	</select>	
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likedetailOrPage" parameterType="Dto" resultType="WeeklyPO" useCache="false">
+	    SELECT
+			*	
+		FRoM qa_weekly
+		<where>
+			     <if test="begin_date!=nill and begin_date!=''"  >
+			    and  DATE_FORMAT(create_time,'%Y-%m-%d') &gt;=   #{begin_date}     <!-- 记录时间 -->
+			     </if>
+			     <if test="end_date!=nill and end_date!=''">
+			   and  DATE_FORMAT(create_time,'%Y-%m-%d') &lt;=   #{end_date}   <!-- 记录时间 -->
+			     </if>
+		</where>	
+		ORDER BY  create_time DESC
+	</select>	
+	<!-- 删除主键关联下的回复信息 -->
+	<delete id="deleteReply">
+		DELETE FROM bs_reply WHERE  theme_id = #{id}
+	</delete>
+	
+	
+	
+</mapper>

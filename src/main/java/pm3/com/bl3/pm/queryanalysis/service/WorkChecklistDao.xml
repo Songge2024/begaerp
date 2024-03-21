@@ -1,0 +1,1285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-18 11:03:34 -->
+<mapper namespace="WorkChecklistDao">
+	
+	<!-- 删除明细数据 -->
+	<delete id="delList"  parameterType="Dto">
+			    delete  from st_proj_workload_user_month where proj_id=#{proj_id} 
+			        and  month=#{month}  
+                     and create_user_id =#{create_user_id}
+	</delete>
+	<!-- 数组查找项目数据 -->
+	<select id="proj" resultType="dto">  
+			SELECT
+				bpt.proj_id,
+				f.proj_name as proj_name,
+				ifnull(ta.task_num, 0) task_num,
+				ifnull(all_ta.all_task_num, 0) all_task_num,
+				ifnull(d.bug_num, 0) bug_num,
+				ifnull(all_d.all_bug_num, 0) all_bug_num,
+				ifnull(e.demand_num, 0) demand_num,
+				ifnull(all_e.all_demand_num, 0) all_demand_num,
+				ifnull(qfm.manage_num, 0) manage_num,
+				ifnull(all_qfm.all_manage_num, 0) all_manage_num,
+				ifnull(format(wa.jhgzl, 1), 0) jhgzl,
+				ifnull(format(wa.sjgzl, 1), 0) sjgzl,
+				ifnull(format(all_wa.all_jhgzl, 1), 0) all_jhgzl,
+				ifnull(format(all_wa.all_sjgzl, 1), 0) all_sjgzl
+			FROM
+				`bs_proj_teams` bpt
+			LEFT JOIN 
+			(
+				SELECT
+					ifnull(
+						format(sum(s.plan_wastage), 1),
+						0
+					) jhgzl,
+					ifnull(
+						format(sum(s.real_wastage), 1),
+						0
+					) sjgzl,
+					s.proj_id,
+					s.handler_user_id
+				FROM
+					(
+						SELECT
+							TRUNCATE (plan_wastage * percent / 100, 1) plan_wastage,
+							real_wastage,
+							PROJ_ID,
+							handler_user_id
+						FROM
+							ta_task
+						WHERE
+							state not IN (1001,1006)
+								<if test="plan_begin_time != null and plan_begin_time != '' and  plan_end_time != null and plan_end_time != '' ">
+								    AND (plan_begin_time BETWEEN   #{plan_begin_time} and DATE_ADD(#{plan_end_time},INTERVAL 1 DAY ))
+								</if>
+						UNION ALL
+							SELECT
+								plan_wastage,
+								real_wastage,
+								PROJ_ID,
+								deal_man 
+							FROM
+								qa_bug_manage qbm
+							WHERE 
+								qbm.state = 1003
+								<if test="plan_begin_time != null and plan_begin_time != ''">
+						            AND qbm.`create_time` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+								</if>
+								  <if test="plan_end_time != null and plan_end_time != ''">
+									AND qbm.`create_time` <![CDATA[  <=  ]]> '${plan_end_time}'
+								</if>
+						UNION ALL
+							SELECT
+								workload AS plan_wastage,
+								workload AS real_wastage,
+								proj_id,
+								create_name
+							FROM
+								`qa_files_manage`
+							WHERE
+								state_flag = 2
+						<if test="plan_begin_time != null and plan_begin_time != ''">
+							AND `begin_date` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+						</if>
+						<if test="plan_end_time != null and plan_end_time != ''">
+							AND `begin_date` <![CDATA[  <=  ]]> '${plan_end_time}'
+						</if>
+					) s
+				GROUP BY
+					s.PROJ_ID
+			) wa ON wa.proj_id = bpt.proj_id 
+			LEFT JOIN 
+			(
+				SELECT
+					ifnull(
+						format(sum(all_s.plan_wastage), 1),
+						0
+					) all_jhgzl,
+					ifnull(
+						format(sum(all_s.real_wastage), 1),
+						0
+					) all_sjgzl,
+					all_s.proj_id,
+					all_s.handler_user_id
+				FROM
+					(
+						SELECT
+							TRUNCATE (plan_wastage * percent / 100, 1) plan_wastage,
+							real_wastage,
+							PROJ_ID,
+							handler_user_id
+						FROM
+							ta_task
+						WHERE
+							state not IN (1001,1006)
+						UNION ALL
+							SELECT
+								plan_wastage,
+								real_wastage,
+								PROJ_ID,
+								deal_man 
+							FROM
+								qa_bug_manage all_qbm
+							WHERE 
+								state = 1003
+						UNION ALL
+							SELECT
+								workload AS plan_wastage,
+								workload AS real_wastage,
+								proj_id,
+								create_name
+							FROM
+								`qa_files_manage`
+							WHERE
+								state_flag = 2
+					) all_s
+				GROUP BY
+					all_s.PROJ_ID
+			) all_wa ON all_wa.proj_id = bpt.proj_id   
+			LEFT JOIN (
+				SELECT
+					COUNT(t.handler_user_id) task_num,
+					t.`handler_user_id`,
+					t.`proj_id`
+				FROM
+					ta_task t
+			LEFT JOIN (
+				SELECT
+					a. NAME,
+					a.id,
+					a.is_del
+				FROM
+				  aos_user a
+			) ua ON ua.id = t.`handler_user_id`
+				WHERE
+					t.state not IN (1001, 1006)
+					and ua.is_del=0
+							<if test="plan_begin_time != null and plan_begin_time != '' and  plan_end_time != null and plan_end_time != '' ">
+							    AND (plan_begin_time BETWEEN   #{plan_begin_time} and DATE_ADD(#{plan_end_time},INTERVAL 1 DAY ))
+							</if>
+				GROUP BY
+					t.`proj_id`
+			) ta ON ta.proj_id = bpt.proj_id 
+			LEFT JOIN (
+				SELECT
+					COUNT(all_t.handler_user_id) all_task_num,
+					all_t.`handler_user_id`,
+					all_t.`proj_id`
+				FROM
+					ta_task all_t
+				LEFT JOIN (
+					SELECT
+						all_a. NAME,
+						all_a.id,
+						all_a.is_del
+					FROM
+						aos_user all_a
+				) all_ua ON all_ua.id = all_t.`handler_user_id`
+				WHERE
+					all_t.state NOT IN (1001, 1006)
+				AND all_ua.is_del = 0
+				GROUP BY
+					all_t.`proj_id`
+			) all_ta ON all_ta.proj_id = bpt.proj_id
+			LEFT JOIN (
+				SELECT
+					COUNT(qa.`proj_id`) bug_num,
+					qa.proj_id
+				FROM
+					qa_bug_manage qa
+				<where>
+					<if test="plan_begin_time != null and plan_begin_time != ''">
+					            AND qa.`create_time` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+					</if>
+					<if test="plan_end_time != null and plan_end_time != ''">
+					           AND qa.`create_time` <![CDATA[  <=  ]]> '${plan_end_time}'
+					</if>
+				</where>
+				GROUP BY
+					qa.`proj_id`
+			) d ON d.proj_id = bpt.proj_id 
+			LEFT JOIN (
+				SELECT
+					COUNT(qa.`proj_id`) all_bug_num,
+					qa.proj_id
+				FROM
+					qa_bug_manage qa
+				GROUP BY
+					qa.`proj_id`
+			) all_d ON all_d.proj_id = bpt.proj_id
+			LEFT JOIN (
+				SELECT
+					COUNT(re.`PROJ_ID`) demand_num,
+					re.`PROJ_ID`
+				FROM
+					`re_demand_action` re
+				WHERE
+					re.state = 1
+					<if test="plan_begin_time != null and plan_begin_time != ''">
+					  AND re.AD_PLAN_FINISH_DATE <![CDATA[  >=  ]]> '${plan_begin_time}'
+					  </if>
+					<if test="plan_end_time != null and plan_end_time != ''">
+					   AND re.AD_PLAN_FINISH_DATE <![CDATA[  <=  ]]> '${plan_end_time}'
+					</if>
+				GROUP BY
+					re.`PROJ_ID`
+			) e ON e.PROJ_ID = bpt.proj_id
+			LEFT JOIN (
+				SELECT
+					COUNT(re.`PROJ_ID`) all_demand_num,
+					re.`PROJ_ID`
+				FROM
+					`re_demand_action` re
+				WHERE
+					re.state = 1
+				GROUP BY
+					re.`PROJ_ID`
+			) all_e ON all_e.PROJ_ID = bpt.proj_id
+			LEFT JOIN ( 
+				SELECT
+					COUNT(qf.`manage_id`) manage_num,
+					qf.proj_id
+				FROM
+					qa_files_manage qf
+				WHERE
+					qf.state_flag = 2
+				<if test="plan_begin_time != null and plan_begin_time != ''">
+	       	 		AND qf.`begin_date` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+				</if>
+			    <if test="plan_end_time != null and plan_end_time != ''">
+		        	AND qf.`begin_date` <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+				GROUP BY
+					qf.`proj_id`
+			) qfm ON qfm.proj_id = bpt.proj_id
+			LEFT JOIN ( 
+				SELECT
+					COUNT(all_qf.`manage_id`) all_manage_num,
+					all_qf.proj_id
+				FROM
+					qa_files_manage all_qf
+				WHERE
+					all_qf.state_flag = 2
+				GROUP BY
+					all_qf.`proj_id`
+			) all_qfm ON all_qfm.proj_id = bpt.proj_id
+			LEFT JOIN
+			(
+				select state,  PROJ_name,  PROJ_id from bs_proj_commons  
+				)f
+				on f.proj_id=bpt.proj_id
+			WHERE
+			    f.state  in (1,2) 
+			    <if test="proj_id != null and proj_id != ''">
+					   AND f.proj_id in (#{proj_id})
+				</if>
+			    <if test="proj_name != null and proj_name != ''">
+		               and f.proj_name like '%${proj_name}%'   
+		       </if>
+		        <if test="proj_id_state != null and proj_id_state != 0">
+		              and f.state = #{proj_id_state}
+		       </if>
+				and (
+					bpt.state = 1
+					AND bpt.proj_id IN (
+						SELECT
+							bb.proj_id
+						FROM
+							bs_proj_teams bb
+						WHERE
+						
+						 <if test="user_id != null and user_id != ''">
+		                         bb.team_user_id  = ${user_id}  
+		                   </if>
+						 GROUP BY
+							bb.proj_id
+					)
+				
+			OR (
+				'4986' IN (
+					select  role_id from  aos_user_role  aur, aos_role ar   
+					  where   
+					    aur.role_id=ar.id and  
+					 <if test="user_id != null and user_id != ''">
+		               user_id = ${user_id}  <!-- 成员ID -->
+		             </if>
+				 )
+				)or
+				 (
+				'5889' IN (
+					select  role_id from  aos_user_role  aur, aos_role ar   
+					  where   
+					    aur.role_id=ar.id and   
+					 <if test="user_id != null and user_id != ''">
+		               user_id = ${user_id}  <!-- 成员ID -->
+		             </if>
+				 )
+				)
+			)
+        group by bpt.`PROJ_ID`
+    </select>  
+    
+	<!-- 数组查找数据 -->
+	<select id="ChecklistList" resultType="dto">  
+			SELECT
+				f.id as id,
+				f.name as name,
+				fs.proj_name,
+				ifnull(tas.task_num, 0) task_num,
+				ifnull(ta.task_nums, 0) task_nums,
+				ifnull(d.bug_nums, 0) bug_nums,
+				ifnull(ds.bug_num, 0) bug_num,
+				ifnull(wa.jhgzl, 0) jhgzl,
+				ifnull(wa.sjgzl, 0) sjgzl,
+				ifnull(ws.jhgzls, 0) jhgzls,
+				ifnull(ws.sjgzls, 0) sjgzls,
+				ifnull(e.demand_nums, 0) demand_nums,
+				ifnull(es.demand_num, 0) demand_num,
+				ifnull(aqm.manage_num, 0) manage_num,
+				ifnull(aqms.manage_nums, 0) manage_nums,
+				bpt.proj_id
+			FROM
+				`bs_proj_teams` bpt
+			LEFT JOIN 
+			(
+				SELECT
+					ifnull(
+						format(sum(s.plan_wastage), 1),
+						0
+					) jhgzl,
+					ifnull(
+						format(sum(s.real_wastage), 1),
+						0
+					) sjgzl,
+					s.proj_id,
+					s.handler_user_id
+				FROM
+					(
+						SELECT
+							TRUNCATE (plan_wastage * percent / 100, 1) plan_wastage,
+							real_wastage,
+							PROJ_ID,
+							handler_user_id
+						FROM
+							ta_task
+						WHERE
+							state not IN (1001, 1006)
+							<if test="plan_begin_time != null and plan_begin_time != '' and  plan_end_time != null and plan_end_time != '' ">
+							    AND (plan_begin_time BETWEEN   #{plan_begin_time} and DATE_ADD(#{plan_end_time},INTERVAL 1 DAY ))
+							</if>	
+						UNION ALL
+							SELECT
+								plan_wastage,
+								real_wastage,
+								PROJ_ID,
+								deal_man 
+							FROM
+								qa_bug_manage qbm
+							WHERE 
+								qbm.state = 1003
+								<if test="plan_begin_time != null and plan_begin_time != ''">
+						            AND qbm.`create_time` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+								</if>
+								  <if test="plan_end_time != null and plan_end_time != ''">
+									AND qbm.`create_time` <![CDATA[  <=  ]]> '${plan_end_time}'
+								</if>
+						UNION ALL
+							SELECT
+								workload AS plan_wastage,
+								workload AS real_wastage,
+								proj_id,
+								user_id
+							FROM
+								`qa_message` qm
+							WHERE 
+								qm.msg_state = 2
+								<if test="plan_begin_time != null and plan_begin_time != ''">
+						            AND qm.`create_time` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+								</if>
+								  <if test="plan_end_time != null and plan_end_time != ''">
+									AND qm.`create_time` <![CDATA[  <=  ]]> '${plan_end_time}'
+								</if>
+					) s
+				GROUP BY
+					handler_user_id,s.`PROJ_ID`
+			) wa ON wa.proj_id = bpt.proj_id
+			AND wa.handler_user_id = bpt.TEAM_USER_ID 
+			LEFT JOIN (
+				SELECT
+					ifnull(
+						format(sum(s.plan_wastage), 1),
+						0
+					) jhgzls,
+					ifnull(
+						format(sum(s.real_wastage), 1),
+						0
+					) sjgzls,
+					s.proj_id,
+					s.handler_user_id
+				FROM
+					(
+						SELECT
+							TRUNCATE (plan_wastage * percent / 100, 1) plan_wastage,
+							real_wastage,
+							PROJ_ID,
+							handler_user_id
+						FROM
+							ta_task
+						WHERE
+							state not IN (1000, 1006)
+						UNION ALL
+							SELECT
+								plan_wastage,
+								real_wastage,
+								PROJ_ID,
+								deal_man 
+							FROM
+								qa_bug_manage qbm
+							WHERE 
+								qbm.state = 1003
+						UNION ALL
+							SELECT
+								workload AS plan_wastage,
+								workload AS real_wastage,
+								proj_id,
+								user_id
+							FROM
+								`qa_message` qm
+							WHERE 
+								qm.msg_state = 2
+					) s
+				GROUP BY
+					handler_user_id,s.proj_id
+			) ws ON ws.proj_id = bpt.proj_id
+			AND ws.handler_user_id = bpt.TEAM_USER_ID 
+			LEFT JOIN (
+				SELECT
+					COUNT(t.handler_user_id) task_nums,
+					t.`handler_user_id`,
+					t.`proj_id`,
+					t.state
+				FROM
+					ta_task t
+				WHERE
+					t.state NOT IN (1001, 1006)
+				GROUP BY
+					t.`handler_user_id`,t.`PROJ_ID`
+			) ta ON ta.proj_id = bpt.proj_id
+			AND ta.handler_user_id = bpt.TEAM_USER_ID  
+			LEFT JOIN 
+			(  select
+				COUNT(t.handler_user_id) task_num,
+				t.`handler_user_id`,
+				t.`proj_id`,
+				t.state
+			FROM
+				ta_task t
+			WHERE
+				t.state NOT IN (1001, 1006)
+				 			<if test="plan_begin_time != null and plan_begin_time != '' and  plan_end_time != null and plan_end_time != '' ">
+							    AND (plan_begin_time BETWEEN   #{plan_begin_time} and DATE_ADD(#{plan_end_time},INTERVAL 1 DAY ))
+							</if>
+			GROUP BY
+				t.`handler_user_id`,t.`proj_id`
+			) tas ON tas.proj_id = bpt.proj_id
+			AND tas.handler_user_id = bpt.TEAM_USER_ID
+			LEFT JOIN (
+				SELECT
+					COUNT(qa.`proj_id`) bug_nums,
+					qa.deal_man,
+					qa.proj_id
+				FROM
+					qa_bug_manage qa
+				GROUP BY
+					qa.deal_man,qa.proj_id
+			) d ON d.proj_id = bpt.proj_id
+			AND d.deal_man = bpt.TEAM_USER_ID
+			LEFT JOIN (
+				SELECT
+					COUNT(qa.`proj_id`) bug_num,
+					qa.deal_man,
+					qa.proj_id
+				FROM
+					qa_bug_manage qa
+				<where>
+					  <if test="plan_begin_time != null and plan_begin_time != ''">
+		       	 	           AND create_time <![CDATA[  >=  ]]> '${plan_begin_time}'
+					    </if>
+				        <if test="plan_end_time != null and plan_end_time != ''">
+			        	       AND create_time <![CDATA[  <=  ]]> '${plan_end_time}'
+					     </if>
+				</where>
+				GROUP BY
+					qa.deal_man,qa.proj_id
+			) ds ON ds.proj_id = bpt.proj_id
+			AND ds.deal_man = bpt.TEAM_USER_ID
+			LEFT JOIN (
+				SELECT
+					COUNT(re.`PROJ_ID`) demand_nums,
+					re.`PROJ_ID`,
+					re.`create_user_id`
+				FROM
+					`re_demand_action` re
+				WHERE
+					re.state = 1
+				GROUP BY
+					re.`create_user_id`,re.`PROJ_ID`
+			) e ON e.PROJ_ID = bpt.proj_id
+			AND e.create_user_id = bpt.TEAM_USER_ID
+			LEFT JOIN (
+				SELECT
+					COUNT(re.`PROJ_ID`) demand_num,
+					re.`PROJ_ID`,
+					re.`create_user_id`
+				FROM
+					`re_demand_action` re
+				WHERE
+					re.state = 1
+					  <if test="plan_begin_time != null and plan_begin_time != ''">
+		       	 	           AND re.AD_PLAN_FINISH_DATE <![CDATA[  >=  ]]> '${plan_begin_time}'
+					    </if>
+				        <if test="plan_end_time != null and plan_end_time != ''">
+			        	       AND re.AD_PLAN_FINISH_DATE <![CDATA[  <=  ]]> '${plan_end_time}'
+					     </if>
+				GROUP BY
+					re.`create_user_id`,re.`PROJ_ID`
+			) es ON es.PROJ_ID = bpt.proj_id
+			AND es.create_user_id = bpt.TEAM_USER_ID
+			LEFT JOIN (
+				SELECT
+					COUNT(qm.`PROJ_ID`) manage_num,
+					qm.`PROJ_ID`,
+					qm.`user_id`
+				FROM
+					`qa_message` qm
+				WHERE
+					qm.msg_state = 2
+					  <if test="plan_begin_time != null and plan_begin_time != ''">
+		       	 	           AND qm.begin_date <![CDATA[  >=  ]]> '${plan_begin_time}'
+					    </if>
+				        <if test="plan_end_time != null and plan_end_time != ''">
+			        	       AND qm.begin_date <![CDATA[  <=  ]]> '${plan_end_time}'
+					     </if>
+				GROUP BY
+					qm.`user_id`,qm.`PROJ_ID`
+			) aqm ON aqm.PROJ_ID = bpt.proj_id
+			AND aqm.user_id = bpt.TEAM_USER_ID
+			LEFT JOIN (
+				SELECT
+					COUNT(qm.`PROJ_ID`) manage_nums,
+					qm.`PROJ_ID`,
+					qm.`user_id`
+				FROM
+					`qa_message` qm
+				WHERE
+					qm.msg_state = 2
+				GROUP BY
+					qm.`user_id`,qm.`PROJ_ID`
+			) aqms ON aqms.PROJ_ID = bpt.proj_id
+			AND aqms.user_id = bpt.TEAM_USER_ID
+			
+			LEFT JOIN (
+				SELECT
+					au.id,
+					au.is_del,
+					au. NAME
+				FROM
+					aos_user au
+			) f ON f.id = bpt.TEAM_USER_ID
+			
+	        LEFT JOIN
+			(
+				select state,  proj_name,  PROJ_id from bs_proj_commons  
+				)fs
+				on fs.proj_id=bpt.proj_id
+			WHERE
+			 fs.state  in (1,2) 
+		        <if test="proj_id_state != null and proj_id_state != 0">
+		               and fs.state = #{proj_id_state}  
+		       </if>
+		        <if test="proj_name != null and proj_name != ''">
+		               and fs.proj_name like '%${proj_name}%' 
+		       </if>
+			and	f.is_del = 0
+			 <if test="proj_id != null and proj_id != ''">
+			        and bpt.proj_id = #{proj_id}
+			</if>
+			
+			and (
+					bpt.state = 1
+					AND bpt.proj_id IN (
+						SELECT
+							bb.proj_id
+						FROM
+							bs_proj_teams bb
+						WHERE
+						 <if test="user_id != null and user_id != ''">
+		                         bb.team_user_id  = ${user_id}  
+		                   </if>
+						 GROUP BY
+							bb.proj_id
+					)
+				
+			OR (
+				'4986' IN (
+					select  role_id from  aos_user_role  aur, aos_role ar   
+					  where   
+					    aur.role_id=ar.id and    
+					 <if test="user_id != null and user_id != ''">
+		               user_id = ${user_id}  <!-- 成员ID -->
+		             </if>
+				 )
+				)or
+				 (
+				'5889' IN (
+					select  role_id from  aos_user_role  aur, aos_role ar   
+					  where   
+					    aur.role_id=ar.id and 
+					 <if test="user_id != null and user_id != ''">
+		               user_id = ${user_id}  <!-- 成员ID -->
+		             </if>
+				 )
+				)
+			)
+			GROUP BY f.id	,bpt.proj_id
+			 ORDER BY bpt.proj_id
+    </select>  
+    <!-- 项目任务详情 -->
+	<select id="taskPage" resultType="dto">  
+     SELECT 
+		  t.`task_code`,
+		  t.`state`,
+		  t.`task_name`,
+		  t.`plan_begin_time`,
+		  t.`plan_end_time`,
+		  ua.name assign_user_id,
+		  us.name handler_user_id,
+		  t.`task_type`,
+		  t.`task_level`,
+		  t.demand_id,
+		  pa.proj_name 
+		FROM
+		  `ta_task` t 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.name,
+		      a.id,
+		      a.is_del
+		    FROM
+		      `aos_user` a) us 
+		    ON us.id = t.`handler_user_id` 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.name,
+		      a.id 
+		    FROM
+		      `aos_user` a) ua 
+		    ON ua.id = t.`assign_user_id` 
+		  LEFT JOIN 
+		    (SELECT 
+		      p.proj_id,
+		      p.proj_name 
+		    FROM
+		      `bs_proj_commons` p) pa 
+		    ON pa.proj_id = t.`proj_id` 
+		WHERE t.proj_id = #{proj_id}
+		  AND t.state  not   IN (1001,1006)
+		 and us.is_del=0
+			<if test="plan_begin_time != null and plan_begin_time != '' and  plan_end_time != null and plan_end_time != '' ">
+			    AND (plan_begin_time BETWEEN   #{plan_begin_time} and DATE_ADD(#{plan_end_time},INTERVAL 1 DAY ))
+			</if>
+    </select> 
+     <!-- 项目缺陷详情 -->
+	<select id="bugPage" resultType="dto">  
+   SELECT 
+   		ac.`name` create_name,
+   		ua.name deal_man,
+   		re.dm_name,
+		  qa.*,
+		  pa.proj_name
+		 
+		FROM
+		  `qa_bug_manage` qa 
+		 
+		  LEFT JOIN 
+		    (SELECT 
+		      p.proj_id,
+		      p.proj_name 
+		    FROM
+		      `bs_proj_commons` p) pa 
+		    ON pa.proj_id = qa.`proj_id` 
+		    LEFT JOIN 
+		    (SELECT a.`id`,a.is_del,a.`name` FROM`aos_user` a )ua
+		    ON ua.id=qa.`deal_man`
+		      left join 
+	    ( select dm_code,dm_name from re_module_divide ) re
+	    on re.dm_code=qa.stand_id
+	      LEFT JOIN  `aos_user` ac
+    		ON ac.`id`=qa.`create_name`
+	     WHERE qa.`state` IN (1000,1001,1002)
+	     and ua.is_del=0
+	      and qa.`proj_id`=#{proj_id}
+	     	<if test="plan_begin_time != null and plan_begin_time != ''">
+			    AND qa.`create_time` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+			</if>
+			<if test="plan_end_time != null and plan_end_time != ''">
+			    AND qa.`create_time` <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+    </select> 
+    
+    <!-- 会议详情 -->
+    <select id="managePage" resultType="dto">
+    	SELECT
+			(
+				SELECT
+					NAME
+				FROM
+					aos_user au
+				WHERE
+					au.id = qfm.compere
+			) AS name,
+			c.proj_name,
+			qfm.*
+		FROM
+			qa_files_manage qfm ,bs_proj_commons c
+		<where>
+			qfm.proj_id=c.proj_id and qfm.proj_id = #{proj_id} and qfm.state_flag = 2
+		    <if test="plan_begin_time != null and plan_begin_time != ''">
+	       	 	 AND qfm.`begin_date` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+			</if>
+		    <if test="plan_end_time != null and plan_end_time != ''">
+	        	  AND qfm.`begin_date` <![CDATA[  <=  ]]> '${plan_end_time}'
+			</if>
+		</where>
+		ORDER BY
+			qfm.create_time DESC
+    </select>
+    
+      <!-- 项目需求详情 -->
+	<select id="demandPage" resultType="dto" >  
+   SELECT 
+		  re.`ad_name`,
+		  re.`ad_type`,
+		  re.ad_raise_date,
+		  re.ad_plan_finish_date,
+		  re.ad_claim_finish_date,
+		  re.ad_actual_finish_date,
+		  re.ad_source,
+		  re.ad_difficulty,
+		  re.ad_priority,
+		  re.ad_workload,
+		  re.ad_content,
+		  re.ad_chage_source,
+		  re.state,
+		  re.ad_source_remark,
+		  re.ad_remark,
+		  re.create_user_id,
+		  ua.name,
+		  pa.proj_name
+		FROM
+		  `re_demand_action` re 
+		  LEFT JOIN 
+		    (SELECT 
+		      p.proj_id,
+		      p.proj_name 
+		    FROM
+		      `bs_proj_commons` p) pa 
+		    ON pa.proj_id = re.`proj_id` 
+		 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.name,
+		      a.id ,
+		      a.is_del
+		    FROM
+		      `aos_user` a) ua 
+		    ON ua.id = re.`create_user_id` 
+		WHERE re.`PROJ_ID` = #{proj_id} 
+		and state=1
+		and ua.is_del=0
+		 <if test="plan_begin_time != null and plan_begin_time != ''">
+		       	 	  AND re.AD_PLAN_FINISH_DATE <![CDATA[  >=  ]]> '${plan_begin_time}'
+				</if>
+			    <if test="plan_end_time != null and plan_end_time != ''">
+		        	   AND re.AD_PLAN_FINISH_DATE <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+    </select> 
+    
+    
+    <!-- 个人任务详情 -->
+	<select id="task_num" resultType="dto">  
+     SELECT 
+		  t.`task_code`,
+		  t.`state`,
+		  t.`task_name`,
+		  t.`plan_begin_time`,
+		  t.`plan_end_time`,
+		  ua.name assign_user_id,
+		  us.name handler_user_id,
+		  t.`task_type`,
+		  t.`task_level`,
+		  t.demand_id,
+		  pa.proj_name 
+		FROM
+		  `ta_task` t 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.name,
+		      a.id 
+		    FROM
+		      `aos_user` a) us 
+		    ON us.id = t.`handler_user_id` 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.name,
+		      a.id 
+		    FROM
+		      `aos_user` a) ua 
+		    ON ua.id = t.`assign_user_id` 
+		  LEFT JOIN 
+		    (SELECT 
+		      p.proj_id,
+		      p.proj_name 
+		    FROM
+		      `bs_proj_commons` p) pa 
+		    ON pa.proj_id = t.`proj_id` 
+		WHERE t.proj_id = #{proj_id}
+		  AND t.handler_user_id = #{handler_user_id}
+       and t.state  not in (1001,1006)
+            <if test="plan_begin_time != null and plan_begin_time != '' and  plan_end_time != null and plan_end_time != '' ">
+			    AND (plan_begin_time BETWEEN   #{plan_begin_time} and DATE_ADD(#{plan_end_time},INTERVAL 1 DAY ))
+			</if>
+    </select> 
+    <!-- 个人总任务详情 -->
+	<select id="task_nums" resultType="dto">  
+     SELECT 
+		  t.`task_code`,
+		  t.`state`,
+		  t.`task_name`,
+		  t.`plan_begin_time`,
+		  t.`plan_end_time`,
+		  ua.name assign_user_id,
+		  us.name handler_user_id,
+		  t.`task_type`,
+		  t.`task_level`,
+		  t.demand_id,
+		  pa.proj_name 
+		FROM
+		  `ta_task` t 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.name,
+		      a.id 
+		    FROM
+		      `aos_user` a) us 
+		    ON us.id = t.`handler_user_id` 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.name,
+		      a.id 
+		    FROM
+		      `aos_user` a) ua 
+		    ON ua.id = t.`assign_user_id` 
+		  LEFT JOIN 
+		    (SELECT 
+		      p.proj_id,
+		      p.proj_name 
+		    FROM
+		      `bs_proj_commons` p) pa 
+		    ON pa.proj_id = t.`proj_id` 
+		WHERE  t.handler_user_id = #{handler_user_id}
+		  and  t.proj_id = #{proj_id}
+          and t.state   not in (1001,1006)
+		order by pa.proj_name
+    </select> 
+    
+    <!-- 缺陷详情 -->
+	<select id="bug_num" resultType="dto">  
+   SELECT  
+   		ac.`name` create_name,
+	   re.dm_name,
+	   ua.name deal_man,
+	  qa.* ,pa.proj_name
+	FROM
+	  `qa_bug_manage` qa 
+	  LEFT JOIN
+	 ( SELECT 
+	      p.proj_id,
+	      p.proj_name 
+	    FROM
+	      `bs_proj_commons` p) pa 
+	    ON pa.proj_id = qa.`proj_id` 
+	    left join 
+	    ( select dm_code,dm_name from re_module_divide ) re
+	    on re.dm_code=qa.stand_id
+	     left join 
+	     (SELECT 
+		      a.name,
+		      a.id 
+		    FROM
+		      `aos_user` a) ua 
+		    ON ua.id = qa.`deal_man` 
+		    LEFT JOIN  `aos_user` ac
+    		ON ac.`id`=qa.`create_name`
+	     WHERE qa.`proj_id`=#{proj_id}
+   		and qa.deal_man = #{id}
+   		  <if test="plan_begin_time != null and plan_begin_time != ''">
+		       	 	 AND qa.`create_time` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+				</if>
+			    <if test="plan_end_time != null and plan_end_time != ''">
+		        	  AND qa.`create_time` <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+    </select> 
+    <!-- 个人总缺陷 -->
+	<select id="bug_nums" resultType="dto">  
+   SELECT  
+   	ac.`name` create_name,
+  	 re.dm_name,
+   	ua.name deal_man,
+	  qa.* ,pa.proj_name
+	FROM
+	  `qa_bug_manage` qa 
+	  LEFT JOIN
+	 ( SELECT 
+	      p.proj_id,
+	      p.proj_name 
+	    FROM
+	      `bs_proj_commons` p) pa 
+	    ON pa.proj_id = qa.`proj_id` 
+	    left join 
+	    ( select dm_code,dm_name from re_module_divide ) re
+	    on re.dm_code=qa.stand_id
+	     left join 
+	     (SELECT 
+		      a.name,
+		      a.id 
+		    FROM
+		      `aos_user` a) ua 
+		    ON ua.id = qa.`deal_man` 
+		    LEFT JOIN  `aos_user` ac
+    		ON ac.`id`=qa.`create_name`
+	     WHERE  qa.deal_man = #{id}
+	     and qa.`proj_id`=#{proj_id}
+		order by pa.proj_name
+    </select> 
+    
+     <!-- 需求详情 -->
+	<select id="demand_num" resultType="dto">  
+   SELECT 
+		  re.`ad_name`,
+		  re.`ad_type`,
+		  re.ad_raise_date,
+		  re.ad_plan_finish_date,
+		  re.ad_claim_finish_date,
+		  re.ad_actual_finish_date,
+		  re.ad_source,
+		  re.ad_difficulty,
+		  re.ad_priority,
+		  re.ad_workload,
+		  re.ad_content,
+		  re.ad_chage_source,
+		  re.state,
+		  re.ad_source_remark,
+		  re.ad_remark,
+		  ua.name,
+		  pa.proj_name
+		FROM
+		  `re_demand_action` re 
+		  LEFT JOIN 
+		    (SELECT 
+		      p.proj_id,
+		      p.proj_name 
+		    FROM
+		      `bs_proj_commons` p) pa 
+		    ON pa.proj_id = re.`proj_id` 
+		 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.name,
+		      a.id 
+		    FROM
+		      `aos_user` a) ua 
+		    ON ua.id = re.`create_user_id` 
+		WHERE re.`PROJ_ID` = #{proj_id} 
+		  AND re.`create_user_id` = #{create_user_id}
+		  and re.state=1
+		   <if test="plan_begin_time != null and plan_begin_time != ''">
+		       	 	  AND re.AD_PLAN_FINISH_DATE <![CDATA[  >=  ]]> '${plan_begin_time}'
+				</if>
+			    <if test="plan_end_time != null and plan_end_time != ''">
+		        	   AND re.AD_PLAN_FINISH_DATE <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+    </select> 
+     <!-- 总需求详情 -->
+	<select id="demand_nums" resultType="dto">  
+   SELECT 
+		  re.`ad_name`,
+		  re.`ad_type`,
+		  re.ad_raise_date,
+		  re.ad_plan_finish_date,
+		  re.ad_claim_finish_date,
+		  re.ad_actual_finish_date,
+		  re.ad_source,
+		  re.ad_difficulty,
+		  re.ad_priority,
+		  re.ad_workload,
+		  re.ad_content,
+		  re.ad_chage_source,
+		  re.state,
+		  re.ad_source_remark,
+		  re.ad_remark,
+		  ua.name,
+		  pa.proj_name
+		FROM
+		  `re_demand_action` re 
+		  LEFT JOIN 
+		    (SELECT 
+		      p.proj_id,
+		      p.proj_name 
+		    FROM
+		      `bs_proj_commons` p) pa 
+		    ON pa.proj_id = re.`proj_id` 
+		  LEFT JOIN 
+		    (SELECT 
+		      a.name,
+		      a.id 
+		    FROM
+		      `aos_user` a) ua 
+		    ON ua.id = re.`create_user_id` 
+		WHERE  re.`create_user_id` = #{create_user_id}
+		  and re.`PROJ_ID` = #{proj_id} 
+		  and re.state=1
+		order by pa.proj_name
+    </select> 
+    
+    <!-- 会议详情 -->
+    <select id="manage_num"  resultType="Dto">
+    	SELECT
+			qm.workload,
+		  	pa.proj_name,
+			qf.begin_date,
+			qf.end_date,
+			qf.meeting_type,
+			qf.review_type,
+			qf.attende_mans,
+			qf.attende_mans_out,
+			qf.theme
+		FROM
+			qa_message qm
+		LEFT JOIN (
+			SELECT
+				p.proj_id,
+				p.proj_name
+			FROM
+				`bs_proj_commons` p
+		) pa ON pa.proj_id = qm.`proj_id`
+		LEFT JOIN (
+			SELECT 
+				q.begin_date,
+				q.end_date,
+				q.meeting_type,
+				q.review_type,
+				q.manage_code,
+				q.attende_mans_out,
+				q.attende_mans,
+				q.theme
+			FROM qa_files_manage q
+		) qf ON qf.manage_code = qm.mang_id
+		WHERE
+			qm.user_id = #{user_id}
+			AND qm.msg_state = 2
+			AND qm.proj_id = #{proj_id}
+			<if test="plan_begin_time != null and plan_begin_time != ''">
+		       	 	 AND qm.`create_time` <![CDATA[  >=  ]]> '${plan_begin_time}'  
+				</if>
+			    <if test="plan_end_time != null and plan_end_time != ''">
+		        	  AND qm.`create_time` <![CDATA[  <=  ]]> '${plan_end_time}'
+				</if>
+    </select>
+      <!-- 会议详情 -->
+    <select id="manage_nums"  resultType="Dto">
+    	SELECT
+			qm.workload,
+		  	pa.proj_name,
+			qf.begin_date,
+			qf.end_date,
+			qf.meeting_type,
+			qf.review_type,
+			qf.attende_mans,
+			qf.attende_mans_out,
+			qf.theme
+		FROM
+			qa_message qm
+		LEFT JOIN (
+			SELECT
+				p.proj_id,
+				p.proj_name
+			FROM
+				`bs_proj_commons` p
+		) pa ON pa.proj_id = qm.`proj_id`
+		LEFT JOIN (
+			SELECT 
+				q.begin_date,
+				q.end_date,
+				q.meeting_type,
+				q.review_type,
+				q.manage_code,
+				q.attende_mans_out,
+				q.attende_mans,
+				q.theme
+			FROM qa_files_manage q
+		) qf ON qf.manage_code = qm.mang_id
+		WHERE
+			qm.user_id = #{user_id}
+			AND qm.msg_state = 2
+			AND qm.proj_id = #{proj_id}
+    </select>
+    
+    <!-- 任务一览表-->
+	<select id="projTasks" resultType="Dto">
+		SELECT 
+			  a.`id`,
+			  a.`name`,
+			   ta.proj_name,
+			  ta.task_name,
+			  ta.plan_begin_time,
+			  ta.real_begin_time,
+			  ta.days,
+			  ta.plan_end_time,
+			  ta.real_end_time,
+			  ta.overdue
+			FROM
+			  `aos_user` a 
+			  LEFT JOIN 
+			    (SELECT 
+			      t.`task_name`,
+			      t.`handler_user_id`,
+			      t.plan_begin_time,
+       			  t.plan_end_time,
+			      t.`real_begin_time`,
+			      t.`real_end_time`,
+			      bp.`PROJ_NAME`,
+			      IF(
+			        IFNULL(t.real_end_time, t.real_end_time),
+			        DATEDIFF(t.`real_end_time`, t.real_begin_time)+1,
+			        DATEDIFF(NOW(), t.plan_begin_time)+1
+			        
+			      ) days,
+			      IF(IFNULL( t.`real_end_time`,NOW())>t.plan_end_time,'是','否') overdue 
+			    FROM
+			      `ta_task` t  ,  
+			       `bs_proj_commons` bp
+				    WHERE t.`state` IN (1002, 1003)
+				     AND bp.`STATE`=1
+				     AND bp.`PROJ_ID`=t.`proj_id` )ta
+			      ON ta.handler_user_id=a.id
+			    <where>
+				    <if test="flag_m != null and flag_m != '' ">
+					     and task_name IS NULL
+					</if>
+					<if test="id != null and id != '' ">
+			     			 and a.`id`=#{id}
+					</if>
+					<if test="plan_begin_time != null and plan_begin_time != '' and  plan_end_time != null and plan_end_time != '' ">
+				            AND ((real_begin_time BETWEEN   #{plan_begin_time} and DATE_ADD(#{plan_end_time},INTERVAL 1 DAY ))
+					</if>	
+					<if test="plan_begin_time != null and plan_begin_time != '' and  plan_end_time != null and plan_end_time != '' ">
+						     or(real_end_time BETWEEN   #{plan_begin_time} and DATE_ADD(#{plan_end_time},INTERVAL 1 DAY )))
+					</if>
+		      </where>
+	</select>
+	
+    <!-- 任务一览表-->
+	<select id="projTask" resultType="Dto">
+		SELECT 
+			  a.id,
+			  a.name,
+			  IFNULL(GROUP_CONCAT(
+			    CONCAT(bt.`PROJ_NAME`, '-', bt.TRP_NAME)
+			  ) ,'')AS display,
+			  IFNULL(ta.num,0)num,
+			  IFNULL(tb.yfb_task,0)yfb_task,
+			  IFNULL(tc.yzs_task ,0)yzs_task
+			FROM
+			`aos_user` a
+			  LEFT JOIN 
+			    (SELECT 
+			      b.`TEAM_USER_ID`,
+			      b.`PROJ_ID`,
+			      br.`TRP_NAME` ,
+			      bc.`PROJ_NAME`
+			    
+			    FROM
+			      `bs_proj_teams` b,
+			      `bs_proj_commons` bc ,
+			      `bs_proj_role_types` br 
+			    WHERE bc.`PROJ_ID`=b.`PROJ_ID` 
+			      AND br.`TRP_CODE` = b.`TRP_CODE`
+			     AND bc.`STATE` = 1 ) bt 
+			    ON a.`id` = bt.TEAM_USER_ID
+			  LEFT JOIN 
+			    (SELECT 
+			      COUNT(t.`task_id`) num,
+			      t.`proj_id`,
+			      t.`handler_user_id` 
+			    FROM
+			      `ta_task` t,
+			      `bs_proj_commons` bp,
+			      `aos_user` a 
+			    WHERE t.`state` IN (1002, 1003) 
+			      AND a.id = t.`handler_user_id` 
+			      AND bp.`STATE` = 1 
+			      AND bp.`PROJ_ID` = t.`proj_id` 
+			    GROUP BY t.handler_user_id) ta 
+			    ON ta.handler_user_id = a.`id`
+			  LEFT JOIN 
+			    (SELECT 
+			      COUNT(t.`task_id`) yfb_task,
+			      t.`proj_id`,
+			      t.`handler_user_id` 
+			    FROM
+			      `ta_task` t,
+			      `bs_proj_commons` bp,
+			      `aos_user` a 
+			    WHERE t.`state` IN (1002) 
+			      AND a.id = t.`handler_user_id` 
+			      AND bp.`STATE` = 1 
+			      AND bp.`PROJ_ID` = t.`proj_id` 
+			    GROUP BY t.handler_user_id) tb 
+			    ON tb.handler_user_id = a.id 
+			  LEFT JOIN 
+			    (SELECT 
+			      COUNT(t.`task_id`) yzs_task,
+			      t.`proj_id`,
+			      t.`handler_user_id` 
+			    FROM
+			      `ta_task` t,
+			      `bs_proj_commons` bp,
+			      `aos_user` a 
+			    WHERE t.`state` IN (1003) 
+			      AND a.id = t.`handler_user_id` 
+			      AND bp.`STATE` = 1 
+			      AND bp.`PROJ_ID` = t.`proj_id` 
+			    GROUP BY t.handler_user_id) tc 
+			    ON tc.handler_user_id = a.id 
+			    WHERE a.`name` NOT IN ('超级用户','李雷','系统管理员')
+				 <if test="flag_m != null and flag_m != '' ">
+				     and  ta.num IS NULL
+				</if>
+			 <if test="name != null and name != '' ">
+				     and  a.name = #{name}
+				</if>
+			 <if test="id != null and id != '' ">
+				     and  a.id = #{id}
+				</if>
+				AND a.`is_del`=0
+			GROUP BY a.id 
+	</select>
+	
+    
+</mapper>

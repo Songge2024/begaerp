@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- aos_role_data_filter[AosRoleDataFilter]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-11-28 19:37:58 -->
+<mapper namespace="aos.system.dao.AosRoleDataFilterDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="AosRoleDataFilterPO">
+		INSERT INTO aos_role_data_filter (
+		<if test="role_id != null">
+	         role_id, <!-- 角色编码 -->
+		</if>
+		<if test="data_filter_id != null">
+	         data_filter_id, <!-- 路径编码 -->
+		</if>
+		<if test="filter != null and filter != ''">
+	         filter, <!-- 过滤规则 -->
+		</if>
+		<if test="id != null">
+	          id  <!-- 规则编码 -->
+	   </if>
+		)VALUES(
+		<if test="role_id != null">
+	          #{role_id, jdbcType=INTEGER}, <!-- 角色编码 -->
+	    </if>
+		<if test="data_filter_id != null">
+	          #{data_filter_id, jdbcType=INTEGER}, <!-- 路径编码 -->
+	    </if>
+		<if test="filter != null and filter != ''">
+	          #{filter, jdbcType=VARCHAR}, <!-- 过滤规则 -->
+	    </if>
+		<if test="id != null">
+		     #{id, jdbcType=INTEGER}  <!-- 规则编码 -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="AosRoleDataFilterPO">
+		INSERT INTO aos_role_data_filter (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{id, jdbcType=INTEGER},  <!-- 规则编码 -->
+		    #{role_id, jdbcType=INTEGER},  <!-- 角色编码 -->
+		    #{data_filter_id, jdbcType=INTEGER},  <!-- 路径编码 -->
+		    #{filter, jdbcType=VARCHAR}  <!-- 过滤规则 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="AosRoleDataFilterPO">
+		UPDATE aos_role_data_filter
+		<set>
+			<if test="id != null">
+		          id = #{id, jdbcType=INTEGER},  <!-- 规则编码 -->
+			</if>
+			<if test="role_id != null">
+		          role_id = #{role_id, jdbcType=INTEGER},  <!-- 角色编码 -->
+			</if>
+			<if test="data_filter_id != null">
+		          data_filter_id = #{data_filter_id, jdbcType=INTEGER},  <!-- 路径编码 -->
+			</if>
+			<if test="filter != null">
+		          filter = #{filter, jdbcType=VARCHAR},  <!-- 过滤规则 -->
+			</if>
+		</set>
+		WHERE  id = #{id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM aos_role_data_filter WHERE  id = #{id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="AosRoleDataFilterPO">
+		SELECT
+		<include refid="column" />
+		FROM aos_role_data_filter WHERE  id = #{id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="AosRoleDataFilterPO">
+		SELECT
+		    <include refid="column" />
+		FROM aos_role_data_filter
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="AosRoleDataFilterPO">
+		SELECT
+			<include refid="column" />	
+		FROM aos_role_data_filter
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="AosRoleDataFilterPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM aos_role_data_filter
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="AosRoleDataFilterPO">
+		SELECT
+			<include refid="column" />	
+		FROM aos_role_data_filter
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="AosRoleDataFilterPO">
+		SELECT
+			<include refid="column" />	
+		FROM aos_role_data_filter
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="AosRoleDataFilterPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM aos_role_data_filter
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="AosRoleDataFilterPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM aos_role_data_filter
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM aos_role_data_filter
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM aos_role_data_filter
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  id,  <!-- 规则编码 -->
+		  role_id,  <!-- 角色编码 -->
+		  data_filter_id,  <!-- 路径编码 -->
+		  filter  <!-- 过滤规则 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  aos_role_data_filter.id,  <!-- 规则编码 -->
+		  aos_role_data_filter.role_id,  <!-- 角色编码 -->
+		  aos_role_data_filter.data_filter_id,  <!-- 路径编码 -->
+		  aos_role_data_filter.filter  <!-- 过滤规则 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="id != null ">
+		      AND id = #{id}  <!-- 规则编码 -->
+		</if>
+	   <if test="role_id != null ">
+		      AND role_id = #{role_id}  <!-- 角色编码 -->
+		</if>
+	   <if test="data_filter_id != null ">
+		      AND data_filter_id = #{data_filter_id}  <!-- 路径编码 -->
+		</if>
+	    <if test="filter != null and filter != ''">
+		      AND filter = #{filter}  <!-- 过滤规则 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="filter != null and filter != ''">
+		      AND filter like '${filter}%'  <!-- 过滤规则 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="filter != null and filter != ''">
+		      Or filter like '${filter}%'  <!-- 过滤规则 -->
+		</if>
+	</sql>
+	
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_contract_file[ContractFile]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-17 17:29:20 -->
+<mapper namespace="ContractFileDao">
+<!--查询系统管理员，登陆人员，部门经理  -->
+<select id="queryLoginAdPm" parameterType="Dto" resultType="Dto">
+					SELECT DISTINCT
+			TEAM_USER_ID as id
+		FROM
+			bs_proj_teams
+		WHERE
+			TRP_CODE IN (28)
+		AND state = 1
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="list" parameterType="Dto" resultType="Dto">
+		SELECT u.name as create_user_name,
+			<include refid="column" />	
+		FROM bs_contract_file f,aos_user u
+		<where>
+		    <include refid="com.bl3.pm.contract.dao.ContractFileDao.equal" />
+		    and f.create_user_id = u.id
+		</where>	
+	</select>
+	
+	<!-- 根据合同主键删除数据持久化对象 -->
+	<delete id="deleteByCtKey">
+		DELETE FROM bs_contract_file WHERE  ct_id = #{ct_id}
+	</delete>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  f.ct_file_id,  <!-- 合同文件ID -->
+		  f.ct_id,  <!-- 合同ID -->
+		  f.ct_file_code,  <!-- 文件编码 -->
+		  f.create_user_id,  <!-- 创建人 -->
+		  f.create_time,  <!-- 创建时间 -->
+		  f.update_user_id,  <!-- 更新人 -->
+		  f.update_time,  <!-- 更新时间 -->
+		  f.state,  <!-- 状态 -->
+		  f.ct_file_title,  <!-- 上传文件标题 -->
+		  f.ct_file_path,  <!-- 上传文件路径 -->
+		  f.ct_file_url,  <!-- 上传文件URL -->
+		  f.ct_file_size,  <!-- 上传文件大小 -->
+		  f.ct_file_remark  <!-- 上传文件备注 -->
+	</sql>
+</mapper>

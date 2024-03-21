@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_preserve_point[PreservePoint]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2019-10-22 13:44:43 -->
+<mapper namespace="com.bl3.pm.process.dao.PreservePointDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="PreservePointPO">
+		INSERT INTO pr_preserve_point (
+		<if test="problem_level != null and problem_level != ''">
+	         problem_level, <!-- 问题等级 -->
+		</if>
+		<if test="deduct_point != null and deduct_point != ''">
+	         deduct_point, <!-- 扣分标准 -->
+		</if>
+		<if test="solve_deduct_point != null and solve_deduct_point != ''">
+	         solve_deduct_point, <!-- 解决时限扣分标准 -->
+		</if>
+		<if test="solve_times != null and solve_times != ''">
+	         solve_times, <!-- 问题解决时限 -->
+		</if>
+	          id
+		)VALUES(
+		<if test="problem_level != null and problem_level != ''">
+	          #{problem_level, jdbcType=VARCHAR}, <!-- 问题等级 -->
+	    </if>
+		<if test="deduct_point != null and deduct_point != ''">
+	          #{deduct_point, jdbcType=VARCHAR}, <!-- 扣分标准 -->
+	    </if>
+		<if test="solve_deduct_point != null and solve_deduct_point != ''">
+	          #{solve_deduct_point, jdbcType=VARCHAR}, <!-- 解决时限扣分标准 -->
+	    </if>
+		<if test="solve_times != null and solve_times != ''">
+	          #{solve_times, jdbcType=VARCHAR}, <!-- 问题解决时限 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="id" parameterType="PreservePointPO">
+		INSERT INTO pr_preserve_point (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{id, jdbcType=INTEGER},  <!-- 扣分标准ID -->
+		    #{problem_level, jdbcType=VARCHAR},  <!-- 问题等级 -->
+		    #{deduct_point, jdbcType=VARCHAR},  <!-- 扣分标准 -->
+		    #{solve_deduct_point, jdbcType=VARCHAR},  <!-- 解决时限扣分标准 -->
+		    #{solve_times, jdbcType=VARCHAR}  <!-- 问题解决时限 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="PreservePointPO">
+		UPDATE pr_preserve_point
+		<set>
+			<if test="id != null">
+		          id = #{id, jdbcType=INTEGER},  <!-- 扣分标准ID -->
+			</if>
+			<if test="problem_level != null">
+		          problem_level = #{problem_level, jdbcType=VARCHAR},  <!-- 问题等级 -->
+			</if>
+			<if test="deduct_point != null">
+		          deduct_point = #{deduct_point, jdbcType=VARCHAR},  <!-- 扣分标准 -->
+			</if>
+			<if test="solve_deduct_point != null">
+		          solve_deduct_point = #{solve_deduct_point, jdbcType=VARCHAR},  <!-- 解决时限扣分标准 -->
+			</if>
+			<if test="solve_times != null">
+		          solve_times = #{solve_times, jdbcType=VARCHAR},  <!-- 问题解决时限 -->
+			</if>
+		</set>
+		WHERE  id = #{id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM pr_preserve_point WHERE  id = #{id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="PreservePointPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_preserve_point WHERE  id = #{id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="PreservePointPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_preserve_point
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="PreservePointPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_preserve_point
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="PreservePointPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_preserve_point
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="PreservePointPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_preserve_point
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="PreservePointPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_preserve_point
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="PreservePointPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_preserve_point
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="PreservePointPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_preserve_point
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_preserve_point
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_preserve_point
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  id,  <!-- 扣分标准ID -->
+		  problem_level,  <!-- 问题等级 -->
+		  deduct_point,  <!-- 扣分标准 -->
+		  solve_deduct_point,  <!-- 解决时限扣分标准 -->
+		  solve_times  <!-- 问题解决时限 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_preserve_point.id,  <!-- 扣分标准ID -->
+		  pr_preserve_point.problem_level,  <!-- 问题等级 -->
+		  pr_preserve_point.deduct_point,  <!-- 扣分标准 -->
+		  pr_preserve_point.solve_deduct_point,  <!-- 解决时限扣分标准 -->
+		  pr_preserve_point.solve_times  <!-- 问题解决时限 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="id != null ">
+		      AND id = #{id}  <!-- 扣分标准ID -->
+		</if>
+	    <if test="problem_level != null and problem_level != ''">
+		      AND problem_level = #{problem_level}  <!-- 问题等级 -->
+		</if>
+	    <if test="deduct_point != null and deduct_point != ''">
+		      AND deduct_point = #{deduct_point}  <!-- 扣分标准 -->
+		</if>
+	    <if test="solve_deduct_point != null and solve_deduct_point != ''">
+		      AND solve_deduct_point = #{solve_deduct_point}  <!-- 解决时限扣分标准 -->
+		</if>
+	    <if test="solve_times != null and solve_times != ''">
+		      AND solve_times = #{solve_times}  <!-- 问题解决时限 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="problem_level != null and problem_level != ''">
+		      AND problem_level like '${problem_level}%'  <!-- 问题等级 -->
+		</if>
+	    <if test="deduct_point != null and deduct_point != ''">
+		      AND deduct_point like '${deduct_point}%'  <!-- 扣分标准 -->
+		</if>
+	    <if test="solve_deduct_point != null and solve_deduct_point != ''">
+		      AND solve_deduct_point like '${solve_deduct_point}%'  <!-- 解决时限扣分标准 -->
+		</if>
+	    <if test="solve_times != null and solve_times != ''">
+		      AND solve_times like '${solve_times}%'  <!-- 问题解决时限 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="problem_level != null and problem_level != ''">
+		      Or problem_level like '${problem_level}%'  <!-- 问题等级 -->
+		</if>
+	    <if test="deduct_point != null and deduct_point != ''">
+		      Or deduct_point like '${deduct_point}%'  <!-- 扣分标准 -->
+		</if>
+	    <if test="solve_deduct_point != null and solve_deduct_point != ''">
+		      Or solve_deduct_point like '${solve_deduct_point}%'  <!-- 解决时限扣分标准 -->
+		</if>
+	    <if test="solve_times != null and solve_times != ''">
+		      Or solve_times like '${solve_times}%'  <!-- 问题解决时限 -->
+		</if>
+	</sql>
+	
+</mapper>

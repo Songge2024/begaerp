@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_entry_registration[EntryRegistration]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-04-20 16:20:30 -->
+<mapper namespace="com.bl3.pm.recruit.dao.EntryRegistrationDao">
+	<select id="queryEnterRegistrationRecord" resultType="Dto" parameterType="Dto">
+				SELECT
+		a.*,b.*
+		FROM
+			bs_entry_registration b
+		LEFT JOIN  bs_recruiter_information a ON b.result_id= a.register_id
+		<where>
+		    <if test="register_id != null and register_id != ''">
+		      AND a.register_id =#{register_id}
+		</if>
+		    <if test="register_date != null and register_date != ''">
+		      AND a.register_date like '${register_date}%'  <!-- 登记日期 -->
+		</if>
+	    <if test="name != null and name != ''">
+		      AND a.name like '${name}%'  <!-- 姓名 -->
+		</if>
+	    <if test="sex != null and sex != ''">
+		      AND a.sex like '${sex}%'  <!-- 性别 -->
+		</if>
+	    <if test="link_phone != null and link_phone != ''">
+		      AND a.link_phone like '${link_phone}%'  <!-- 联系方式 -->
+		</if>
+	    <if test="contact_date != null and contact_date != ''">
+		      AND a.contact_date like '${contact_date}%'  <!-- 联系日期 -->
+		</if>
+	    <if test="contact_result != null and contact_result != ''">
+		      AND a.contact_result like '${contact_result}%'  <!-- 联系结果 -->
+		</if>
+	    <if test="interview_date != null and interview_date != ''">
+		      AND a.interview_date like '${interview_date}%'  <!-- 约定面试日期 -->
+		</if>
+	    <if test="notify_entry_time != null and notify_entry_time != ''">
+		      AND  date_format(b.entry_date,'%Y-%m-%d') =date_format(#{notify_entry_time},'%Y-%m-%d')  <!-- 通知入职时间 -->
+		</if>
+		</where>	
+	</select>
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="entry_id" parameterType="EntryRegistrationPO">
+		INSERT INTO bs_entry_registration (
+		<if test="result_id != null">
+	         result_id, <!-- 结果id -->
+		</if>
+		<if test="entry_type != null and entry_type != ''">
+	         entry_type, <!-- 入职类型 -->
+		</if>
+		<if test="entry_date != null and entry_date != ''">
+	         entry_date, <!-- 入职时间 -->
+		</if>
+		<if test="entry_post != null and entry_post != ''">
+	         entry_post, <!-- 入职岗位 -->
+		</if>
+		<if test="experience != null and experience != ''">
+	         experience, <!-- 经验 -->
+		</if>
+		<if test="train_situation != null and train_situation != ''">
+	         train_situation, <!-- 培训情况 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人Id -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人id -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="result_remark != null and result_remark != ''">
+	         result_remark <!-- 备注 -->
+		</if>
+		)VALUES(
+		<if test="result_id != null">
+	          #{result_id, jdbcType=INTEGER}, <!-- 结果id -->
+	    </if>
+		<if test="entry_type != null and entry_type != ''">
+	          #{entry_type, jdbcType=VARCHAR}, <!-- 入职类型 -->
+	    </if>
+		<if test="entry_date != null and entry_date != ''">
+	          #{entry_date, jdbcType=VARCHAR}, <!-- 入职时间 -->
+	    </if>
+		<if test="entry_post != null and entry_post != ''">
+	          #{entry_post, jdbcType=VARCHAR}, <!-- 入职岗位 -->
+	    </if>
+		<if test="experience != null and experience != ''">
+	          #{experience, jdbcType=VARCHAR}, <!-- 经验 -->
+	    </if>
+		<if test="train_situation != null and train_situation != ''">
+	          #{train_situation, jdbcType=VARCHAR}, <!-- 培训情况 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人Id -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人id -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="result_remark != null and result_remark != ''">
+	          #{result_remark, jdbcType=VARCHAR} <!-- 备注 -->
+	    </if>
+	          
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="entry_id" parameterType="EntryRegistrationPO">
+		INSERT INTO bs_entry_registration (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{entry_id, jdbcType=INTEGER},  <!-- 入职主键id -->
+		    #{result_id, jdbcType=INTEGER},  <!-- 结果id -->
+		    #{entry_type, jdbcType=VARCHAR},  <!-- 入职类型 -->
+		    #{entry_date, jdbcType=VARCHAR},  <!-- 入职时间 -->
+		    #{entry_post, jdbcType=VARCHAR},  <!-- 入职岗位 -->
+		    #{experience, jdbcType=VARCHAR},  <!-- 经验 -->
+		    #{train_situation, jdbcType=VARCHAR},  <!-- 培训情况 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人Id -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人id -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{result_remark, jdbcType=VARCHAR}  <!-- 备注 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="EntryRegistrationPO">
+		UPDATE bs_entry_registration
+		<set>
+		
+			<if test="entry_type != null">
+		          entry_type = #{entry_type, jdbcType=VARCHAR},  <!-- 入职类型 -->
+			</if>
+			<if test="entry_date != null">
+		          entry_date = #{entry_date, jdbcType=VARCHAR},  <!-- 入职时间 -->
+			</if>
+			<if test="entry_post != null">
+		          entry_post = #{entry_post, jdbcType=VARCHAR},  <!-- 入职岗位 -->
+			</if>
+			<if test="experience != null">
+		          experience = #{experience, jdbcType=VARCHAR},  <!-- 经验 -->
+			</if>
+			<if test="train_situation != null">
+		          train_situation = #{train_situation, jdbcType=VARCHAR},  <!-- 培训情况 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人Id -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人id -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="result_remark != null">
+		          result_remark = #{result_remark, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+		</set>
+		WHERE  entry_id = #{entry_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_entry_registration WHERE  entry_id = #{entry_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="EntryRegistrationPO">
+		SELECT
+		<include refid="column" />
+		FROM bs_entry_registration WHERE  entry_id = #{entry_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="EntryRegistrationPO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_entry_registration
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="EntryRegistrationPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_entry_registration
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="EntryRegistrationPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_entry_registration
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="EntryRegistrationPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_entry_registration
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="EntryRegistrationPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_entry_registration
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="EntryRegistrationPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_entry_registration
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="EntryRegistrationPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_entry_registration
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_entry_registration
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_entry_registration
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  entry_id,  <!-- 入职主键id -->
+		  result_id,  <!-- 结果id -->
+		  entry_type,  <!-- 入职类型 -->
+		  date_format(entry_date,'%Y-%m-%d')entry_date,  <!-- 入职时间 -->
+		  entry_post,  <!-- 入职岗位 -->
+		  experience,  <!-- 经验 -->
+		  train_situation,  <!-- 培训情况 -->
+		  create_user_id,  <!-- 创建人Id -->
+		  update_user_id,  <!-- 更新人id -->
+		  date_format(create_time,'%Y-%m-%d') create_time,  <!-- 创建时间 -->
+		  date_format(update_time,'%Y-%m-%d') update_time,  <!-- 更新时间 -->
+		  result_remark  <!-- 备注 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_entry_registration.entry_id,  <!-- 入职主键id -->
+		  bs_entry_registration.result_id,  <!-- 结果id -->
+		  bs_entry_registration.entry_type,  <!-- 入职类型 -->
+		  bs_entry_registration.entry_date,  <!-- 入职时间 -->
+		  bs_entry_registration.entry_post,  <!-- 入职岗位 -->
+		  bs_entry_registration.experience,  <!-- 经验 -->
+		  bs_entry_registration.train_situation,  <!-- 培训情况 -->
+		  bs_entry_registration.create_user_id,  <!-- 创建人Id -->
+		  bs_entry_registration.update_user_id,  <!-- 更新人id -->
+		  bs_entry_registration.create_time,  <!-- 创建时间 -->
+		  bs_entry_registration.update_time,  <!-- 更新时间 -->
+		  bs_entry_registration.result_remark  <!-- 备注 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="entry_id != null ">
+		      AND entry_id = #{entry_id}  <!-- 入职主键id -->
+		</if>
+	   <if test="result_id != null ">
+		      AND result_id = #{result_id}  <!-- 结果id -->
+		</if>
+	    <if test="entry_type != null and entry_type != ''">
+		      AND entry_type = #{entry_type}  <!-- 入职类型 -->
+		</if>
+	    <if test="entry_date != null and entry_date != ''">
+		      AND entry_date = #{entry_date}  <!-- 入职时间 -->
+		</if>
+	    <if test="entry_post != null and entry_post != ''">
+		      AND entry_post = #{entry_post}  <!-- 入职岗位 -->
+		</if>
+	    <if test="experience != null and experience != ''">
+		      AND experience = #{experience}  <!-- 经验 -->
+		</if>
+	    <if test="train_situation != null and train_situation != ''">
+		      AND train_situation = #{train_situation}  <!-- 培训情况 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人Id -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人id -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="result_remark != null and result_remark != ''">
+		      AND result_remark = #{result_remark}  <!-- 备注 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="entry_type != null and entry_type != ''">
+		      AND entry_type like '${entry_type}%'  <!-- 入职类型 -->
+		</if>
+	    <if test="entry_date != null and entry_date != ''">
+		      AND entry_date like '${entry_date}%'  <!-- 入职时间 -->
+		</if>
+	    <if test="entry_post != null and entry_post != ''">
+		      AND entry_post like '${entry_post}%'  <!-- 入职岗位 -->
+		</if>
+	    <if test="experience != null and experience != ''">
+		      AND experience like '${experience}%'  <!-- 经验 -->
+		</if>
+	    <if test="train_situation != null and train_situation != ''">
+		      AND train_situation like '${train_situation}%'  <!-- 培训情况 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="result_remark != null and result_remark != ''">
+		      AND result_remark like '${result_remark}%'  <!-- 备注 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="entry_type != null and entry_type != ''">
+		      Or entry_type like '${entry_type}%'  <!-- 入职类型 -->
+		</if>
+	    <if test="entry_date != null and entry_date != ''">
+		      Or entry_date like '${entry_date}%'  <!-- 入职时间 -->
+		</if>
+	    <if test="entry_post != null and entry_post != ''">
+		      Or entry_post like '${entry_post}%'  <!-- 入职岗位 -->
+		</if>
+	    <if test="experience != null and experience != ''">
+		      Or experience like '${experience}%'  <!-- 经验 -->
+		</if>
+	    <if test="train_situation != null and train_situation != ''">
+		      Or train_situation like '${train_situation}%'  <!-- 培训情况 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="result_remark != null and result_remark != ''">
+		      Or result_remark like '${result_remark}%'  <!-- 备注 -->
+		</if>
+	</sql>
+	
+</mapper>

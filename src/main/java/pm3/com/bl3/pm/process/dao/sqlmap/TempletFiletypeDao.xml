@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_templet_filetype[TempletFiletype]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-14 09:48:51 -->
+<mapper namespace="com.bl3.pm.process.dao.TempletFiletypeDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="TempletFiletypePO">
+		INSERT INTO pr_templet_filetype (
+		<if test="templet_id != null">
+	         templet_id, <!-- 模板ID -->
+		</if>
+		<if test="temp_proc_id != null">
+	         temp_proc_id, <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+		</if>
+		<if test="subdir_id != null">
+	         subdir_id, <!-- 模板过程文档文件类型ID -->
+		</if>
+		<if test="filetype_id != null">
+	         filetype_id, <!-- 模板过程文档文件类型ID -->
+		</if>
+		<if test="temp_filetype_name != null and temp_filetype_name != ''">
+	         temp_filetype_name, <!-- 模板过程文档文件类型名称 -->
+		</if>
+		<if test="sort_no != null and sort_no != ''">
+	         sort_no, <!-- 排序号 -->
+	    </if>
+	    <if test="sort_no == null">
+	         sort_no, <!-- 排序号 -->
+	    </if>
+		<if test="flow_state != null">
+	         flow_state, <!-- 是否必须流程 0 否 1 是 -->
+		</if>
+		<if test="create_user_id != null and create_user_id != ''">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		   create_time <!-- 创建时间 -->
+		)VALUES(
+		<if test="templet_id != null">
+	          #{templet_id, jdbcType=INTEGER}, <!-- 模板ID -->
+	    </if>
+		<if test="temp_proc_id != null">
+	          #{temp_proc_id, jdbcType=INTEGER}, <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+	    </if>
+	    <if test="subdir_id != null">
+	          #{subdir_id, jdbcType=INTEGER}, <!-- 所属过程子目录pr_templet_process.templet_subdir_id -->
+	    </if>
+		<if test="filetype_id != null">
+	          #{filetype_id, jdbcType=INTEGER}, <!-- 模板过程文档文件类型ID -->
+	    </if>
+		<if test="temp_filetype_name != null and temp_filetype_name != ''">
+	          #{temp_filetype_name, jdbcType=VARCHAR}, <!-- 模板过程文档文件类型名称 -->
+	    </if>
+	     <if test="sort_no != null and sort_no != ''">
+			#{sort_no, jdbcType=INTEGER},
+		 </if>
+	    <if test="sort_no == null">
+		 (SELECT ifnull(max(sort_no),0) FROM pr_templet_filetype a WHERE  templet_id = #{templet_id} and subdir_id = #{subdir_id})+1,
+		 </if>
+		<if test="flow_state != null">
+	          #{flow_state, jdbcType=INTEGER}, <!-- 是否必须流程 0 否 1 是 -->
+	    </if>
+		<if test="create_user_id != null and create_user_id != ''">
+	          #{create_user_id, jdbcType=VARCHAR}, <!-- 创建人 -->
+	    </if>
+		<if test="update_user_id != null and update_user_id != ''">
+	          #{update_user_id, jdbcType=VARCHAR}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR},<!-- 状态 -->
+	    </if>
+	      sysdate() <!-- 创建时间 -->
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insertFiletype"  parameterType="Dto">
+		INSERT INTO pr_templet_filetype (
+			 templet_id,
+	         subdir_id, <!-- 模板过程文档文件类型ID -->
+	         filetype_id, <!-- 模板过程文档文件类型ID -->
+	         temp_filetype_name, <!-- 模板过程文档文件类型名称 -->
+	         `sort_no`, <!-- 排序号 -->
+	         flow_state, <!-- 是否必须流程 0 否 1 是 -->
+	         create_user_id, <!-- 创建人 -->
+	         state, <!-- 状态 -->
+		   create_time <!-- 创建时间 -->
+		)select * from (
+		select #{new_templet_id} ,a.subdir_id,a.filetype_id,a.temp_filetype_name,a.sort_no,a.flow_state,#{create_user_id},1 ,sysdate() from pr_templet_filetype a where templet_id = #{old_templet_id} and state =1
+		) as tb
+	</insert>
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="TempletFiletypePO">
+		INSERT INTO pr_templet_filetype (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{templet_id, jdbcType=INTEGER},  <!-- 模板ID -->
+		    #{temp_proc_id, jdbcType=INTEGER},  <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+		    #{subdir_id, jdbcType=INTEGER},
+		    #{filetype_id, jdbcType=INTEGER},  <!-- 模板过程文档文件类型ID -->
+		    #{temp_filetype_name, jdbcType=VARCHAR},  <!-- 模板过程文档文件类型名称 -->
+		    #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+		    #{flow_state, jdbcType=INTEGER},  <!-- 是否必须流程 0 否 1 是 -->
+		    #{create_user_id, jdbcType=VARCHAR},  <!-- 创建人 -->
+		    sysdate(),  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=VARCHAR},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+	<!--updateFiletype 批量更新-->
+	<update id="updateFiletype" parameterType="TempletFiletypePO">
+		UPDATE pr_templet_filetype a
+		SET a.temp_proc_id = (
+			SELECT
+			b.temp_proc_id
+		FROM
+			pr_templet_process b
+		where 
+		b.templet_id = a.templet_id
+	and b.subdir_id = a.subdir_id
+	and b.state = 1) where a.temp_proc_id is null
+		</update>
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="TempletFiletypePO">
+		UPDATE pr_templet_filetype
+		<set>
+			<if test="temp_filetype_id != null">
+		          temp_filetype_id = #{temp_filetype_id, jdbcType=INTEGER},  <!-- 模板文件类型ID -->
+			</if>
+			<if test="templet_id != null">
+		          templet_id = #{templet_id, jdbcType=INTEGER},  <!-- 模板ID -->
+			</if>
+			<if test="temp_proc_id != null">
+		          temp_proc_id = #{temp_proc_id, jdbcType=INTEGER},  <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+			</if>
+			<if test="subdir_id != null">
+		          subdir_id = #{subdir_id, jdbcType=INTEGER},  <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+			</if>
+			<if test="filetype_id != null">
+		          filetype_id = #{filetype_id, jdbcType=INTEGER},  <!-- 模板过程文档文件类型ID -->
+			</if>
+			<if test="temp_filetype_name != null">
+		          temp_filetype_name = #{temp_filetype_name, jdbcType=VARCHAR},  <!-- 模板过程文档文件类型名称 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="flow_state != null">
+		          flow_state = #{flow_state, jdbcType=INTEGER},  <!-- 是否必须流程 0 否 1 是 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=VARCHAR},  <!-- 更新人 -->
+			</if>
+		          update_time = sysdate(),  <!-- 更新时间 -->
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  temp_filetype_id = #{temp_filetype_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		update pr_templet_filetype set state = 0 WHERE  temp_filetype_id = #{temp_filetype_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="TempletFiletypePO">
+		SELECT
+		<include refid="column" />
+		FROM pr_templet_filetype WHERE  temp_filetype_id = #{temp_filetype_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="TempletFiletypePO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_templet_filetype
+		<where>
+		    <include refid="equal" />
+		</where>	
+		order by sort_no	
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="TempletFiletypePO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_templet_filetype
+		<where>
+		    <include refid="equal" />
+		</where>	
+		order by sort_no
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="TempletFiletypePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_templet_filetype
+		<where>
+		    <include refid="equal" />
+		</where>
+		order by sort_no	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="TempletFiletypePO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_templet_filetype
+		<where>
+		    <include refid="like" />
+		</where>
+		order by sort_no	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="TempletFiletypePO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_templet_filetype
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+		order by sort_no
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="TempletFiletypePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_templet_filetype
+		<where>
+		    <include refid="like" />
+		</where>	
+		order by sort_no
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="TempletFiletypePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_templet_filetype
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+		order by sort_no
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_templet_filetype
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_templet_filetype
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  temp_filetype_id,  <!-- 模板文件类型ID -->
+		  templet_id,  <!-- 模板ID -->
+		  temp_proc_id,  <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+		  filetype_id,  <!-- 模板过程文档文件类型ID -->
+		  temp_filetype_name,  <!-- 模板过程文档文件类型名称 -->
+		  sort_no,  <!-- 排序号 -->
+		  flow_state,  <!-- 是否必须流程 0 否 1 是 -->
+		  (select name from aos_user where id =create_user_id) create_user_name,  <!-- 创建人 -->
+		  create_user_id,
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_templet_filetype.temp_filetype_id,  <!-- 模板文件类型ID -->
+		  pr_templet_filetype.templet_id,  <!-- 模板ID -->
+		  pr_templet_filetype.temp_proc_id,  <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+		  pr_templet_filetype.filetype_id,  <!-- 模板过程文档文件类型ID -->
+		  pr_templet_filetype.temp_filetype_name,  <!-- 模板过程文档文件类型名称 -->
+		  pr_templet_filetype.sort_no,  <!-- 排序号 -->
+		  pr_templet_filetype.flow_state,  <!-- 是否必须流程 0 否 1 是 -->
+		  pr_templet_filetype.create_user_id,  <!-- 创建人 -->
+		  pr_templet_filetype.create_time,  <!-- 创建时间 -->
+		  pr_templet_filetype.update_user_id,  <!-- 更新人 -->
+		  pr_templet_filetype.update_time,  <!-- 更新时间 -->
+		  pr_templet_filetype.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="temp_filetype_id != null ">
+		      AND temp_filetype_id = #{temp_filetype_id}  <!-- 模板文件类型ID -->
+		</if>
+	   <if test="templet_id != null ">
+		      AND templet_id = #{templet_id}  <!-- 模板ID -->
+		</if>
+	   <if test="temp_proc_id != null ">
+		      AND temp_proc_id = #{temp_proc_id}  <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+		</if>
+	   <if test="filetype_id != null ">
+		      AND filetype_id = #{filetype_id}  <!-- 模板过程文档文件类型ID -->
+		</if>
+	    <if test="temp_filetype_name != null and temp_filetype_name != ''">
+		      AND temp_filetype_name = #{temp_filetype_name}  <!-- 模板过程文档文件类型名称 -->
+		</if>
+	   <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	   <if test="flow_state != null ">
+		      AND flow_state = #{flow_state}  <!-- 是否必须流程 0 否 1 是 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+		<if test="rootdir_id != null and rootdir_id != ''">
+		      AND subdir_id in (select subdir_id from pr_templet_process where templet_id = #{templet_id} and rootdir_id =#{rootdir_id} and state = 1)  <!-- 更新时间 -->
+		</if>
+	    
+		      AND state != 0 <!-- 状态 -->
+		
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="temp_filetype_name != null and temp_filetype_name != ''">
+		      AND temp_filetype_name like '${temp_filetype_name}%'  <!-- 模板过程文档文件类型名称 -->
+		</if>
+		 <if test="templet_id != null ">
+		      AND templet_id = #{templet_id}  <!-- 模板ID -->
+		</if>
+	   	<if test="temp_proc_id != null ">
+		      AND temp_proc_id = #{temp_proc_id}  <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	  		  AND state != 0 <!-- 状态 -->
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="temp_filetype_name != null and temp_filetype_name != ''">
+		      Or temp_filetype_name like '${temp_filetype_name}%'  <!-- 模板过程文档文件类型名称 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      Or create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+		 <if test="templet_id != null ">
+		      Or templet_id = #{templet_id}  <!-- 模板ID -->
+		</if>
+	   	<if test="temp_proc_id != null ">
+		      Or temp_proc_id = #{temp_proc_id}  <!-- 所属过程子目录pr_templet_process.templet_process_id -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      Or update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	  		  Or state != 0 <!-- 状态 -->
+	</sql>
+	
+		<!-- 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="listComboBoxFiletypeId" resultType="Dto" parameterType="Dto">
+		SELECT
+		filetype_id AS value, filetype_name AS display
+		FROM
+		pr_filetype
+		where state =1
+		      and rootdir_id =#{rootdir_id} 
+		      and subdir_id =#{subdir_id}  
+	</select>
+	
+		<!-- 查询是否重复 -->
+	<select id="countFiletypeId" resultType="Integer">
+		select count(1) from pr_templet_filetype 
+		where templet_id = #{templet_id}
+		 and filetype_id = #{filetype_id}
+		 and subdir_id =#{subdir_id}
+		 and state = 1  
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- qa_files_manage[FilesManage]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-06-13 15:54:21 -->
+<mapper namespace="com.bl3.pm.quality.dao.FilesManageDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="manage_id" parameterType="FilesManagePO">
+		INSERT INTO qa_files_manage (
+		<if test="manage_code != null and manage_code != ''">
+	         manage_code, <!-- 评审编码 -->
+		</if>
+		<if test="theme != null and theme != ''">
+	         theme, <!-- 评审主题 -->
+		</if>
+		<if test="file_note != null and file_note != ''">
+	         file_note, <!-- 评审内容 -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="attende_id != null and attende_id != ''">
+	         attende_id, <!-- 参与人(内部)ID -->
+		</if>
+		<if test="attende_mans != null and attende_mans != ''">
+	         attende_mans, <!-- 参加人员(内部) -->
+		</if>
+		<if test="result != null and result != ''">
+	         result, <!-- 结论 -->
+		</if>
+		<if test="create_name != null">
+	         create_name, <!-- 创建人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="file_addr != null and file_addr != ''">
+	         file_addr, <!-- 文档地址 -->
+		</if>
+		<if test="opinion != null and opinion != ''">
+	         opinion, <!-- 意见 -->
+		</if>
+		<if test="opinion_code != null and opinion_code != ''">
+	         opinion_code, <!-- 意见编码 -->
+		</if>
+		<if test="state_flag != null and state_flag != ''">
+	         state_flag, <!-- 评审状态 -->
+		</if>
+		<if test="file_title != null and file_title != ''">
+	         file_title, <!-- 文档标题 -->
+		</if>
+		<if test="end_date != null and end_date != ''">
+	         end_date, <!-- 结束时间 -->
+		</if>
+		<if test="pass_flag != null">
+	         pass_flag, <!-- 是否通过 -->
+		</if>
+		<if test="begin_date != null and begin_date != ''">
+	         begin_date, <!-- 开始时间 -->
+		</if>
+		<if test="attende_mans_out != null and attende_mans_out != ''">
+	         attende_mans_out, <!-- 参与人(外部) -->
+		</if>
+		<if test="compere != null">
+	         compere, <!-- 主持人 -->
+		</if>
+		<if test="initiator != null">
+	         initiator, <!-- 发起人 -->
+		</if>
+		<if test="review_addre != null and review_addre != ''">
+	         review_addre, <!-- 评审地点 -->
+		</if>
+		<if test="manage_begin_date != null and manage_begin_date != ''">
+	         manage_begin_date, <!-- 评论开始时间 -->
+		</if>
+		<if test="review_type != null">
+	         review_type, <!-- 评审方式(1.会议，2在线，3邮件) -->
+		</if>
+		<if test="meeting_type != null">
+	         meeting_type, <!-- 会议类型（1.项目周例会2.评审会议3.专题会议4.其它） -->
+		</if>
+		<if test="manage_end_date != null and manage_end_date != ''">
+	         manage_end_date, <!-- 评论结束时间 -->
+		</if>
+		<if test="workload != null">
+	         workload, <!-- 评审工作量 -->
+		</if>
+	          manage_id
+		)VALUES(
+		<if test="manage_code != null and manage_code != ''">
+	          #{manage_code, jdbcType=VARCHAR}, <!-- 评审编码 -->
+	    </if>
+		<if test="theme != null and theme != ''">
+	          #{theme, jdbcType=VARCHAR}, <!-- 评审主题 -->
+	    </if>
+		<if test="file_note != null and file_note != ''">
+	          #{file_note, jdbcType=VARCHAR}, <!-- 评审内容 -->
+	    </if>
+	    <if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="attende_id != null and attende_id != ''">
+	          #{attende_id, jdbcType=VARCHAR}, <!-- 参与人(内部)ID -->
+	    </if>
+		<if test="attende_mans != null and attende_mans != ''">
+	          #{attende_mans, jdbcType=VARCHAR}, <!-- 参加人员(内部) -->
+	    </if>
+		<if test="result != null and result != ''">
+	          #{result, jdbcType=VARCHAR}, <!-- 结论 -->
+	    </if>
+		<if test="create_name != null">
+	          #{create_name, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="file_addr != null and file_addr != ''">
+	          #{file_addr, jdbcType=VARCHAR}, <!-- 文档地址 -->
+	    </if>
+		<if test="opinion != null and opinion != ''">
+	          #{opinion, jdbcType=VARCHAR}, <!-- 意见 -->
+	    </if>
+		<if test="opinion_code != null and opinion_code != ''">
+	          #{opinion_code, jdbcType=VARCHAR}, <!-- 意见编码 -->
+	    </if>
+		<if test="state_flag != null and state_flag != ''">
+	          #{state_flag, jdbcType=VARCHAR}, <!-- 评审状态 -->
+	    </if>
+		<if test="file_title != null and file_title != ''">
+	          #{file_title, jdbcType=VARCHAR}, <!-- 文档标题 -->
+	    </if>
+		<if test="end_date != null and end_date != ''">
+	          #{end_date, jdbcType=VARCHAR}, <!-- 结束时间 -->
+	    </if>
+		<if test="pass_flag != null">
+	          #{pass_flag, jdbcType=INTEGER}, <!-- 是否通过 -->
+	    </if>
+		<if test="begin_date != null and begin_date != ''">
+	          #{begin_date, jdbcType=VARCHAR}, <!-- 开始时间 -->
+	    </if>
+		<if test="attende_mans_out != null and attende_mans_out != ''">
+	          #{attende_mans_out, jdbcType=VARCHAR}, <!-- 参与人(外部) -->
+	    </if>
+		<if test="compere != null">
+	          #{compere, jdbcType=INTEGER}, <!-- 主持人 -->
+	    </if>
+		<if test="initiator != null">
+	          #{initiator, jdbcType=INTEGER}, <!-- 发起人 -->
+	    </if>
+		<if test="review_addre != null and review_addre != ''">
+	          #{review_addre, jdbcType=VARCHAR}, <!-- 评审地点 -->
+	    </if>
+		<if test="manage_begin_date != null and manage_begin_date != ''">
+	          #{manage_begin_date, jdbcType=VARCHAR}, <!-- 评论开始时间 -->
+	    </if>
+		<if test="review_type != null">
+	          #{review_type, jdbcType=INTEGER}, <!-- 评审方式(1.会议，2在线，3邮件) -->
+	    </if>
+	    <if test="meeting_type != null">
+	          #{meeting_type, jdbcType=INTEGER}, <!-- 会议类型（1.项目周例会2.评审会议3.专题会议4.其它） -->
+	    </if>
+		<if test="manage_end_date != null and manage_end_date != ''">
+	          #{manage_end_date, jdbcType=VARCHAR}, <!-- 评论结束时间 -->
+	    </if>
+		<if test="workload != null">
+	          #{workload, jdbcType=NUMERIC}, <!-- 评审工作量 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<select id="selectMaxSerialNo" parameterType="Dto" resultType="Integer">
+		SELECT IFNULL(MAX(serial_no),0)+1 FROM qa_files_manage_logs WHERE manage_id=#{manage_id}
+	</select>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="manage_id" parameterType="FilesManagePO">
+		INSERT INTO qa_files_manage (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{manage_id, jdbcType=INTEGER},  <!-- 评审id -->
+		    #{manage_code, jdbcType=VARCHAR},  <!-- 评审编码 -->
+		    #{theme, jdbcType=VARCHAR},  <!-- 评审主题 -->
+		    #{file_note, jdbcType=VARCHAR},  <!-- 评审内容 -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{attende_id, jdbcType=VARCHAR},  <!-- 参与人(内部)ID -->
+		    #{attende_mans, jdbcType=VARCHAR},  <!-- 参加人员(内部) -->
+		    #{result, jdbcType=VARCHAR},  <!-- 结论 -->
+		    #{create_name, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{file_addr, jdbcType=VARCHAR},  <!-- 文档地址 -->
+		    #{opinion, jdbcType=VARCHAR},  <!-- 意见 -->
+		    #{opinion_code, jdbcType=VARCHAR},  <!-- 意见编码 -->
+		    #{state_flag, jdbcType=VARCHAR},  <!-- 评审状态 -->
+		    #{file_title, jdbcType=VARCHAR},  <!-- 文档标题 -->
+		    #{end_date, jdbcType=VARCHAR},  <!-- 结束时间 -->
+		    #{pass_flag, jdbcType=INTEGER},  <!-- 是否通过 -->
+		    #{begin_date, jdbcType=VARCHAR},  <!-- 开始时间 -->
+		    #{attende_mans_out, jdbcType=VARCHAR},  <!-- 参与人(外部) -->
+		    #{compere, jdbcType=INTEGER},  <!-- 主持人 -->
+		    #{initiator, jdbcType=INTEGER},  <!-- 发起人 -->
+		    #{review_addre, jdbcType=VARCHAR},  <!-- 评审地点 -->
+		    #{manage_begin_date, jdbcType=VARCHAR},  <!-- 评论开始时间 -->
+		    #{review_type, jdbcType=INTEGER},  <!-- 评审方式(1.会议，2在线，3邮件) -->
+		    #{meeting_type, jdbcType=INTEGER},  <!-- 会议类型（1.项目周例会2.评审会议3.专题会议4.其它） -->
+		    #{manage_end_date, jdbcType=VARCHAR},  <!-- 评论结束时间 -->
+		    #{workload, jdbcType=NUMERIC}  <!-- 评审工作量 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="FilesManagePO">
+		UPDATE qa_files_manage
+		<set>
+			<if test="manage_id != null">
+		          manage_id = #{manage_id, jdbcType=INTEGER},  <!-- 评审id -->
+			</if>
+			<if test="manage_code != null">
+		          manage_code = #{manage_code, jdbcType=VARCHAR},  <!-- 评审编码 -->
+			</if>
+			<if test="theme != null">
+		          theme = #{theme, jdbcType=VARCHAR},  <!-- 评审主题 -->
+			</if>
+			<if test="file_note != null">
+		          file_note = #{file_note, jdbcType=VARCHAR},  <!-- 评审内容 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="attende_id != null">
+		          attende_id = #{attende_id, jdbcType=VARCHAR},  <!-- 参与人(内部)ID -->
+			</if>
+			<if test="attende_mans != null">
+		          attende_mans = #{attende_mans, jdbcType=VARCHAR},  <!-- 参加人员(内部) -->
+			</if>
+			<if test="result != null">
+		          result = #{result, jdbcType=VARCHAR},  <!-- 结论 -->
+			</if>
+			<if test="create_name != null">
+		          create_name = #{create_name, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="file_addr != null">
+		          file_addr = #{file_addr, jdbcType=VARCHAR},  <!-- 文档地址 -->
+			</if>
+			<if test="opinion != null">
+		          opinion = #{opinion, jdbcType=VARCHAR},  <!-- 意见 -->
+			</if>
+			<if test="opinion_code != null">
+		          opinion_code = #{opinion_code, jdbcType=VARCHAR},  <!-- 意见编码 -->
+			</if>
+			<if test="state_flag != null">
+		          state_flag = #{state_flag, jdbcType=VARCHAR},  <!-- 评审状态 -->
+			</if>
+			<if test="file_title != null">
+		          file_title = #{file_title, jdbcType=VARCHAR},  <!-- 文档标题 -->
+			</if>
+			<if test="end_date != null">
+		          end_date = #{end_date, jdbcType=VARCHAR},  <!-- 结束时间 -->
+			</if>
+			<if test="pass_flag != null">
+		          pass_flag = #{pass_flag, jdbcType=INTEGER},  <!-- 是否通过 -->
+			</if>
+			<if test="begin_date != null">
+		          begin_date = #{begin_date, jdbcType=VARCHAR},  <!-- 开始时间 -->
+			</if>
+			<if test="attende_mans_out != null">
+		          attende_mans_out = #{attende_mans_out, jdbcType=VARCHAR},  <!-- 参与人(外部) -->
+			</if>
+			<if test="compere != null">
+		          compere = #{compere, jdbcType=INTEGER},  <!-- 主持人 -->
+			</if>
+			<if test="initiator != null">
+		          initiator = #{initiator, jdbcType=INTEGER},  <!-- 发起人 -->
+			</if>
+			<if test="review_addre != null">
+		          review_addre = #{review_addre, jdbcType=VARCHAR},  <!-- 评审地点 -->
+			</if>
+			<if test="manage_begin_date != null">
+		          manage_begin_date = #{manage_begin_date, jdbcType=VARCHAR},  <!-- 评论开始时间 -->
+			</if>
+			<if test="review_type != null">
+		          review_type = #{review_type, jdbcType=INTEGER},  <!-- 评审方式(1.会议，2在线，3邮件) -->
+			</if>
+			<if test="meeting_type != null">
+		          meeting_type = #{meeting_type, jdbcType=INTEGER},  <!-- 会议类型（1.项目周例会2.评审会议3.专题会议4.其它） -->
+			</if>
+			<if test="manage_end_date != null">
+		          manage_end_date = #{manage_end_date, jdbcType=VARCHAR},  <!-- 评论结束时间 -->
+			</if>
+			<if test="workload != null">
+		          workload = #{workload, jdbcType=NUMERIC},  <!-- 评审工作量 -->
+			</if>
+		</set>
+		WHERE  manage_id = #{manage_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM qa_files_manage WHERE  manage_id = #{manage_id}
+	</delete>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByManageCode">
+		DELETE FROM qa_message WHERE  mang_id = #{mang_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="FilesManagePO">
+		SELECT
+		<include refid="column" />
+		FROM qa_files_manage WHERE  manage_id = #{manage_id}
+	</select>
+	
+	<update id="selectMsg" >
+		UPDATE qa_message SET msg_state = 2 WHERE msg_id = #{msg_id}
+	</update>
+	
+	<update id="changeRefuseState">
+		UPDATE qa_message SET msg_state = 3 WHERE msg_id = #{msg_id}
+	</update>
+	
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="FilesManagePO">
+		SELECT
+		    <include refid="column" />
+		FROM qa_files_manage
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="FilesManagePO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_files_manage
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="FilesManagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_files_manage
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="FilesManagePO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_files_manage
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="FilesManagePO">
+		SELECT
+			<include refid="column" />	
+		FROM qa_files_manage
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="FilesManagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_files_manage
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="FilesManagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_files_manage
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM qa_files_manage
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM qa_files_manage
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<select id="selectProjName" resultType="String">
+		select proj_name from bs_proj_commons where proj_id = #{proj_id}
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  manage_id,  <!-- 评审id -->
+		  manage_code,  <!-- 评审编码 -->
+		  theme,  <!-- 评审主题 -->
+		  file_note,  <!-- 评审内容 -->
+		  proj_id,  <!-- 项目ID -->
+		  attende_id,  <!-- 参与人(内部)ID -->
+		  attende_mans,  <!-- 参加人员(内部) -->
+		  result,  <!-- 结论 -->
+		  create_name,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  file_addr,  <!-- 文档地址 -->
+		  opinion,  <!-- 意见 -->
+		  opinion_code,  <!-- 意见编码 -->
+		  state_flag,  <!-- 评审状态 -->
+		  file_title,  <!-- 文档标题 -->
+		  end_date,  <!-- 结束时间 -->
+		  pass_flag,  <!-- 是否通过 -->
+		  begin_date,  <!-- 开始时间 -->
+		  attende_mans_out,  <!-- 参与人(外部) -->
+		  compere,  <!-- 主持人 -->
+		  initiator,  <!-- 发起人 -->
+		  review_addre,  <!-- 评审地点 -->
+		  manage_begin_date,  <!-- 评论开始时间 -->
+		  review_type,  <!-- 评审方式(1.会议，2在线，3邮件) -->
+		  meeting_type,  <!-- 会议类型（1.项目周例会2.评审会议3.专题会议4.其它） -->
+		  manage_end_date,  <!-- 评论结束时间 -->
+		  workload  <!-- 评审工作量 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  qa_files_manage.manage_id,  <!-- 评审id -->
+		  qa_files_manage.manage_code,  <!-- 评审编码 -->
+		  qa_files_manage.theme,  <!-- 评审主题 -->
+		  qa_files_manage.file_note,  <!-- 评审内容 -->
+		  qa_files_manage.proj_id,  <!-- 项目ID -->
+		  qa_files_manage.attende_id,  <!-- 参与人(内部)ID -->
+		  qa_files_manage.attende_mans,  <!-- 参加人员(内部) -->
+		  qa_files_manage.result,  <!-- 结论 -->
+		  qa_files_manage.create_name,  <!-- 创建人 -->
+		  qa_files_manage.create_time,  <!-- 创建时间 -->
+		  qa_files_manage.file_addr,  <!-- 文档地址 -->
+		  qa_files_manage.opinion,  <!-- 意见 -->
+		  qa_files_manage.opinion_code,  <!-- 意见编码 -->
+		  qa_files_manage.state_flag,  <!-- 评审状态 -->
+		  qa_files_manage.file_title,  <!-- 文档标题 -->
+		  qa_files_manage.end_date,  <!-- 结束时间 -->
+		  qa_files_manage.pass_flag,  <!-- 是否通过 -->
+		  qa_files_manage.begin_date,  <!-- 开始时间 -->
+		  qa_files_manage.attende_mans_out,  <!-- 参与人(外部) -->
+		  qa_files_manage.compere,  <!-- 主持人 -->
+		  qa_files_manage.initiator,  <!-- 发起人 -->
+		  qa_files_manage.review_addre,  <!-- 评审地点 -->
+		  qa_files_manage.manage_begin_date,  <!-- 评论开始时间 -->
+		  qa_files_manage.review_type,  <!-- 评审方式(1.会议，2在线，3邮件) -->
+		  qa_files_manage.meeting_type,  <!-- 会议类型（1.项目周例会2.评审会议3.专题会议4.其它） -->
+		  qa_files_manage.manage_end_date,  <!-- 评论结束时间 -->
+		  qa_files_manage.workload  <!-- 评审工作量 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="manage_id != null ">
+		      AND manage_id = #{manage_id}  <!-- 评审id -->
+		</if>
+	    <if test="manage_code != null and manage_code != ''">
+		      AND manage_code = #{manage_code}  <!-- 评审编码 -->
+		</if>
+	    <if test="theme != null and theme != ''">
+		      AND theme = #{theme}  <!-- 评审主题 -->
+		</if>
+	    <if test="file_note != null and file_note != ''">
+		      AND file_note = #{file_note}  <!-- 评审内容 -->
+		</if>
+		<if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="attende_id != null and attende_id != ''">
+		      AND attende_id = #{attende_id}  <!-- 参与人(内部)ID -->
+		</if>
+	    <if test="attende_mans != null and attende_mans != ''">
+		      AND attende_mans = #{attende_mans}  <!-- 参加人员(内部) -->
+		</if>
+	    <if test="result != null and result != ''">
+		      AND result = #{result}  <!-- 结论 -->
+		</if>
+	   <if test="create_name != null ">
+		      AND create_name = #{create_name}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	    <if test="file_addr != null and file_addr != ''">
+		      AND file_addr = #{file_addr}  <!-- 文档地址 -->
+		</if>
+	    <if test="opinion != null and opinion != ''">
+		      AND opinion = #{opinion}  <!-- 意见 -->
+		</if>
+	    <if test="opinion_code != null and opinion_code != ''">
+		      AND opinion_code = #{opinion_code}  <!-- 意见编码 -->
+		</if>
+	    <if test="state_flag != null and state_flag != ''">
+		      AND state_flag = #{state_flag}  <!-- 评审状态 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      AND file_title = #{file_title}  <!-- 文档标题 -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      AND end_date = #{end_date}  <!-- 结束时间 -->
+		</if>
+	   <if test="pass_flag != null ">
+		      AND pass_flag = #{pass_flag}  <!-- 是否通过 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      AND begin_date = #{begin_date}  <!-- 开始时间 -->
+		</if>
+	    <if test="attende_mans_out != null and attende_mans_out != ''">
+		      AND attende_mans_out = #{attende_mans_out}  <!-- 参与人(外部) -->
+		</if>
+	   <if test="compere != null ">
+		      AND compere = #{compere}  <!-- 主持人 -->
+		</if>
+	   <if test="initiator != null ">
+		      AND initiator = #{initiator}  <!-- 发起人 -->
+		</if>
+	    <if test="review_addre != null and review_addre != ''">
+		      AND review_addre = #{review_addre}  <!-- 评审地点 -->
+		</if>
+	    <if test="manage_begin_date != null and manage_begin_date != ''">
+		      AND manage_begin_date = #{manage_begin_date}  <!-- 评论开始时间 -->
+		</if>
+	   <if test="review_type != null ">
+		      AND review_type = #{review_type}  <!-- 评审方式(1.会议，2在线，3邮件) -->
+		</if>
+		<if test="meeting_type != null ">
+		      AND meeting_type = #{meeting_type}  <!-- 会议类型（1.项目周例会2.评审会议3.专题会议4.其它） -->
+		</if>
+	    <if test="manage_end_date != null and manage_end_date != ''">
+		      AND manage_end_date = #{manage_end_date}  <!-- 评论结束时间 -->
+		</if>
+	   <if test="workload != null ">
+		      AND workload = #{workload}  <!-- 评审工作量 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="manage_code != null and manage_code != ''">
+		      AND manage_code like '${manage_code}%'  <!-- 评审编码 -->
+		</if>
+	    <if test="theme != null and theme != ''">
+		      AND theme like '${theme}%'  <!-- 评审主题 -->
+		</if>
+	    <if test="file_note != null and file_note != ''">
+		      AND file_note like '${file_note}%'  <!-- 评审内容 -->
+		</if>
+	    <if test="attende_id != null and attende_id != ''">
+		      AND attende_id like '${attende_id}%'  <!-- 参与人(内部)ID -->
+		</if>
+	    <if test="attende_mans != null and attende_mans != ''">
+		      AND attende_mans like '${attende_mans}%'  <!-- 参加人员(内部) -->
+		</if>
+	    <if test="result != null and result != ''">
+		      AND result like '${result}%'  <!-- 结论 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="file_addr != null and file_addr != ''">
+		      AND file_addr like '${file_addr}%'  <!-- 文档地址 -->
+		</if>
+	    <if test="opinion != null and opinion != ''">
+		      AND opinion like '${opinion}%'  <!-- 意见 -->
+		</if>
+	    <if test="opinion_code != null and opinion_code != ''">
+		      AND opinion_code like '${opinion_code}%'  <!-- 意见编码 -->
+		</if>
+	    <if test="state_flag != null and state_flag != ''">
+		      AND state_flag like '${state_flag}%'  <!-- 评审状态 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      AND file_title like '${file_title}%'  <!-- 文档标题 -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      AND end_date like '${end_date}%'  <!-- 结束时间 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      AND begin_date like '${begin_date}%'  <!-- 开始时间 -->
+		</if>
+	    <if test="attende_mans_out != null and attende_mans_out != ''">
+		      AND attende_mans_out like '${attende_mans_out}%'  <!-- 参与人(外部) -->
+		</if>
+	    <if test="review_addre != null and review_addre != ''">
+		      AND review_addre like '${review_addre}%'  <!-- 评审地点 -->
+		</if>
+	    <if test="manage_begin_date != null and manage_begin_date != ''">
+		      AND manage_begin_date like '${manage_begin_date}%'  <!-- 评论开始时间 -->
+		</if>
+	    <if test="manage_end_date != null and manage_end_date != ''">
+		      AND manage_end_date like '${manage_end_date}%'  <!-- 评论结束时间 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="manage_code != null and manage_code != ''">
+		      Or manage_code like '${manage_code}%'  <!-- 评审编码 -->
+		</if>
+	    <if test="theme != null and theme != ''">
+		      Or theme like '${theme}%'  <!-- 评审主题 -->
+		</if>
+	    <if test="file_note != null and file_note != ''">
+		      Or file_note like '${file_note}%'  <!-- 评审内容 -->
+		</if>
+	    <if test="attende_id != null and attende_id != ''">
+		      Or attende_id like '${attende_id}%'  <!-- 参与人(内部)ID -->
+		</if>
+	    <if test="attende_mans != null and attende_mans != ''">
+		      Or attende_mans like '${attende_mans}%'  <!-- 参加人员(内部) -->
+		</if>
+	    <if test="result != null and result != ''">
+		      Or result like '${result}%'  <!-- 结论 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="file_addr != null and file_addr != ''">
+		      Or file_addr like '${file_addr}%'  <!-- 文档地址 -->
+		</if>
+	    <if test="opinion != null and opinion != ''">
+		      Or opinion like '${opinion}%'  <!-- 意见 -->
+		</if>
+	    <if test="opinion_code != null and opinion_code != ''">
+		      Or opinion_code like '${opinion_code}%'  <!-- 意见编码 -->
+		</if>
+	    <if test="state_flag != null and state_flag != ''">
+		      Or state_flag like '${state_flag}%'  <!-- 评审状态 -->
+		</if>
+	    <if test="file_title != null and file_title != ''">
+		      Or file_title like '${file_title}%'  <!-- 文档标题 -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      Or end_date like '${end_date}%'  <!-- 结束时间 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      Or begin_date like '${begin_date}%'  <!-- 开始时间 -->
+		</if>
+	    <if test="attende_mans_out != null and attende_mans_out != ''">
+		      Or attende_mans_out like '${attende_mans_out}%'  <!-- 参与人(外部) -->
+		</if>
+	    <if test="review_addre != null and review_addre != ''">
+		      Or review_addre like '${review_addre}%'  <!-- 评审地点 -->
+		</if>
+	    <if test="manage_begin_date != null and manage_begin_date != ''">
+		      Or manage_begin_date like '${manage_begin_date}%'  <!-- 评论开始时间 -->
+		</if>
+	    <if test="manage_end_date != null and manage_end_date != ''">
+		      Or manage_end_date like '${manage_end_date}%'  <!-- 评论结束时间 -->
+		</if>
+	</sql>
+	
+	<select id="selectManageID" resultType="Dto">
+		SELECT
+			bpc.proj_name,
+			qm.remarks,
+			qm.theme,
+			qm.msg_id,
+			qm.msg_note,
+			qm.msg_state,
+			qm.pass_flag,
+			qfm.begin_date,
+			qfm.end_date,
+			qfm.workload,
+			qfm.review_addre,
+			(
+				CASE
+				WHEN review_type = 1 THEN
+					'现场会议'
+				WHEN review_type = 2 THEN
+					'远程会议'
+				ELSE
+					'其它'
+				END
+			) review_type,
+			(
+				CASE
+				WHEN meeting_type = 1 THEN
+					'项目周例会'
+				WHEN meeting_type = 2 THEN
+					'评审会议'
+				WHEN meeting_type = 3 THEN
+					'专题会议'
+				ELSE
+					'其它'
+				END
+			) meeting_type,
+			qfm.initiator,
+			qfm.compere,
+			qfm.manage_code,
+			qfm.attende_mans,
+			qfm.attende_mans_out,
+			aou.`name` as initiator_name,
+			aur.`name` as compere_name
+		FROM
+			qa_message qm,
+			qa_files_manage qfm
+			LEFT JOIN aos_user aou ON aou.id = qfm.initiator
+			LEFT JOIN aos_user aur ON aur.id = qfm.compere,
+			bs_proj_commons bpc	
+		<where>
+			qm.mang_id = qfm.manage_code
+			AND bpc.proj_id = qm.proj_id
+		    <if test="manage_code != null ">
+		      	AND mang_id = #{manage_code}  <!-- 消息ID -->
+			</if>
+		</where>
+	</select>
+	
+</mapper>

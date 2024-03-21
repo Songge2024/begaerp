@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bl3.pm.quality.dao.FilesManageLogsDao">
+	
+	<insert id="insert" parameterType="FilesManageLogsPO">
+		INSERT INTO qa_files_manage_logs(
+		<if test="manage_id != null">
+	         manage_id, <!-- 评审ID -->
+		</if>
+		<if test="serial_no != null">
+	         serial_no, <!-- 序号 -->
+		</if>
+		<if test="content != null and content != ''">
+	         content, <!-- 修改描述 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 修改时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 修改人 -->
+		</if>
+		<if test="log_id != null">
+	          log_id <!-- 修改编码 -->
+	   </if>
+		)VALUES(
+		<if test="manage_id != null">
+	          #{manage_id, jdbcType=INTEGER}, <!-- 评审ID -->
+	    </if>
+		<if test="serial_no != null">
+	          #{serial_no, jdbcType=INTEGER}, <!-- 序号 -->
+	    </if>
+		<if test="content != null and content != ''">
+	          #{content, jdbcType=VARCHAR}, <!-- 修改描述 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 修改时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 修改人 -->
+	    </if>
+		<if test="log_id != null">
+		     #{log_id, jdbcType=INTEGER} <!-- 修改编码 -->
+	    </if>
+		)
+	</insert>
+	
+	<select id="likeOrPage" parameterType="Dto" resultType="FilesManageLogsPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM qa_files_manage_logs
+		<where>
+		    <if test="manage_id != null">
+		    	manage_id = #{manage_id}
+		    </if>
+		</where>	
+	</select>	
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  log_id,  <!-- 修改编码 -->
+		  manage_id,  <!-- 评审ID -->
+		  serial_no,  <!-- 序号 -->
+		  content,  <!-- 修改描述 -->
+		  update_time,  <!-- 修改时间 -->
+		  update_user_id  <!-- 修改人 -->
+	</sql>
+	
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+		<if test="manage_id != null ">
+		      AND manage_id like '${manage_id}%'  <!-- 评审ID -->
+		</if>
+	    <if test="content != null and content != ''">
+		      Or content like '${content}%'  <!-- 修改描述 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 修改时间 -->
+		</if>
+	</sql>
+</mapper>

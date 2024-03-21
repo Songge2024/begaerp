@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_contract[Contract]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-24 17:34:23 -->
+<mapper namespace="com.bl3.pm.contract.dao.ContractDao">
+	<!--剩余百分比计算  -->
+	<select id="queryCreateOrUpdatePercent" resultType="Dto"  parameterType="Dto">
+	SELECT
+	IFNULL((100-IFNULL(sum(percentage)+#{percentage},0)),0)percentage
+		FROM
+			bs_contract_stage a
+		WHERE
+			a.ct_id =#{ct_id}
+			<if test="ct_stage_id != null and ct_stage_id != ''">
+		    AND ct_stage_id NOT IN (#{ct_stage_id})
+		</if>
+	
+	</select>
+	<!--剩余百分比计算有小数的应付金额  -->
+	<select id="queryOtherPercent" resultType="Dto"  parameterType="Dto">
+	SELECT
+	ifnull(100 - sum(a.percentage),0) percent,
+		ifnull((
+			b.ct_total_amount - sum(a.rece_amount)
+		),0) syje
+		FROM
+			bs_contract_stage a,
+			bs_contract b
+		WHERE
+			a.ct_id = b.ct_id
+		AND
+		a.ct_id = #{ct_id}
+	</select>
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="ct_id" parameterType="ContractPO">
+		INSERT INTO bs_contract (
+		<if test="ct_code != null and ct_code != ''">
+	         ct_code, <!-- 合同编码 -->
+		</if>
+		<if test="ct_name != null and ct_name != ''">
+	         ct_name, <!-- 合同名称 -->
+		</if>
+		<if test="ct_type != null and ct_type != ''">
+	         ct_type, <!-- 合同类型 -->
+		</if>
+		<if test="ct_properties != null and ct_properties != ''">
+	         ct_properties, <!-- 合同性质 -->
+		</if>
+		<if test="sales_leader != null and sales_leader != ''">
+	         sales_leader, <!-- 销售代表 -->
+		</if>
+		<if test="partya_name != null and partya_name != ''">
+	         partya_name, <!-- 甲方名称 -->
+		</if>
+		<if test="partyb_name != null and partyb_name != ''">
+	         partyb_name, <!-- 乙方名称 -->
+		</if>
+		<if test="partyc_name != null and partyc_name != ''">
+	         partyc_name, <!-- 丙方名称 -->
+		</if>
+		<if test="ct_total_amount != null">
+	         ct_total_amount, <!-- 合同总金额 -->
+		</if>
+		<if test="ct_sign_date != null">
+	         ct_sign_date, <!-- 合同签订时间 -->
+		</if>
+		<if test="ct_begin_date != null">
+	         ct_begin_date, <!-- 合同生效日期 -->
+		</if>
+		<if test="ct_end_date != null">
+	         ct_end_date, <!-- 合同终止日期 -->
+		</if>
+		<if test="ct_remark != null and ct_remark != ''">
+	         ct_remark, <!-- 合同备注 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="create_date != null and create_date != ''">
+	         create_date, <!-- 创建日期 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 修改人 -->
+		</if>
+		<if test="update_date != null and update_date != ''">
+	         update_date, <!-- 修改日期 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 合同状态 -->
+		</if>
+		<if test="reason != null and reason != ''">
+	         reason, <!-- 作废原因 -->
+		</if>
+	          ct_id
+		)VALUES(
+		<if test="ct_code != null and ct_code != ''">
+	          #{ct_code, jdbcType=VARCHAR}, <!-- 合同编码 -->
+	    </if>
+		<if test="ct_name != null and ct_name != ''">
+	          #{ct_name, jdbcType=VARCHAR}, <!-- 合同名称 -->
+	    </if>
+		<if test="ct_type != null and ct_type != ''">
+	          #{ct_type, jdbcType=VARCHAR}, <!-- 合同类型 -->
+	    </if>
+	    <if test="ct_properties != null and ct_properties != ''">
+	         #{ct_properties, jdbcType=VARCHAR}, <!-- 合同性质 -->
+		</if>
+		<if test="sales_leader != null and sales_leader != ''">
+	         #{sales_leader, jdbcType=VARCHAR}, <!-- 销售代表 -->
+		</if>
+		<if test="partya_name != null and partya_name != ''">
+	          #{partya_name, jdbcType=VARCHAR}, <!-- 甲方名称 -->
+	    </if>
+		<if test="partyb_name != null and partyb_name != ''">
+	          #{partyb_name, jdbcType=VARCHAR}, <!-- 乙方名称 -->
+	    </if>
+		<if test="partyc_name != null and partyc_name != ''">
+	          #{partyc_name, jdbcType=VARCHAR}, <!-- 丙方名称 -->
+	    </if>
+		<if test="ct_total_amount != null">
+	          #{ct_total_amount, jdbcType=NUMERIC}, <!-- 合同总金额 -->
+	    </if>
+		<if test="ct_sign_date != null">
+	          #{ct_sign_date, jdbcType=DATE}, <!-- 合同签订时间 -->
+	    </if>
+		<if test="ct_begin_date != null">
+	          #{ct_begin_date, jdbcType=DATE}, <!-- 合同生效日期 -->
+	    </if>
+		<if test="ct_end_date != null">
+	          #{ct_end_date, jdbcType=DATE}, <!-- 合同终止日期 -->
+	    </if>
+		<if test="ct_remark != null and ct_remark != ''">
+	          #{ct_remark, jdbcType=VARCHAR}, <!-- 合同备注 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="create_date != null and create_date != ''">
+	          #{create_date, jdbcType=VARCHAR}, <!-- 创建日期 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 修改人 -->
+	    </if>
+		<if test="update_date != null and update_date != ''">
+	          #{update_date, jdbcType=VARCHAR}, <!-- 修改日期 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 合同状态 -->
+	    </if>
+		<if test="reason != null and reason != ''">
+	          #{reason, jdbcType=VARCHAR}, <!-- 作废原因 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="ct_id" parameterType="ContractPO">
+		INSERT INTO bs_contract (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{ct_id, jdbcType=INTEGER},  <!-- 合同ID -->
+		    #{ct_code, jdbcType=VARCHAR},  <!-- 合同编码 -->
+		    #{ct_name, jdbcType=VARCHAR},  <!-- 合同名称 -->
+		    #{ct_type, jdbcType=VARCHAR},  <!-- 合同类型 -->
+		    #{ct_properties, jdbcType=VARCHAR},  <!-- 合同性质 -->
+		    #{sales_leader, jdbcType=VARCHAR},  <!-- 销售代表-->
+		    #{partya_name, jdbcType=VARCHAR},  <!-- 甲方名称 -->
+		    #{partyb_name, jdbcType=VARCHAR},  <!-- 乙方名称 -->
+		    #{partyc_name, jdbcType=VARCHAR},  <!-- 丙方名称 -->
+		    #{ct_total_amount, jdbcType=NUMERIC},  <!-- 合同总金额 -->
+		    #{ct_sign_date, jdbcType=DATE},  <!-- 合同签订时间 -->
+		    #{ct_begin_date, jdbcType=DATE},  <!-- 合同生效日期 -->
+		    #{ct_end_date, jdbcType=DATE},  <!-- 合同终止日期 -->
+		    #{ct_remark, jdbcType=VARCHAR},  <!-- 合同备注 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{create_date, jdbcType=VARCHAR},  <!-- 创建日期 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 修改人 -->
+		    #{update_date, jdbcType=VARCHAR},  <!-- 修改日期 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 合同状态 -->
+		    #{reason, jdbcType=VARCHAR}  <!-- 作废原因 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ContractPO">
+		UPDATE bs_contract
+		<set>
+			<if test="ct_id != null">
+		          ct_id = #{ct_id, jdbcType=INTEGER},  <!-- 合同ID -->
+			</if>
+			<if test="ct_code != null">
+		          ct_code = #{ct_code, jdbcType=VARCHAR},  <!-- 合同编码 -->
+			</if>
+			<if test="ct_name != null">
+		          ct_name = #{ct_name, jdbcType=VARCHAR},  <!-- 合同名称 -->
+			</if>
+			<if test="ct_type != null">
+		          ct_type = #{ct_type, jdbcType=VARCHAR},  <!-- 合同类型 -->
+			</if>
+			<if test="ct_properties != null">
+		          ct_properties = #{ct_properties, jdbcType=VARCHAR},  <!-- 合同性质 -->
+			</if>
+			<if test="sales_leader != null">
+		          sales_leader = #{sales_leader, jdbcType=VARCHAR},  <!-- 销售代表 -->
+			</if>
+			<if test="partya_name != null">
+		          partya_name = #{partya_name, jdbcType=VARCHAR},  <!-- 甲方名称 -->
+			</if>
+			<if test="partyb_name != null">
+		          partyb_name = #{partyb_name, jdbcType=VARCHAR},  <!-- 乙方名称 -->
+			</if>
+			<if test="partyc_name != null">
+		          partyc_name = #{partyc_name, jdbcType=VARCHAR},  <!-- 丙方名称 -->
+			</if>
+			<if test="ct_total_amount != null">
+		          ct_total_amount = #{ct_total_amount, jdbcType=NUMERIC},  <!-- 合同总金额 -->
+			</if>
+			<if test="ct_sign_date != null">
+		          ct_sign_date = #{ct_sign_date, jdbcType=DATE},  <!-- 合同签订时间 -->
+			</if>
+			<if test="ct_begin_date != null">
+		          ct_begin_date = #{ct_begin_date, jdbcType=DATE},  <!-- 合同生效日期 -->
+			</if>
+			<if test="ct_end_date != null">
+		          ct_end_date = #{ct_end_date, jdbcType=DATE},  <!-- 合同终止日期 -->
+			</if>
+			<if test="ct_remark != null">
+		          ct_remark = #{ct_remark, jdbcType=VARCHAR},  <!-- 合同备注 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_date != null">
+		          create_date = #{create_date, jdbcType=VARCHAR},  <!-- 创建日期 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 修改人 -->
+			</if>
+			<if test="update_date != null">
+		          update_date = #{update_date, jdbcType=VARCHAR},  <!-- 修改日期 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 合同状态 -->
+			</if>
+			<if test="reason != null">
+		          reason = #{reason, jdbcType=VARCHAR},  <!-- 作废原因 -->
+			</if>
+		</set>
+		WHERE  ct_id = #{ct_id}
+	</update>
+	
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateStateByKey" parameterType="ContractPO">
+		UPDATE bs_contract
+		<set>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 修改人 -->
+			</if>
+			<if test="update_date != null">
+		          update_date = #{update_date, jdbcType=VARCHAR},  <!-- 修改日期 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 合同状态 -->
+			</if>
+		</set>
+		WHERE  ct_id = #{ct_id}
+	</update>
+	
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_contract WHERE  ct_id = #{ct_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ContractPO">
+		SELECT
+		<include refid="column" />
+		FROM bs_contract WHERE  ct_id = #{ct_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ContractPO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_contract
+		<where>
+		    <if test="ct_code != null and ct_code != ''">
+		      AND ct_code = #{ct_code}  <!-- 合同编码 -->
+		</if>
+		 <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ContractPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_contract
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ContractPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_contract
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ContractPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_contract
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ContractPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_contract
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ContractPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_contract
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ContractPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_contract
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_contract
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_contract
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  ct_id,  <!-- 合同ID -->
+		  ct_code,  <!-- 合同编码 -->
+		  ct_name,  <!-- 合同名称 -->
+		  ct_type,  <!-- 合同类型 -->
+		  ct_properties,  <!-- 合同性质 -->
+		  sales_leader,  <!-- 销售代表-->
+		  partya_name,  <!-- 甲方名称 -->
+		  partyb_name,  <!-- 乙方名称 -->
+		  partyc_name,  <!-- 丙方名称 -->
+		  ct_total_amount,  <!-- 合同总金额 -->
+		  ct_sign_date,  <!-- 合同签订时间 -->
+		  ct_begin_date,  <!-- 合同生效日期 -->
+		  ct_end_date,  <!-- 合同终止日期 -->
+		  ct_remark,  <!-- 合同备注 -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_date,  <!-- 创建日期 -->
+		  update_user_id,  <!-- 修改人 -->
+		  update_date,  <!-- 修改日期 -->
+		  state,  <!-- 合同状态 -->
+		  reason  <!-- 作废原因 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_contract.ct_id,  <!-- 合同ID -->
+		  bs_contract.ct_code,  <!-- 合同编码 -->
+		  bs_contract.ct_name,  <!-- 合同名称 -->
+		  bs_contract.ct_type,  <!-- 合同类型 -->
+		  bs_contract.partya_name,  <!-- 甲方名称 -->
+		  bs_contract.partyb_name,  <!-- 乙方名称 -->
+		  bs_contract.partyc_name,  <!-- 丙方名称 -->
+		  bs_contract.ct_total_amount,  <!-- 合同总金额 -->
+		  bs_contract.ct_sign_date,  <!-- 合同签订时间 -->
+		  bs_contract.ct_begin_date,  <!-- 合同生效日期 -->
+		  bs_contract.ct_end_date,  <!-- 合同终止日期 -->
+		  bs_contract.ct_remark,  <!-- 合同备注 -->
+		  bs_contract.create_user_id,  <!-- 创建人 -->
+		  bs_contract.create_date,  <!-- 创建日期 -->
+		  bs_contract.update_user_id,  <!-- 修改人 -->
+		  bs_contract.update_date,  <!-- 修改日期 -->
+		  bs_contract.state,  <!-- 合同状态 -->
+		  bs_contract.reason  <!-- 作废原因 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="ct_id != null ">
+		      AND ct_id = #{ct_id}  <!-- 合同ID -->
+		</if>
+	    <if test="ct_code != null and ct_code != ''">
+		      AND ct_code = #{ct_code}  <!-- 合同编码 -->
+		</if>
+	    <if test="ct_name != null and ct_name != ''">
+		      AND ct_name = #{ct_name}  <!-- 合同名称 -->
+		</if>
+	    <if test="ct_type != null and ct_type != ''">
+		      AND ct_type = #{ct_type}  <!-- 合同类型 -->
+		</if>
+	    <if test="partya_name != null and partya_name != ''">
+		      AND partya_name = #{partya_name}  <!-- 甲方名称 -->
+		</if>
+	    <if test="partyb_name != null and partyb_name != ''">
+		      AND partyb_name = #{partyb_name}  <!-- 乙方名称 -->
+		</if>
+	    <if test="partyc_name != null and partyc_name != ''">
+		      AND partyc_name = #{partyc_name}  <!-- 丙方名称 -->
+		</if>
+	   <if test="ct_total_amount != null ">
+		      AND ct_total_amount = #{ct_total_amount}  <!-- 合同总金额 -->
+		</if>
+	   <if test="ct_sign_date != null ">
+		      AND ct_sign_date = #{ct_sign_date}  <!-- 合同签订时间 -->
+		</if>
+	   <if test="ct_begin_date != null ">
+		      AND ct_begin_date = #{ct_begin_date}  <!-- 合同生效日期 -->
+		</if>
+	   <if test="ct_end_date != null ">
+		      AND ct_end_date = #{ct_end_date}  <!-- 合同终止日期 -->
+		</if>
+	    <if test="ct_remark != null and ct_remark != ''">
+		      AND ct_remark = #{ct_remark}  <!-- 合同备注 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_date != null and create_date != ''">
+		      AND create_date = #{create_date}  <!-- 创建日期 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 修改人 -->
+		</if>
+	    <if test="update_date != null and update_date != ''">
+		      AND update_date = #{update_date}  <!-- 修改日期 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 合同状态 -->
+		</if>
+	    <if test="reason != null and reason != ''">
+		      AND reason = #{reason}  <!-- 作废原因 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="ct_code != null and ct_code != ''">
+		      Or ct_code like '%${ct_code}%'  <!-- 合同编码 -->
+		</if>
+	    <if test="ct_name != null and ct_name != ''">
+		      Or ct_name like '%${ct_name}%'  <!-- 合同名称 -->
+		</if>
+		 <if test="ct_properties != null and ct_properties != ''">
+		      AND ct_properties like '${ct_properties}%'  <!-- 合同性质 -->
+		</if>
+		<if test="sales_leader != null and sales_leader != ''">
+		      AND sales_leader like '${sales_leader}%'  <!-- 销售代表 -->
+		</if>
+		
+	    <if test="ct_type != null and ct_type != ''">
+		      AND ct_type like '${ct_type}%'  <!-- 合同类型 -->
+		</if>
+	    <if test="partya_name != null and partya_name != ''">
+		      Or partya_name like '%${partya_name}%'  <!-- 甲方名称 -->
+		</if>
+	    <if test="partyb_name != null and partyb_name != ''">
+		      AND partyb_name like '${partyb_name}%'  <!-- 乙方名称 -->
+		</if>
+	    <if test="partyc_name != null and partyc_name != ''">
+		      AND partyc_name like '${partyc_name}%'  <!-- 丙方名称 -->
+		</if>
+	    <if test="ct_remark != null and ct_remark != ''">
+		      AND ct_remark like '${ct_remark}%'  <!-- 合同备注 -->
+		</if>
+	    <if test="create_date != null and create_date != ''">
+		      AND create_date like '${create_date}%'  <!-- 创建日期 -->
+		</if>
+	    <if test="update_date != null and update_date != ''">
+		      AND update_date like '${update_date}%'  <!-- 修改日期 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 合同状态 -->
+		</if>
+	    <if test="reason != null and reason != ''">
+		      AND reason like '${reason}%'  <!-- 作废原因 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="ct_code != null and ct_code != ''">
+		      Or ct_code like '${ct_code}%'  <!-- 合同编码 -->
+		</if>
+		 <if test="ct_properties != null and ct_properties != ''">
+		      Or ct_properties like '${ct_properties}%'  <!-- 合同性质 -->
+		</if>
+		 <if test="sales_leader != null and sales_leader != ''">
+		      Or sales_leader like '${sales_leader}%'  <!-- 销售代表 -->
+		</if>
+	    <if test="ct_name != null and ct_name != ''">
+		      Or ct_name like '${ct_name}%'  <!-- 合同名称 -->
+		</if>
+	    <if test="ct_type != null and ct_type != ''">
+		      Or ct_type like '${ct_type}%'  <!-- 合同类型 -->
+		</if>
+	    <if test="partya_name != null and partya_name != ''">
+		      Or partya_name like '${partya_name}%'  <!-- 甲方名称 -->
+		</if>
+	    <if test="partyb_name != null and partyb_name != ''">
+		      Or partyb_name like '${partyb_name}%'  <!-- 乙方名称 -->
+		</if>
+	    <if test="partyc_name != null and partyc_name != ''">
+		      Or partyc_name like '${partyc_name}%'  <!-- 丙方名称 -->
+		</if>
+	    <if test="ct_remark != null and ct_remark != ''">
+		      Or ct_remark like '${ct_remark}%'  <!-- 合同备注 -->
+		</if>
+	    <if test="create_date != null and create_date != ''">
+		      Or create_date like '${create_date}%'  <!-- 创建日期 -->
+		</if>
+	    <if test="update_date != null and update_date != ''">
+		      Or update_date like '${update_date}%'  <!-- 修改日期 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 合同状态 -->
+		</if>
+	    <if test="reason != null and reason != ''">
+		      Or reason like '${reason}%'  <!-- 作废原因 -->
+		</if>
+	</sql>
+	
+</mapper>

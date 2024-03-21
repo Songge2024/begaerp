@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 资源管理模块使用的SQL语句 -->
+<mapper namespace="demandDaisy">
+	<!-- 查询多级联动下拉框数据(第一级) -->
+	<select id="listComboBoxCascadeData" resultType="Dto">
+		SELECT
+		proj_id AS value, proj_name AS display
+		FROM
+		bs_proj_commons 
+	</select>
+<!-- 查询设计，编码，测试的完成情况 -->
+	<select id="listMutiModelState" resultType="Dto" parameterType="Dto">
+	select
+	   <include refid="com.bl3.pm.task.dao.TaskDao.column" />
+	from
+		ta_task 
+			<where>
+				 <include refid="com.bl3.pm.task.dao.TaskDao.equal" />
+			</where>	
+			 order by task_id desc
+	</select>
+	<!-- 查询需求维护模块列表 -->
+	<select id="listDemandDaisyPage" resultType="Dto" parameterType="Dto">
+SELECT
+	a.dm_code,
+	a.dm_name,
+	a.dm_parent_code,
+	a.dm_is_leaf,
+	a.dm_sort_no,
+	a.dm_remark,
+	a.update_user_id,
+	a.create_user_id,
+	a.update_time,
+	a.create_time,
+	(select name from aos_user where a.create_user_id=id)create_user_name,
+	(select name from aos_user where a.update_user_id=id)update_user_name,
+	a.state,
+	a.proj_id,
+	b.proj_name
+FROM
+	re_module_divide a,
+	bs_proj_commons b
+			<where>
+			    <if test="dm_name != null and dm_name != ''">
+				    AND a.dm_name LIKE '%${dm_name}%' 
+				</if>
+				 <if test="dm_code != null and dm_code != ''">
+				 and  ( a.dm_code = '${dm_code}' or a.dm_parent_code = '${dm_code}' )
+				</if>
+				<if test="proj_id != null and proj_id != ''">
+				    AND a.proj_id = '${proj_id}' 
+				</if>
+				<if test="proj_name != null and proj_name != ''">
+				    AND b.proj_name LIKE '%${proj_name}%' 
+				</if>
+				and b.proj_id=a.proj_id
+			</where>	
+			 ORDER BY a.dm_sort_no ASC, a.dm_code DESC
+	</select>
+	
+	<!-- 检查删除节点中是否包含根节点 -->
+	<select id="checkRootNode" resultType="ModuleDividePO" parameterType="Dto">
+	     SELECT 
+	         <include refid="com.bl3.pm.basic.dao.ModuleDivideDao.column" />
+	      FROM re_module_divide WHERE dm_code IN (${ids}) AND dm_parent_code = '0'
+	</select>
+	
+	<!-- 查询和指定模块相关的用户列表 -->
+	<select id="listUsersDependOnModule" resultType="String" parameterType="Dto">
+		SELECT DISTINCT user_id FROM aos_user_role where role_id IN (
+		SELECT DISTINCT role_id from aos_role_module where module_id = #{module_id})
+	</select>
+
+</mapper>

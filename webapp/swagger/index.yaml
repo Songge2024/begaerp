@@ -1,0 +1,42 @@
+swagger: '2.0'
+info:
+  description: AOS是一个轻量级的Java快速开发平台
+  version: 1.0.0
+  title: AOS快速开发平台
+
+basePath: /aosuite
+
+schemes:
+  - http
+
+#定义接口数据
+paths:
+  /http/do.jhtml:
+    get:
+      tags:
+        - 后台测试接口
+      summary: 统一测试接口
+      produces:
+        - application/json
+      parameters:
+        - name: router
+          description: 后台service路径
+          in: query
+          type: string
+          required: true
+        - name: juid
+          description: 用户编码
+          in: query
+          type: string
+          required: true
+        - name: api_params
+          description: 附加参数
+          in: query
+          type: string
+          required: true
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+

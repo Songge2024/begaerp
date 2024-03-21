@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- st_proj_workload_month[ProjWorkloadMonth]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-05-26 21:01:53 -->
+<mapper namespace="com.bl3.pm.basic.dao.ProjWorkloadMonthDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="st_work_id" parameterType="Dto">
+		INSERT INTO st_proj_workload_month (
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="month != null">
+	         month, <!-- 年月（默认格式YYYYMM） -->
+		</if>
+		<if test="proj_demand_num != null">
+	         proj_demand_num, <!-- 项目的总需求数量 -->
+		</if>
+		<if test="proj_task_num != null">
+	         proj_task_num, <!-- proj_task_num -->
+		</if>
+		<if test="proj_defect_num != null">
+	         proj_defect_num, <!-- 项目的缺陷数量 -->
+		</if>
+		<if test="proj_plan_workload != null and proj_plan_workload != ''">
+	         proj_plan_workload, <!-- 项目的工作量 -->
+		</if>
+		<if test="proj_real_workload != null and proj_real_workload != ''">
+	         proj_real_workload, <!-- proj_real_workload -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 生成人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 生成时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态，默认1有效，0无效 -->
+		</if>
+	          st_work_id
+		)VALUES(
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="month != null">
+	          #{month, jdbcType=INTEGER}, <!-- 年月（默认格式YYYYMM） -->
+	    </if>
+		<if test="proj_demand_num != null">
+	          #{proj_demand_num, jdbcType=INTEGER}, <!-- 项目的总需求数量 -->
+	    </if>
+		<if test="proj_task_num != null">
+	          #{proj_task_num, jdbcType=INTEGER}, <!-- proj_task_num -->
+	    </if>
+		<if test="proj_defect_num != null">
+	          #{proj_defect_num, jdbcType=INTEGER}, <!-- 项目的缺陷数量 -->
+	    </if>
+		<if test="proj_plan_workload != null and proj_plan_workload != ''">
+	          #{proj_plan_workload, jdbcType=VARCHAR}, <!-- 项目的工作量 -->
+	    </if>
+		<if test="proj_real_workload != null and proj_real_workload != ''">
+	          #{proj_real_workload, jdbcType=VARCHAR}, <!-- proj_real_workload -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 生成人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 生成时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态，默认1有效，0无效 -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="st_work_id" parameterType="ProjWorkloadMonthPO">
+		INSERT INTO st_proj_workload_month (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{st_work_id, jdbcType=INTEGER},  <!-- 项目工作量月度统计ID -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{month, jdbcType=INTEGER},  <!-- 年月（默认格式YYYYMM） -->
+		    #{proj_demand_num, jdbcType=INTEGER},  <!-- 项目的总需求数量 -->
+		    #{proj_task_num, jdbcType=INTEGER},  <!-- proj_task_num -->
+		    #{proj_defect_num, jdbcType=INTEGER},  <!-- 项目的缺陷数量 -->
+		    #{proj_plan_workload, jdbcType=VARCHAR},  <!-- 项目的工作量 -->
+		    #{proj_real_workload, jdbcType=VARCHAR},  <!-- proj_real_workload -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 生成人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 生成时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态，默认1有效，0无效 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProjWorkloadMonthPO">
+		UPDATE st_proj_workload_month
+		<set>
+			<if test="st_work_id != null">
+		          st_work_id = #{st_work_id, jdbcType=INTEGER},  <!-- 项目工作量月度统计ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="month != null">
+		          month = #{month, jdbcType=INTEGER},  <!-- 年月（默认格式YYYYMM） -->
+			</if>
+			<if test="proj_demand_num != null">
+		          proj_demand_num = #{proj_demand_num, jdbcType=INTEGER},  <!-- 项目的总需求数量 -->
+			</if>
+			<if test="proj_task_num != null">
+		          proj_task_num = #{proj_task_num, jdbcType=INTEGER},  <!-- proj_task_num -->
+			</if>
+			<if test="proj_defect_num != null">
+		          proj_defect_num = #{proj_defect_num, jdbcType=INTEGER},  <!-- 项目的缺陷数量 -->
+			</if>
+			<if test="proj_plan_workload != null">
+		          proj_plan_workload = #{proj_plan_workload, jdbcType=VARCHAR},  <!-- 项目的工作量 -->
+			</if>
+			<if test="proj_real_workload != null">
+		          proj_real_workload = #{proj_real_workload, jdbcType=VARCHAR},  <!-- proj_real_workload -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 生成人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 生成时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态，默认1有效，0无效 -->
+			</if>
+		</set>
+		WHERE  st_work_id = #{st_work_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM st_proj_workload_month WHERE  st_work_id = #{st_work_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProjWorkloadMonthPO">
+		SELECT
+		<include refid="column" />
+		FROM st_proj_workload_month WHERE  st_work_id = #{st_work_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProjWorkloadMonthPO">
+		SELECT
+		    <include refid="column" />
+		FROM st_proj_workload_month
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="Dto">
+		SELECT
+			<include refid="column" />	
+		FROM st_proj_workload_month
+		<where>
+			  
+		    <include refid="equal" />
+		    
+		</where>	
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="listtaide" parameterType="Dto" resultType="Dto">
+		SELECT
+			<include refid="column" />	
+		FROM st_proj_workload_month
+		<where>
+			  
+		    <include refid="equaltaide" />
+		    
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProjWorkloadMonthPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM st_proj_workload_month
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProjWorkloadMonthPO">
+		SELECT
+			<include refid="column" />	
+		FROM st_proj_workload_month
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProjWorkloadMonthPO">
+		SELECT
+			<include refid="column" />	
+		FROM st_proj_workload_month
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProjWorkloadMonthPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM st_proj_workload_month
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="Dto" useCache="false">
+	    SELECT
+		  st_work_id, 
+		  f.proj_id, 
+		 ( select  proj_name  from  bs_proj_commons bpc where  bpc.proj_id=spwm.proj_id)as proj_name,    
+		  month,  
+		  proj_demand_num, 
+		  proj_task_num,  
+		  proj_defect_num,  
+		  proj_plan_workload,  
+		  proj_real_workload, 
+		  create_user_id,  
+		  (select name from aos_user au where au.id=create_user_id)create_user_name,
+		  create_time,  
+		  update_user_id,  
+		  (select name from aos_user au where au.id=update_user_id)update_user_name,
+		  update_time,  
+		  spwm.state  
+		FRoM st_proj_workload_month spwm
+			LEFT JOIN
+			(
+				select state,  PROJ_name,  PROJ_id from bs_proj_commons  
+				)f
+				on f.proj_id=spwm.proj_id
+		   where	 
+		      f.state  in (1,2) 
+			    <if test="proj_id != null and proj_id != ''">
+					   AND f.proj_id in (#{proj_id})
+				</if>
+			    <if test="proj_name != null and proj_name != ''">
+		               and f.proj_name like '%${proj_name}%'   
+		       </if>
+		        <if test="proj_id_state != null and proj_id_state != 0">
+		              and f.state = #{proj_id_state}
+		       </if>
+		    AND ( spwm.proj_id IN (
+						SELECT
+							bb.proj_id
+						FROM
+							bs_proj_teams bb
+						WHERE
+						 <if test="user_id != null and user_id != ''">
+		                         bb.team_user_id  = ${user_id}  
+		                   </if>
+						 GROUP BY
+							bb.proj_id
+					)
+			OR (
+				'4986' IN (
+					select  role_id from  aos_user_role  aur, aos_role ar   
+					  where   
+					    aur.role_id=ar.id and     
+					 <if test="user_id != null and user_id != ''">
+		               user_id = ${user_id}  <!-- 成员ID -->
+		             </if>
+				 )
+				)or
+				 (
+				'5889' IN (
+					select  role_id from  aos_user_role  aur, aos_role ar   
+					  where   
+					    aur.role_id=ar.id and    
+					 <if test="user_id != null and user_id != ''">
+		               user_id = ${user_id}  <!-- 成员ID -->
+		             </if>
+				 )
+			)
+		)
+		order by month desc
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM st_proj_workload_month
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM st_proj_workload_month
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  st_work_id,  <!-- 项目工作量月度统计ID -->
+		  proj_id,  <!-- 项目ID -->
+		  month,  <!-- 年月（默认格式YYYYMM） -->
+		  proj_demand_num,  <!-- 项目的总需求数量 -->
+		  proj_task_num,  <!-- proj_task_num -->
+		  proj_defect_num,  <!-- 项目的缺陷数量 -->
+		  proj_plan_workload,  <!-- 项目的工作量 -->
+		  proj_real_workload,  <!-- proj_real_workload -->
+		  create_user_id,  <!-- 生成人 -->
+		  create_time,  <!-- 生成时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态，默认1有效，0无效 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  st_proj_workload_month.st_work_id,  <!-- 项目工作量月度统计ID -->
+		  st_proj_workload_month.proj_id,  <!-- 项目ID -->
+		  st_proj_workload_month.month,  <!-- 年月（默认格式YYYYMM） -->
+		  st_proj_workload_month.proj_demand_num,  <!-- 项目的总需求数量 -->
+		  st_proj_workload_month.proj_task_num,  <!-- proj_task_num -->
+		  st_proj_workload_month.proj_defect_num,  <!-- 项目的缺陷数量 -->
+		  st_proj_workload_month.proj_plan_workload,  <!-- 项目的工作量 -->
+		  st_proj_workload_month.proj_real_workload,  <!-- proj_real_workload -->
+		  st_proj_workload_month.create_user_id,  <!-- 生成人 -->
+		  st_proj_workload_month.create_time,  <!-- 生成时间 -->
+		  st_proj_workload_month.update_user_id,  <!-- 更新人 -->
+		  st_proj_workload_month.update_time,  <!-- 更新时间 -->
+		  st_proj_workload_month.state  <!-- 状态，默认1有效，0无效 -->
+	</sql>
+
+<!-- Where精确匹配字段 -->
+	<sql id="equaltaide">
+	   <if test="st_work_id != null ">
+		      AND st_work_id = #{st_work_id}  <!-- 项目工作量月度统计ID -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="month != null ">
+		      AND month = #{month}  <!-- 年月（默认格式YYYYMM） -->
+		</if>
+	   <if test="proj_demand_num != null ">
+		      AND proj_demand_num = #{proj_demand_num}  <!-- 项目的总需求数量 -->
+		</if>
+	   <if test="proj_task_num != null ">
+		      AND proj_task_num = #{proj_task_num}  <!-- proj_task_num -->
+		</if>
+	   <if test="proj_defect_num != null ">
+		      AND proj_defect_num = #{proj_defect_num}  <!-- 项目的缺陷数量 -->
+		</if>
+	    <if test="proj_plan_workload != null and proj_plan_workload != ''">
+		      AND proj_plan_workload = #{proj_plan_workload}  <!-- 项目的工作量 -->
+		</if>
+	    <if test="proj_real_workload != null and proj_real_workload != ''">
+		      AND proj_real_workload = #{proj_real_workload}  <!-- proj_real_workload -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 生成人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 生成时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态，默认1有效，0无效 -->
+		</if>
+	</sql>
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="st_work_id != null ">
+		      AND st_work_id = #{st_work_id}  <!-- 项目工作量月度统计ID -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="month != null ">
+		      AND month &gt; #{month}  <!-- 年月（默认格式YYYYMM） -->
+		</if>
+	   <if test="proj_demand_num != null ">
+		      AND proj_demand_num = #{proj_demand_num}  <!-- 项目的总需求数量 -->
+		</if>
+	   <if test="proj_task_num != null ">
+		      AND proj_task_num = #{proj_task_num}  <!-- proj_task_num -->
+		</if>
+	   <if test="proj_defect_num != null ">
+		      AND proj_defect_num = #{proj_defect_num}  <!-- 项目的缺陷数量 -->
+		</if>
+	    <if test="proj_plan_workload != null and proj_plan_workload != ''">
+		      AND proj_plan_workload = #{proj_plan_workload}  <!-- 项目的工作量 -->
+		</if>
+	    <if test="proj_real_workload != null and proj_real_workload != ''">
+		      AND proj_real_workload = #{proj_real_workload}  <!-- proj_real_workload -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 生成人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 生成时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态，默认1有效，0无效 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="proj_plan_workload != null and proj_plan_workload != ''">
+		      AND proj_plan_workload like '${proj_plan_workload}%'  <!-- 项目的工作量 -->
+		</if>
+	    <if test="proj_real_workload != null and proj_real_workload != ''">
+		      AND proj_real_workload like '${proj_real_workload}%'  <!-- proj_real_workload -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 生成时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态，默认1有效，0无效 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="proj_plan_workload != null and proj_plan_workload != ''">
+		      Or proj_plan_workload like '${proj_plan_workload}%'  <!-- 项目的工作量 -->
+		</if>
+	    <if test="proj_real_workload != null and proj_real_workload != ''">
+		      Or proj_real_workload like '${proj_real_workload}%'  <!-- proj_real_workload -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 生成时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态，默认1有效，0无效 -->
+		</if>
+	</sql>
+	
+</mapper>

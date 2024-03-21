@@ -1,0 +1,928 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ta_daily_report[DailyReport]SQL自动映射 -->
+<!-- 注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-18 11:03:34 -->
+<mapper namespace="DailyReportDao">
+
+
+	<!-- 根据id数组查找数据 -->
+	<select id="TestExampleArrayList" resultType="Dto">
+		SELECT
+		<include refid="com.bl3.pm.task.dao.DailyReportDao.column" />
+		FROM ta_daily_report q
+		where q.ID in
+		<foreach collection="array" item="Id" index="index" open="("
+			close=")" separator=",">
+			#{Id}
+		</foreach>
+	</select>
+
+	<!-- 根据id和状态查找日报数据 -->
+	<select id="TestExampleArrayList5" resultType="Dto">
+		SELECT if(GROUP_CONCAT(q.task_desc, '骉驫')is
+		NULL,"",GROUP_CONCAT(q.task_desc, '骉驫')) task_desc FROM ta_task q
+		where q.state=1003 and q.handler_user_id = #{user_id_}
+	</select>
+	
+	<!-- 查询人员身份 -->
+	<select id="SelectType" resultType="Dto">
+	SELECT role_id FROM aos_user_role WHERE user_id = '${pm_user_id}'
+	</select>
+	
+	<!-- 测试组 -->
+	<select id="TestExampleArrayListPagesum_qa" resultType="Dto">
+	SELECT b.TEAM_USER_ID AS update_user_id,b.name as daily_name,COUNT(d.id) as sum FROM
+   (
+SELECT DISTINCT a.id  AS TEAM_USER_ID,a.name AS name FROM aos_user a LEFT JOIN
+    aos_user_role c ON c.user_id = a.id
+		WHERE a.name NOT IN ('超级用户','系统管理员')
+		AND (c.role_id = 8537 or c.user_id =  '${pm_user_id}')
+)b
+   LEFT JOIN 
+   (SELECT p.* FROM ta_daily_report p 
+   <where>
+   <if test="begin_time != null and begin_time != ''">
+				AND p.daily_time <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 工作时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				AND daily_time <![CDATA[   <=  ]]>
+				'${end_time}'  <!-- 工作时间 -->
+			</if> and p.state='1002'
+			</where>
+			)d 
+    on d.update_user_id = b.TEAM_USER_ID
+   GROUP BY b.TEAM_USER_ID
+	</select>
+	
+	<!-- UI组  -->
+	<select id="TestExampleArrayListPagesum_ui" resultType="Dto">
+	SELECT b.TEAM_USER_ID AS update_user_id,b.name as daily_name,COUNT(d.id) as sum FROM
+   (
+SELECT DISTINCT a.id  AS TEAM_USER_ID,a.name AS name FROM aos_user a LEFT JOIN
+    aos_user_role c ON c.user_id = a.id
+		WHERE a.name NOT IN ('超级用户','系统管理员')
+		AND (c.role_id = 8411 or c.user_id =  '${pm_user_id}')
+)b
+   LEFT JOIN 
+   (SELECT p.* FROM ta_daily_report p 
+   <where>
+   <if test="begin_time != null and begin_time != ''">
+				AND p.daily_time <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 工作时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				AND daily_time <![CDATA[   <=  ]]>
+				'${end_time}'  <!-- 工作时间 -->
+			</if> and p.state='1002'
+			</where>
+			)d 
+    on d.update_user_id = b.TEAM_USER_ID
+   GROUP BY b.TEAM_USER_ID
+	</select>
+	
+	<!-- 日报查询界面统计每个人的日报总数 -->
+	<select id="TestExampleArrayListPagesum" resultType="Dto">
+	
+      
+    SELECT b.TEAM_USER_ID AS update_user_id,b.name as daily_name,COUNT(d.id) as sum FROM
+   (SELECT DISTINCT a.id  AS TEAM_USER_ID,a.name AS name FROM aos_user a LEFT JOIN
+    bs_proj_teams c ON c.TEAM_USER_ID = a.id
+    <where>
+   <if test="proj_id != null and proj_id != ''">
+			AND c.proj_id = '${proj_id}'  <!-- 项目组ID -->
+		</if>
+		AND a.name NOT IN ('超级用户','系统管理员')
+		AND c.state = '1'
+		AND c.proj_id IN (SELECT e.proj_id FROM bs_proj_teams e WHERE e.TEAM_USER_ID = '${pm_user_id}' and (e.trp_code = 26 or e.trp_code = 28)
+		AND e.state <![CDATA[   <>  ]]> '0' )
+  </where>)b
+   LEFT JOIN 
+   (SELECT p.* FROM ta_daily_report p 
+   <where>
+   <if test="begin_time != null and begin_time != ''">
+				AND p.daily_time <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 工作时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				AND daily_time <![CDATA[   <=  ]]>
+				'${end_time}'  <!-- 工作时间 -->
+			</if> and p.state='1002'
+			</where>
+			)d 
+    on d.update_user_id = b.TEAM_USER_ID
+   GROUP BY b.TEAM_USER_ID
+   
+	</select>
+	
+	<!-- 日报查询查询项目经理所有的项目 -->
+	<select id="listComboBoxUerid" resultType="Dto">
+		SELECT 
+		  bpc.`PROJ_ID` AS value,
+		  bpc.`PROJ_NAME` AS display 
+		FROM
+		  `bs_proj_commons` bpc
+		<if test="team_user_id != 'null' and team_user_id != ''">
+		  	,`bs_proj_teams` bpt 
+		</if>
+		WHERE bpc.`STATE` <![CDATA[  <>  ]]> '0' 
+		<if test="team_user_id != 'null' and team_user_id != ''">
+			and bpt.`state` = '1'
+		  	and bpt.`PROJ_ID` = bpc.`PROJ_ID`
+		  	AND bpt.`TEAM_USER_ID`=${team_user_id}
+		  	AND bpt. trp_code = 26
+		</if>
+		GROUP BY bpc.`PROJ_ID` 
+		order by CREATE_TIME desc
+	</select>
+	
+	<!-- 根据id和状态查找日报数据 -->
+	<select id="TestExampleArrayList555" resultType="Dto">
+		SELECT if(GROUP_CONCAT(p.task_desc, '骉驫')is
+		NULL,"",GROUP_CONCAT(p.task_desc, '骉驫')) task_desc FROM ta_task q ,
+		(select o.task_id task_id , concat(task_name,":",o.task_desc) task_desc from ta_task o ) p
+		where q.task_id = p.task_id
+		and q.real_begin_time <![CDATA[  <  ]]>
+		ADDDATE('${daily_time}',INTERVAL 1 day)
+		and (q.real_end_time <![CDATA[  >=  ]]>
+		'${daily_time}' or q.real_end_time is null )
+		and q.handler_user_id = '${update_user_id}'
+	</select>
+	
+	<select id="TestExampleArrayListexample" resultType="Dto">
+	SELECT GROUP_CONCAT( b.name, '项目的' ,b.standard_code ,'模块共计用例',b.sum,'条') example from (
+    SELECT c.proj_name name, a.standard_code , count(1) sum FROM qa_test_example a , bs_proj_commons c
+    WHERE a.proj_id =c.proj_id 
+    AND a.tester_id = '${update_user_id}' 
+    AND date_format(a.create_time, '%Y-%m-%d') = '${daily_time}'
+    GROUP BY c.proj_name,a.standard_code
+    ) b
+		
+	</select>
+	
+	<select id="TestExampleArrayListtestexample" resultType="Dto">
+	SELECT CONCAT('项目:',d.proj_name,'(模块：',d.codes,')共计条数：',d.sum) testexample FROM ( 
+    SELECT c.proj_name, GROUP_CONCAT(DISTINCT a.standard_code) codes ,COUNT(1) sum
+    FROM qa_test_example a , qa_testexample_log b , bs_proj_commons c
+    WHERE a.standard_id = b.standard_id
+    AND a.proj_id = c.proj_id
+    AND date_format(b.test_time, '%Y-%m-%d') = '${daily_time}'
+    AND b.tester_id= '${update_user_id}'
+    GROUP BY c.proj_name ) d
+	
+	</select>
+	
+	<select id="TestExampleArrayListbug" resultType="Dto">
+	SELECT GROUP_CONCAT(a.bug_code) bug_create,count(0) sum FROM qa_bug_manage a
+    WHERE date_format(a.create_time, '%Y-%m-%d') = '${daily_time}'
+    AND a.create_name = '${getname}'
+	</select>
+	
+	<select id="TestExampleArrayListdeal" resultType="Dto">
+	SELECT GROUP_CONCAT(b.bug_code) bug_deal ,count(0) sum FROM qa_bug_manage b
+    WHERE date_format(b.close_time, '%Y-%m-%d') = '${daily_time}'
+    AND b.deal_man = '${update_user_id}'
+	</select>
+	
+	<select id="TestExampleArrayListfiles" resultType="Dto">
+	SELECT a.theme ,a.attende_id FROM qa_files_manage a
+    WHERE a.state_flag <![CDATA[   <>  ]]> '1' 
+    AND a.review_type ='1'    
+    AND date_format(a.begin_date, '%Y-%m-%d') <![CDATA[   <=  ]]> '${daily_time}'
+    AND date_format(a.end_date, '%Y-%m-%d') <![CDATA[   >=  ]]> '${daily_time}'
+	</select>
+	
+	<select id="TestExampleArrayListreplynews" resultType="Dto">
+	SELECT  GROUP_CONCAT(a.theme) news FROM qa_files_manage a ,qa_reply_news b
+      WHERE a.state_flag <![CDATA[   <>  ]]> '1'
+      AND a.opinion_code = b.text_code
+      AND a.review_type <![CDATA[   <>  ]]>'1' 
+      AND date_format(b.text_date, '%Y-%m-%d') <![CDATA[   >=  ]]> '${daily_time}'
+      AND b.text_name_id = '${update_user_id}'
+	</select>
+
+   <!-- 新增根据id和时间查询日报是否存在 -->
+	<select id="TestExampleArrayList5555" resultType="Dto">
+	SELECT if(GROUP_CONCAT(id)is NULL,"",GROUP_CONCAT(id)) id FROM ta_daily_report where update_user_id = '${update_user_id}'
+	and daily_time = '${daily_time}'
+   </select>
+
+	<select id="selectDailyReportByDate" resultType="Dto">
+		SELECT * FROM ta_daily_report where update_user_id = '${update_id}'
+		and daily_time = '${daily_date}'
+	</select>
+
+    <!-- 查询根据id和时间查询日报是否存在 -->
+	<select id="TestExampleArrayList55555" resultType="Dto">
+	SELECT if(GROUP_CONCAT(id)is NULL,"",GROUP_CONCAT(id)) id FROM ta_daily_report where update_user_id = '${update_user_id}'
+	and daily_time = '${daily_time}' and id <![CDATA[  <>  ]]> '${id}'
+    </select>
+
+	<!--查询一段时间内最后修改的日报 -->
+	<select id="TestExampleArrayList11Page" resultType="DailyReportPO">
+
+		SELECT
+		<include refid="com.bl3.pm.task.dao.DailyReportDao.column" />
+		FROM ta_daily_report q
+		<where>
+			<if test="name != null and name != ''">
+				AND name like '%${name}%'  <!-- 日报名称 -->
+			</if>
+			<if test="descc != null and descc != ''">
+				AND descc like '${descc}%'  <!-- 日报描述 -->
+			</if>
+			<if test="remark != null and remark != ''">
+				AND remark like '${remark}%'  <!-- remark -->
+			</if>
+			<if test="update_time != null and update_time != ''">
+				AND update_time like '${update_time}%'  <!-- 更新时间 -->
+			</if>
+			<if test="update_user_id != null and update_user_id != ''">
+				AND update_user_id = ${update_user_id} <!-- 修改人 -->
+			</if>
+
+			<if test="state != null and state != ''">
+				AND state like '${state}%'  <!-- 日报状态 -->
+			</if>
+			<if test="begin_time != null and begin_time != ''">
+				AND daily_time <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 工作时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				AND daily_time <![CDATA[   <=  ]]>
+				'${end_time}'  <!-- 工作时间 -->
+			</if>
+			and q.update_time in (select MAX(b.update_time) from ta_daily_report
+			b)
+		</where>
+	</select>
+
+	<!--查询项目组的日报 -->
+	<select id="TestExampleArrayListPage" resultType="Dto"
+	parameterType="Dto">
+	select b.* from (
+	SELECT distinct d.id id1 ,d.* from (
+	select * FROM ta_daily_report a
+	<where>
+		<if test="name != null and name != ''">
+			AND a.name like '%${name}%'  <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+			AND a.descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+			AND a.remark like '${remark}%'  <!-- remark -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+			AND a.update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+			AND a.update_user_id = ${update_user_id} <!-- 修改人 -->
+		</if>
+		AND a.state = '1002'  <!-- 日报状态 -->
+		<if test="begin_time != null and begin_time != ''">
+			AND a.daily_time <![CDATA[  >=  ]]>
+			'${begin_time}'  <!-- 工作时间 -->
+		</if>
+		<if test="end_time != null and end_time != ''">
+			AND a.daily_time <![CDATA[   <=  ]]>
+			'${end_time}'  <!-- 工作时间 -->
+		</if>
+		
+	</where>
+	) d
+	LEFT JOIN bs_proj_teams c on d.update_user_id = c.TEAM_USER_ID
+  <where>
+  <if test="proj_id != null and proj_id != ''">
+			AND c.proj_id = '${proj_id}'  <!-- 项目组ID -->
+ </if>
+ AND c.state='1'
+  </where>
+	) b
+</select>
+<!--QA组长查询测试人员的日报 -->
+<select id="TestExampleArrayListsearchPage_qa" resultType="Dto"
+	parameterType="Dto">
+	select b.* from (
+	SELECT distinct d.id id1 ,d.* from (
+	select * FROM ta_daily_report a
+	<where>
+		<if test="name != null and name != ''">
+			AND a.name like '%${name}%'  <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+			AND a.descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+			AND a.remark like '${remark}%'  <!-- remark -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+			AND a.update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+			AND a.update_user_id = ${update_user_id} <!-- 修改人 -->
+		</if>
+		AND a.state = '1002'  <!-- 日报状态 -->
+		<if test="begin_time != null and begin_time != ''">
+			AND a.daily_time <![CDATA[  >=  ]]>
+			'${begin_time}'  <!-- 工作时间 -->
+		</if>
+		<if test="end_time != null and end_time != ''">
+			AND a.daily_time <![CDATA[   <=  ]]>
+			'${end_time}'  <!-- 工作时间 -->
+		</if>
+		   AND (a.update_user_id in(SELECT user_id FROM aos_user_role WHERE role_id = 8537)
+		   or a.update_user_id = ${pm_user_id})
+		   AND a.update_user_id in  (
+		SELECT  f.id   FROM aos_user f LEFT JOIN
+    bs_proj_teams g ON g.TEAM_USER_ID = f.id
+    <where>
+   <if test="proj_id != null and proj_id != ''">
+			AND g.proj_id = '${proj_id}'  
+		</if>
+		AND f.name NOT IN ('超级用户','系统管理员')
+  </where> ) 
+  
+	</where>
+	) d
+	LEFT JOIN bs_proj_teams c on d.update_user_id = c.TEAM_USER_ID
+  <where>
+  <if test="proj_id != null and proj_id != ''">
+			AND c.proj_id = '${proj_id}'  <!-- 项目组ID -->
+		</if>
+  </where>
+	) b
+</select>
+
+<!--UI组长查询UI人员的日报 -->
+<select id="TestExampleArrayListsearchPage_ui" resultType="Dto"
+	parameterType="Dto">
+	select b.* from (
+	SELECT distinct d.id id1 ,d.* from (
+	select * FROM ta_daily_report a
+	<where>
+		<if test="name != null and name != ''">
+			AND a.name like '%${name}%'  <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+			AND a.descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+			AND a.remark like '${remark}%'  <!-- remark -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+			AND a.update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+			AND a.update_user_id = ${update_user_id} <!-- 修改人 -->
+		</if>
+		AND a.state = '1002'  <!-- 日报状态 -->
+		<if test="begin_time != null and begin_time != ''">
+			AND a.daily_time <![CDATA[  >=  ]]>
+			'${begin_time}'  <!-- 工作时间 -->
+		</if>
+		<if test="end_time != null and end_time != ''">
+			AND a.daily_time <![CDATA[   <=  ]]>
+			'${end_time}'  <!-- 工作时间 -->
+		</if>
+		   AND a.update_user_id in(SELECT user_id FROM aos_user_role WHERE role_id = 8411)
+			AND a.update_user_id in  (
+		SELECT  f.id   FROM aos_user f LEFT JOIN
+    bs_proj_teams g ON g.TEAM_USER_ID = f.id
+    <where>
+   <if test="proj_id != null and proj_id != ''">
+			AND g.proj_id = '${proj_id}'  
+		</if>
+		AND f.name NOT IN ('超级用户','系统管理员')
+  </where> ) 
+  
+	</where>
+	) d
+	LEFT JOIN bs_proj_teams c on d.update_user_id = c.TEAM_USER_ID
+  <where>
+  <if test="proj_id != null and proj_id != ''">
+			AND c.proj_id = '${proj_id}'  <!-- 项目组ID -->
+		</if>
+  </where>
+	) b
+</select>
+
+<!--项目经理查询项目组的日报 -->
+	<select id="TestExampleArrayListsearchPage" resultType="Dto"
+	parameterType="Dto">
+	select b.* from (
+	SELECT distinct d.id id1 ,d.* from (
+	select * FROM ta_daily_report a
+	<where>
+		<if test="name != null and name != ''">
+			AND a.name like '%${name}%'  <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+			AND a.descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+			AND a.remark like '${remark}%'  <!-- remark -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+			AND a.update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+			AND a.update_user_id = ${update_user_id} <!-- 修改人 -->
+		</if>
+		AND a.state = '1002'  <!-- 日报状态 -->
+		<if test="begin_time != null and begin_time != ''">
+			AND a.daily_time <![CDATA[  >=  ]]>
+			'${begin_time}'  <!-- 工作时间 -->
+		</if>
+		<if test="end_time != null and end_time != ''">
+			AND a.daily_time <![CDATA[   <=  ]]>
+			'${end_time}'  <!-- 工作时间 -->
+		</if>
+		
+			AND a.update_user_id in  (
+		SELECT  f.id   FROM aos_user f LEFT JOIN
+    bs_proj_teams g ON g.TEAM_USER_ID = f.id
+    <where>
+   <if test="proj_id != null and proj_id != ''">
+			AND g.proj_id = '${proj_id}'  
+		</if>
+		AND f.name NOT IN ('超级用户','系统管理员')
+		AND g.proj_id IN (SELECT e.proj_id FROM bs_proj_teams e WHERE e.TEAM_USER_ID = '${pm_user_id}' and (e.trp_code = 26 or e.trp_code = 28)
+		AND e.state <![CDATA[   <>  ]]> '0' )
+  </where> ) 
+  
+	</where>
+	) d
+	LEFT JOIN bs_proj_teams c on d.update_user_id = c.TEAM_USER_ID
+  <where>
+  <if test="proj_id != null and proj_id != ''">
+			AND c.proj_id = '${proj_id}'  <!-- 项目组ID -->
+		</if>
+  </where>
+	) b
+</select>
+<!-- QA组长查询QA人员日报 -->
+<select id="TestExampleArrayListPage123_qa" resultType="Dto"
+	parameterType="Dto">
+	select b.* from (
+	SELECT distinct d.id id1 ,d.* from (
+	select * FROM ta_daily_report a
+	<where>
+		<if test="name != null and name != ''">
+			AND a.name like '%${name}%'  <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+			AND a.descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+			AND a.remark like '${remark}%'  <!-- remark -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+			AND a.update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+			AND a.update_user_id = ${update_user_id} <!-- 修改人 -->
+		</if>
+		AND a.state = '1002'  <!-- 日报状态 -->
+		<if test="begin_time != null and begin_time != ''">
+			AND a.daily_time <![CDATA[  >=  ]]>
+			'${begin_time}'  <!-- 工作时间 -->
+		</if>
+		<if test="end_time != null and end_time != ''">
+			AND a.daily_time <![CDATA[   <=  ]]>
+			'${end_time}'  <!-- 工作时间 -->
+		</if>
+		AND (a.update_user_id in(SELECT user_id FROM aos_user_role WHERE role_id = 8537)
+		 or a.update_user_id = ${pm_user_id} )
+		AND a.update_user_id in  (
+		SELECT  f.id   FROM aos_user f LEFT JOIN
+    bs_proj_teams g ON g.TEAM_USER_ID = f.id
+    <where>
+   <if test="proj_id != null and proj_id != ''">
+			AND g.proj_id = '${proj_id}'  
+		</if>
+		AND f.name NOT IN ('超级用户','系统管理员')
+  </where> ) 
+  
+ 
+	</where>
+	) d
+	LEFT JOIN bs_proj_teams c on d.update_user_id = c.TEAM_USER_ID
+	<where>
+  <if test="proj_id != null and proj_id != ''">
+			AND c.proj_id = '${proj_id}'  <!-- 项目组ID -->
+		</if>
+  </where>
+	) b
+	
+</select>
+
+
+<!-- UI组长查询UI人员日报 -->
+<select id="TestExampleArrayListPage123_ui" resultType="Dto"
+	parameterType="Dto">
+	select b.* from (
+	SELECT distinct d.id id1 ,d.* from (
+	select * FROM ta_daily_report a
+	<where>
+		<if test="name != null and name != ''">
+			AND a.name like '%${name}%'  <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+			AND a.descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+			AND a.remark like '${remark}%'  <!-- remark -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+			AND a.update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+			AND a.update_user_id = ${update_user_id} <!-- 修改人 -->
+		</if>
+		AND a.state = '1002'  <!-- 日报状态 -->
+		<if test="begin_time != null and begin_time != ''">
+			AND a.daily_time <![CDATA[  >=  ]]>
+			'${begin_time}'  <!-- 工作时间 -->
+		</if>
+		<if test="end_time != null and end_time != ''">
+			AND a.daily_time <![CDATA[   <=  ]]>
+			'${end_time}'  <!-- 工作时间 -->
+		</if>
+		AND (a.update_user_id in(SELECT user_id FROM aos_user_role WHERE role_id = 8411)  or a.update_user_id = ${pm_user_id})
+		AND a.update_user_id in  (
+		SELECT  f.id   FROM aos_user f LEFT JOIN
+    bs_proj_teams g ON g.TEAM_USER_ID = f.id
+    <where>
+   <if test="proj_id != null and proj_id != ''">
+			AND g.proj_id = '${proj_id}'  
+		</if>
+		AND f.name NOT IN ('超级用户','系统管理员')
+  </where> ) 
+  
+ 
+	</where>
+	) d
+	LEFT JOIN bs_proj_teams c on d.update_user_id = c.TEAM_USER_ID
+	<where>
+  <if test="proj_id != null and proj_id != ''">
+			AND c.proj_id = '${proj_id}'  <!-- 项目组ID -->
+		</if>
+  </where>
+	) b
+	
+</select>
+
+<!--查询项目组的日报 -->
+	<select id="TestExampleArrayListPage123" resultType="Dto"
+	parameterType="Dto">
+	select b.* from (
+	SELECT distinct d.id id1 ,d.* from (
+	select * FROM ta_daily_report a
+	<where>
+		<if test="name != null and name != ''">
+			AND a.name like '%${name}%'  <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+			AND a.descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+			AND a.remark like '${remark}%'  <!-- remark -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+			AND a.update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+			AND a.update_user_id = ${update_user_id} <!-- 修改人 -->
+		</if>
+		AND a.state = '1002'  <!-- 日报状态 -->
+		<if test="begin_time != null and begin_time != ''">
+			AND a.daily_time <![CDATA[  >=  ]]>
+			'${begin_time}'  <!-- 工作时间 -->
+		</if>
+		<if test="end_time != null and end_time != ''">
+			AND a.daily_time <![CDATA[   <=  ]]>
+			'${end_time}'  <!-- 工作时间 -->
+		</if>
+		
+		AND a.update_user_id in  (
+		SELECT  f.id   FROM aos_user f LEFT JOIN
+    bs_proj_teams g ON g.TEAM_USER_ID = f.id
+    <where>
+   <if test="proj_id != null and proj_id != ''">
+			AND g.proj_id = '${proj_id}'  
+		</if>
+		AND f.name NOT IN ('超级用户','系统管理员')
+		AND g.proj_id IN (SELECT e.proj_id FROM bs_proj_teams e WHERE e.TEAM_USER_ID = '${pm_user_id}' and (e.trp_code = 26 or e.trp_code = 28)
+		AND e.state <![CDATA[   <>  ]]> '0' )
+  </where> ) 
+  
+ 
+	</where>
+	) d
+	LEFT JOIN bs_proj_teams c on d.update_user_id = c.TEAM_USER_ID
+	<where>
+  <if test="proj_id != null and proj_id != ''">
+			AND c.proj_id = '${proj_id}'  <!-- 项目组ID -->
+		</if>
+  </where>
+	) b
+	
+</select>
+
+
+<!--总览的日报 -->
+	<select id="TestExampleArrayListPage1234" resultType="Dto"
+	parameterType="Dto">
+	select b.* from (
+	SELECT distinct d.id id1 ,d.* from (
+	select * FROM ta_daily_report a
+	<where>
+		<if test="name != null and name != ''">
+			AND a.name like '%${name}%'  <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+			AND a.descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+			AND a.remark like '${remark}%'  <!-- remark -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+			AND a.update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		<if test="update_user_id != null and update_user_id != ''">
+			AND a.update_user_id = ${update_user_id} <!-- 修改人 -->
+		</if>
+		<if test="state != null and state != ''">
+			AND a.state like '${state}%'  <!-- 状态 -->
+		</if>
+		<if test="begin_time != null and begin_time != ''">
+			AND a.daily_time <![CDATA[  >=  ]]>
+			'${begin_time}'  <!-- 工作时间 -->
+		</if>
+		<if test="end_time != null and end_time != ''">
+			AND a.daily_time <![CDATA[   <=  ]]>
+			'${end_time}'  <!-- 工作时间 -->
+		</if>
+		<if test="proj_id != null and proj_id != ''">
+			AND b.proj_id = '${proj_id}'  <!-- 项目组ID -->
+		</if>
+	</where>
+	) d
+	LEFT JOIN bs_proj_teams c on d.update_user_id = c.TEAM_USER_ID
+	) b
+</select>
+	<!--查询一段时间内的日报 -->
+	<select id="TestExampleArrayList1Page" resultType="DailyReportPO">
+
+		SELECT
+		<include refid="com.bl3.pm.task.dao.DailyReportDao.column" />
+		FROM ta_daily_report q
+		<where>
+			<if test="name != null and name != ''">
+				AND name like '%${name}%'  <!-- 日报名称 -->
+			</if>
+			<if test="descc != null and descc != ''">
+				AND descc like '${descc}%'  <!-- 日报描述 -->
+			</if>
+			<if test="remark != null and remark != ''">
+				AND remark like '${remark}%'  <!-- remark -->
+			</if>
+			<if test="update_time != null and update_time != ''">
+				AND update_time like '${update_time}%'  <!-- 更新时间 -->
+			</if>
+			<if test="update_user_id != null and update_user_id != ''">
+				AND update_user_id = ${update_user_id} <!-- 修改人 -->
+			</if>
+			<if test="state != null and state != ''">
+				AND state like '${state}%'  <!-- 日报状态 -->
+			</if>
+			<if test="begin_time != null and begin_time != ''">
+				AND daily_time <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 工作时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				AND daily_time <![CDATA[   <=  ]]>
+				'${end_time}'  <!-- 工作时间 -->
+			</if>
+			and q.update_time not in (select MAX(b.update_time) from
+			ta_daily_report b)
+		</where>
+		order by q.daily_time asc
+	</select>
+
+	<!--查询所有日报 -->
+	<select id="TestExampleArrayList2Page" resultType="DailyReportPO">
+		SELECT
+		<include refid="com.bl3.pm.task.dao.DailyReportDao.column" />
+		FROM ta_daily_report q  order by q.daily_time desc
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="DailyReportPO"
+		useCache="false">
+		SELECT
+		<include refid="com.bl3.pm.task.dao.DailyReportDao.column" />
+		FRoM ta_daily_report
+		<where>
+			<include refid="like" />
+		</where>
+	</select>
+
+	<!-- Where模糊匹配字段 交集 -->
+	<sql id="like">
+		<if test="name != null and name != ''">
+			AND name like '%${name}%'  <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+			AND descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+			AND remark like '${remark}%'  <!-- remark -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+			AND begin_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+		<if test="week_day != null and week_day != ''">
+			AND week_day like '${week_day}%'  <!-- week_day -->
+		</if>
+		<if test="state != null and state != ''">
+			AND state like '${state}%'  <!-- 日报状态 -->
+		</if>
+		<if test="daily_time != null and daily_time != ''">
+			AND daily_time like '${daily_time}%'  <!-- 工作时间 -->
+		</if>
+	</sql>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="getDaiReport" parameterType="Dto" resultType="Dto">
+		SELECT
+		*
+		FRoM ta_daily_report
+		<where>
+			<if test="proj_id != null ">
+				AND id = #{proj_id}  <!-- 更新人 -->
+			</if>
+		</where>
+	</select>
+
+	<!--工作台查询我的任务 -->
+	<select id="TestExampleArrayList22" resultType="Dto"
+		parameterType="Dto">
+		SELECT a.task_id , b.proj_name proj_name ,
+		a.task_name,a.plan_begin_time,a.plan_end_time,a.task_level,a.state
+		FROM ta_task a , bs_proj_commons b
+		WHERE a.proj_id = b.proj_id
+		AND a.handler_user_id = ${handler_user_id}
+		AND a.proj_id = ${proj_id}
+		AND a.state in(1002,1003,1004)
+		order by a.task_id desc
+	</select>
+  <!--工作台查询我的日报 -->
+  <select id="TestExampleArrayList222" resultType="Dto" parameterType="Dto">
+	SELECT
+		<include refid="com.bl3.pm.task.dao.DailyReportDao.column" />
+		FROM ta_daily_report q
+		<where>
+			<if test="name != null and name != ''">
+				AND name like '%${name}%'  <!-- 日报名称 -->
+			</if>
+			<if test="descc != null and descc != ''">
+				AND descc like '${descc}%'  <!-- 日报描述 -->
+			</if>
+			<if test="remark != null and remark != ''">
+				AND remark like '${remark}%'  <!-- remark -->
+			</if>
+			<if test="update_time != null and update_time != ''">
+				AND update_time like '${update_time}%'  <!-- 更新时间 -->
+			</if>
+			<if test="update_user_id != null and update_user_id != ''">
+				AND update_user_id = ${update_user_id} <!-- 修改人 -->
+			</if>
+			<if test="state != null and state != ''">
+				AND state like '${state}%'  <!-- 日报状态 -->
+			</if>
+			<if test="begin_time != null and begin_time != ''">
+				AND daily_time <![CDATA[  >=  ]]>
+				'${begin_time}'  <!-- 工作时间 -->
+			</if>
+			<if test="end_time != null and end_time != ''">
+				AND daily_time <![CDATA[   <=  ]]>
+				'${end_time}'  <!-- 工作时间 -->
+			</if>
+		</where>
+		order by q.daily_time desc
+	</select>
+	<!--工作台查询我的评审 -->
+	<select id="TestExampleArrayList33" resultType="Dto"
+		parameterType="Dto">
+   SELECT  theme ,begin_date ,end_date,review_type,attende_id
+      FROM qa_files_manage 
+      where state_flag = '2'
+	</select>
+
+	<!--工作台查询我的缺陷 -->
+	<select id="TestExampleArrayList44" resultType="Dto"
+		parameterType="Dto">
+		SELECT a.bug_id, b.proj_name , c.dm_name ,a.bug_name , a.create_name,a.state
+		FROM qa_bug_manage a ,bs_proj_commons b ,re_module_divide c
+		WHERE a.proj_id = b.proj_id
+		AND c.dm_code = a.stand_id
+		AND a.deal_man = ${deal_man}
+		AND a.proj_id = ${proj_id}
+		AND a.state in (1000,1002)
+	</select>
+
+	<!--工作台查询我的缺陷 -->
+	<select id="TestExampleArrayList55" resultType="Dto"
+		parameterType="Dto">
+		SELECT a.bug_id, b.proj_name , c.dm_name ,a.bug_name , a.deal_man, a.state
+		FROM qa_bug_manage a ,bs_proj_commons b ,re_module_divide c
+		WHERE a.proj_id = b.proj_id
+		AND c.dm_code = a.stand_id
+		AND a.create_name = '${create_man}'
+		AND a.proj_id = ${proj_id}
+		AND a.state in (1001,1004)	
+	</select>
+	
+	<!--工作台查询我的缺陷 -->
+	<select id="select_my_daily" resultType="Dto">
+		SELECT
+				id,
+				NAME,
+				descc,
+				remark,
+				update_user_id,
+				update_time,
+				(
+					CASE week_day
+					WHEN 'Monday' THEN
+						'星期一'
+					WHEN 'Tuesday' THEN
+						'星期二'
+					WHEN 'Wednesday' THEN
+						'星期三'
+					WHEN 'Thursday' THEN
+						'星期四'
+					WHEN 'Friday' THEN
+						'星期五'
+					WHEN 'Saturday' THEN
+						'星期六'
+					WHEN 'Sunday' THEN
+						'星期日'
+					ELSE
+						week_day
+					END
+				) AS week_day,
+				state,
+				daily_time,
+				desccc,
+				DATE_FORMAT(daily_time, '%Y-%m-%d') AS m_time
+			FROM
+				`ta_daily_report`
+			WHERE DATE_SUB(CURDATE(), INTERVAL 30 DAY) <![CDATA[   <=  ]]> daily_time
+			AND update_user_id =${user_id}
+	</select>
+
+   <!--设置默认项目-->
+	<select id="SetDefaultProject" resultType="Dto"
+		parameterType="Dto">
+		INSERT INTO ta_my_project (proj_id,person_id,person_name) 
+		VALUE (${proj_id},${person_id},#{person_name})
+	</select>
+	
+	<!--删除默认项目-->
+	<select id="DeleteDefaultProject" resultType="Dto"
+		parameterType="Dto">
+		DELETE FROM ta_my_project where person_id = ${person_id}
+	</select>
+	
+	   <!--查询默认项目-->
+	<select id="SelectDefaultProject" resultType="Dto"
+		parameterType="Dto">
+		SELECT proj_id FROM ta_my_project where person_id = ${person_id}
+	</select>
+	
+	<!--取默认项目信息-->
+	<select id="GetDefaultProject" resultType="Dto" parameterType="Dto">
+	SELECT a.proj_id ,a.proj_name  
+      from bs_proj_commons a ,ta_my_project b
+        WHERE a.proj_id = b.proj_id
+          and  b.person_id = ${person_id}
+	</select>
+	
+	 <!--修改默认项目-->
+	<select id="UpdateDefaultProject" resultType="Dto"
+		parameterType="Dto">
+		UPDATE ta_my_project 
+		<set>
+		proj_id = ${proj_id},
+		person_name = #{person_name}
+		</set>
+		where person_id = ${person_id}
+	</select>
+
+	
+</mapper>

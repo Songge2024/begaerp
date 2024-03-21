@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_proj_week[ProjWeek]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-19 17:02:26 -->
+<mapper namespace="com.bl3.pm.basic.dao.ProjWeekDao">
+<!--消耗天数  -->
+<select id="queryWastDay" resultType="Dto">
+		SELECT
+			DATEDIFF(#{end_date},#{begin_date})+1 plan_wastage
+		FROM
+			dual
+
+</select>
+<!--查询项目周上级的开始和结束时间  -->
+<select id="queryTimeData" resultType="Dto">
+		SELECT
+			begin_date,
+			end_date,
+			plan_wastage,
+			parent_id,
+			is_leaf
+		FROM
+			bs_proj_milestone
+		WHERE
+		<if test="milest_code != null and milest_code != ''">
+		       milest_code = #{milest_code} 
+		</if>
+		<if test="type != null and type != ''">
+		     and  type = #{type} 
+		</if>
+</select>
+
+	<!--查询开始时间  -->
+	<select id="queryBegintime" resultType="Dto">
+	SELECT
+		IFNULL(
+		CONCAT(
+			DATE_FORMAT(
+				DATE_ADD(max(end_date), INTERVAL 1 DAY),
+				'%Y-%m-%d'
+			),
+			' 08:30:00'
+		),
+		CONCAT((
+			SELECT
+				begin_date
+			FROM
+				bs_proj_commons
+			WHERE
+				proj_id = #{proj_id}
+		),
+			' 08:30:00'
+		)
+			)begin_time
+		FROM
+			bs_proj_milestone
+		WHERE
+		   proj_id=#{proj_id}
+			and state !=- 1
+			<if test="milest_code != null and milest_code != ''">
+		     and  parent_id = #{milest_code}
+		</if>
+		</select>
+<!-- 查询指定的日期属于星期几 -->
+<select id="queryWeektime" resultType="Dto">
+select date_format(#{begin_time},'%w')w_day from dual
+</select>
+<!-- 查询指定的日期的星期一 -->
+<select id="queryWeekMonday" resultType="Dto">
+select subdate(#{begin_time},date_format(#{begin_time},'%w')-1)monday FROM DUAL
+</select>
+<!-- 查询指定的日期的星期日 -->
+<select id="queryWeekSaturday" resultType="Dto">
+SELECT
+	CONCAT(
+		DATE_FORMAT(
+			subdate(
+				#{begin_time},
+				date_format(#{begin_time}, '%w')- 7
+			),
+			'%Y-%m-%d'
+		),
+		' 17:30:00'
+	)saturday
+FROM
+	DUAL
+</select>
+<!--启用停用项目周维护数据  -->
+	<update id="updateState" parameterType="ProjWeekPO">
+	update bs_proj_week set
+	state=#{state}
+	where week_id in (#{week_id})
+	</update>
+<!--非物理删除项目周维护数据  -->
+	<update id="updateDelState" parameterType="ProjWeekPO">
+	update bs_proj_week set
+	state='-1'
+	where week_id = #{week_id}
+	</update>
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ProjWeekPO">
+		INSERT INTO bs_proj_week (
+		<if test="week_name != null and week_name != ''">
+	         week_name, <!-- 项目周名称 -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="begin_date != null and begin_date != ''">
+	         begin_date, <!-- 开始时间 -->
+		</if>
+		<if test="end_date != null and end_date != ''">
+	         end_date, <!-- 结束时间 -->
+		</if>
+		<if test="comment != null and comment != ''">
+	         comment, <!-- 说明 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 设计人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="week_id != null">
+	          week_id  <!-- 项目周ID -->
+	   </if>
+		)VALUES(
+		<if test="week_name != null and week_name != ''">
+	          #{week_name, jdbcType=VARCHAR}, <!-- 项目周名称 -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="begin_date != null and begin_date != ''">
+	          #{begin_date, jdbcType=VARCHAR}, <!-- 开始时间 -->
+	    </if>
+		<if test="end_date != null and end_date != ''">
+	          #{end_date, jdbcType=VARCHAR}, <!-- 结束时间 -->
+	    </if>
+		<if test="comment != null and comment != ''">
+	          #{comment, jdbcType=VARCHAR}, <!-- 说明 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 设计人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		<if test="week_id != null">
+		     #{week_id, jdbcType=INTEGER}  <!-- 项目周ID -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ProjWeekPO">
+		INSERT INTO bs_proj_week (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{week_id, jdbcType=INTEGER},  <!-- 项目周ID -->
+		    #{week_name, jdbcType=VARCHAR},  <!-- 项目周名称 -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{begin_date, jdbcType=VARCHAR},  <!-- 开始时间 -->
+		    #{end_date, jdbcType=VARCHAR},  <!-- 结束时间 -->
+		    #{comment, jdbcType=VARCHAR},  <!-- 说明 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProjWeekPO">
+		UPDATE bs_proj_week
+		<set>
+			<if test="week_id != null">
+		          week_id = #{week_id, jdbcType=INTEGER},  <!-- 项目周ID -->
+			</if>
+			<if test="week_name != null">
+		          week_name = #{week_name, jdbcType=VARCHAR},  <!-- 项目周名称 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="begin_date != null">
+		          begin_date = #{begin_date, jdbcType=VARCHAR},  <!-- 开始时间 -->
+			</if>
+			<if test="end_date != null">
+		          end_date = #{end_date, jdbcType=VARCHAR},  <!-- 结束时间 -->
+			</if>
+			<if test="comment != null">
+		          comment = #{comment, jdbcType=VARCHAR},  <!-- 说明 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 设计人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  week_id = #{week_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_proj_week WHERE  week_id = #{week_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProjWeekPO">
+		SELECT
+		<include refid="column" />
+		FROM bs_proj_week WHERE  week_id = #{week_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProjWeekPO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_proj_week
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProjWeekPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_week
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProjWeekPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_week
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProjWeekPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_week
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProjWeekPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_proj_week
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProjWeekPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_proj_week
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 查询项目周数据 -->
+	<select id="queryProjWeekPage" parameterType="Dto" resultType="Dto" >
+	    SELECT
+			<include refid="column" />,
+			(select name from aos_user where create_user_id=id)	create_user_name,
+			(select name from aos_user where update_user_id=id)	update_user_name,
+			(case 
+			when state=0 THEN
+			'未启用'
+			when state=1 THEN
+			'已启用'
+			ELSE
+			'已作废'
+			END
+			)state_name,
+			(select a.proj_name from bs_proj_commons a
+			 where a.state=1 and a.proj_id=bs_proj_week.proj_id)proj_name
+		FRoM bs_proj_week
+		<where>
+		     <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目周ID -->
+		</if>
+		    and state!="-1"
+		</where>	
+	</select>	
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ProjWeekPO" >
+	    SELECT
+			<include refid="column" />,
+			(select name from aos_user where create_user_id=id)	create_user_name,
+			(select name from aos_user where update_user_id=id)	update_user_name,
+			(case 
+			when state=0 THEN
+			'未启用'
+			when state=1 THEN
+			'已启用'
+			ELSE
+			'已作废'
+			END
+			)state_name,
+			(select a.proj_name from bs_proj_commons a
+			 where a.state=1 and a.proj_id=bs_proj_week.proj_id)proj_name
+		FRoM bs_proj_week
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_proj_week
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_proj_week
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  week_id,  <!-- 项目周ID -->
+		  week_name,  <!-- 项目周名称 -->
+		  proj_id,  <!-- 项目ID -->
+		  begin_date,  <!-- 开始时间 -->
+		  end_date,  <!-- 结束时间 -->
+		  comment,  <!-- 说明 -->
+		  create_user_id,  <!-- 设计人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_proj_week.week_id,  <!-- 项目周ID -->
+		  bs_proj_week.week_name,  <!-- 项目周名称 -->
+		  bs_proj_week.proj_id,  <!-- 项目ID -->
+		  bs_proj_week.begin_date,  <!-- 开始时间 -->
+		  bs_proj_week.end_date,  <!-- 结束时间 -->
+		  bs_proj_week.comment,  <!-- 说明 -->
+		  bs_proj_week.create_user_id,  <!-- 设计人 -->
+		  bs_proj_week.create_time,  <!-- 创建时间 -->
+		  bs_proj_week.update_user_id,  <!-- 更新人 -->
+		  bs_proj_week.update_time,  <!-- 更新时间 -->
+		  bs_proj_week.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="week_id != null ">
+		      AND week_id = #{week_id}  <!-- 项目周ID -->
+		</if>
+	    <if test="week_name != null and week_name != ''">
+		      AND week_name = #{week_name}  <!-- 项目周名称 -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      AND begin_date = #{begin_date}  <!-- 开始时间 -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      AND end_date = #{end_date}  <!-- 结束时间 -->
+		</if>
+	    <if test="comment != null and comment != ''">
+		      AND comment = #{comment}  <!-- 说明 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 设计人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="week_name != null and week_name != ''">
+		      AND week_name like '${week_name}%'  <!-- 项目周名称 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      AND begin_date like '${begin_date}%'  <!-- 开始时间 -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      AND end_date like '${end_date}%'  <!-- 结束时间 -->
+		</if>
+	    <if test="comment != null and comment != ''">
+		      AND comment like '${comment}%'  <!-- 说明 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="week_name != null and week_name != ''">
+		      Or week_name like '${week_name}%'  <!-- 项目周名称 -->
+		</if>
+	    <if test="begin_date != null and begin_date != ''">
+		      Or begin_date like '${begin_date}%'  <!-- 开始时间 -->
+		</if>
+	    <if test="end_date != null and end_date != ''">
+		      Or end_date like '${end_date}%'  <!-- 结束时间 -->
+		</if>
+	    <if test="comment != null and comment != ''">
+		      Or comment like '${comment}%'  <!-- 说明 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+</mapper>

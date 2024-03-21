@@ -1,0 +1,8 @@
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ include file="/WEB-INF/jsp/common/tags.jsp"%>
+##生成grid列
+#foreach($columnDto in $columnDtos)
+#if(${columnDto.isPkey} == "false")
+	<aos:column header="${columnDto.comment}" dataIndex="${columnDto.name}" fixedWidth="100" #if(${columnDto.jdbctype} == "DATE"||${columnDto.jdbctype} == "DATETIME")type="date" format="Y-m-d" width="100"#end/>
+#end
+#end

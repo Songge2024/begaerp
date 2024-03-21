@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 部门管理模块使用的SQL语句 -->
+<mapper namespace="DemandDao">
+
+	<!-- 查询部门列表 -->
+	<select id="listdemand" resultType="Dto" parameterType="Dto">
+			SELECT 
+			rda.`AD_ID` AS  value,
+			rda.`AD_NAME` AS display
+		FROM
+		  `re_demand_action` rda 
+            <if test="proj_id != null and proj_id != ''">
+				    where proj_id = ${proj_id}
+				    and state = '1'
+			</if>
+	</select>
+	
+	<!-- 查询部门列表 -->
+	<select id="listtaskgroup" resultType="Dto" parameterType="Dto">
+			SELECT group_id as value,
+				group_name AS display
+			 FROM ta_task_group  
+			where  state = '1001'
+			<if test="proj_id != null and proj_id != ''">
+				     and proj_id = ${proj_id}
+			</if>
+	</select>
+
+</mapper>

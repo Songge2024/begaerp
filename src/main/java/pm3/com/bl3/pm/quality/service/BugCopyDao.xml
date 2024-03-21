@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- qa_bug_copy[BugCopy]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2020-05-19 16:19:35 -->
+<mapper namespace="BugCopyDao">
+	<insert id="insertCopy" parameterType="Dto">
+		INSERT INTO qa_bug_copy (
+				from_proj_id,  <!-- 项目ID -->
+				from_bug_id,  <!-- 缺陷id -->
+				to_proj_id,  <!-- 缺陷状态 -->
+				to_bug_id,  <!-- 缺陷名称 -->
+				create_id,  <!-- 创建人id -->
+				create_time  <!-- 创建时间 -->
+		)
+		VALUES (
+				#{from_proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+				#{from_bug_id, jdbcType=INTEGER},  <!-- 缺陷id -->
+				#{to_proj_id, jdbcType=INTEGER},  <!-- 缺陷状态 -->
+				#{to_bug_id, jdbcType=INTEGER},  <!-- 缺陷名称 -->
+				#{create_id, jdbcType=INTEGER},  <!-- 创建人id -->
+				#{create_time, jdbcType=VARCHAR}  <!-- 创建时间 -->
+		)
+	</insert>
+	
+	<select id="relationSave" resultType="Integer">
+		SELECT
+			count(*)
+		FROM 
+			qa_bug_copy
+		WHERE
+			from_bug_id = #{from_bug_id}
+			AND to_bug_id = #{id}
+	</select>
+</mapper>

@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_check_main[CheckMain]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2019-10-22 20:33:19 -->
+<mapper namespace="com.bl3.pm.process.dao.CheckMainDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="CheckMainPO">
+		INSERT INTO pr_check_main (
+		<if test="check_code != null and check_code != ''">
+	         check_code, <!-- 检查项编码 -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- proj_id -->
+		</if>
+		<if test="check_cata_id != null">
+	         check_cata_id, <!-- 检查项维护ID -->
+		</if>
+		<if test="check_name != null and check_name != ''">
+	         check_name, <!-- 检查单名称 -->
+		</if>
+		<if test="comment != null and comment != ''">
+	         comment, <!-- 说明 -->
+		</if>
+		<if test="yes_num != null">
+	         yes_num, <!-- 统计 符合数 -->
+		</if>
+		<if test="no_num != null">
+	         no_num, <!-- 统计 不符合数 -->
+		</if>
+		<if test="none_num != null">
+	         none_num, <!-- 统计 不适应数 -->
+		</if>
+		<if test="suggest != null and suggest != ''">
+	         suggest, <!-- 建议与意见 -->
+		</if>
+		<if test="check_user_id != null">
+	         check_user_id, <!-- 检查人 -->
+		</if>
+		<if test="check_time != null and check_time != ''">
+	         check_time, <!-- 检查时间 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="plan_check_time != null and plan_check_time != ''">
+	         plan_check_time, <!-- 计划检查时间 -->
+		</if>
+	          check_id 
+		)VALUES(
+		<if test="check_code != null and check_code != ''">
+	          #{check_code, jdbcType=VARCHAR}, <!-- 检查项编码 -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- proj_id -->
+	    </if>
+		<if test="check_cata_id != null">
+	          #{check_cata_id, jdbcType=INTEGER}, <!-- 检查项维护ID -->
+	    </if>
+		<if test="check_name != null and check_name != ''">
+	          #{check_name, jdbcType=VARCHAR}, <!-- 检查单名称 -->
+	    </if>
+		<if test="comment != null and comment != ''">
+	          #{comment, jdbcType=VARCHAR}, <!-- 说明 -->
+	    </if>
+		<if test="yes_num != null">
+	          #{yes_num, jdbcType=INTEGER}, <!-- 统计 符合数 -->
+	    </if>
+		<if test="no_num != null">
+	          #{no_num, jdbcType=INTEGER}, <!-- 统计 不符合数 -->
+	    </if>
+		<if test="none_num != null">
+	          #{none_num, jdbcType=INTEGER}, <!-- 统计 不适应数 -->
+	    </if>
+		<if test="suggest != null and suggest != ''">
+	          #{suggest, jdbcType=VARCHAR}, <!-- 建议与意见 -->
+	    </if>
+		<if test="check_user_id != null">
+	          #{check_user_id, jdbcType=INTEGER}, <!-- 检查人 -->
+	    </if>
+		<if test="check_time != null and check_time != ''">
+	          #{check_time, jdbcType=VARCHAR}, <!-- 检查时间 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		<if test="plan_check_time != null and plan_check_time != ''">
+	          #{plan_check_time, jdbcType=VARCHAR}, <!-- 计划检查时间 -->
+	    </if>
+		null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="CheckMainPO">
+		INSERT INTO pr_check_main (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{check_id, jdbcType=INTEGER},  <!-- 检查单目录ID -->
+		    #{check_code, jdbcType=VARCHAR},  <!-- 检查项编码 -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- proj_id -->
+		    #{check_cata_id, jdbcType=INTEGER},  <!-- 检查项维护ID -->
+		    #{check_name, jdbcType=VARCHAR},  <!-- 检查单名称 -->
+		    #{comment, jdbcType=VARCHAR},  <!-- 说明 -->
+		    #{yes_num, jdbcType=INTEGER},  <!-- 统计 符合数 -->
+		    #{no_num, jdbcType=INTEGER},  <!-- 统计 不符合数 -->
+		    #{none_num, jdbcType=INTEGER},  <!-- 统计 不适应数 -->
+		    #{suggest, jdbcType=VARCHAR},  <!-- 建议与意见 -->
+		    #{check_user_id, jdbcType=INTEGER},  <!-- 检查人 -->
+		    #{check_time, jdbcType=VARCHAR},  <!-- 检查时间 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+		    #{plan_check_time, jdbcType=VARCHAR}  <!-- 计划检查时间 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="CheckMainPO">
+		UPDATE pr_check_main
+		<set>
+			<if test="check_id != null">
+		          check_id = #{check_id, jdbcType=INTEGER},  <!-- 检查单目录ID -->
+			</if>
+			<if test="check_code != null">
+		          check_code = #{check_code, jdbcType=VARCHAR},  <!-- 检查项编码 -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- proj_id -->
+			</if>
+			<if test="check_cata_id != null">
+		          check_cata_id = #{check_cata_id, jdbcType=INTEGER},  <!-- 检查项维护ID -->
+			</if>
+			<if test="check_name != null">
+		          check_name = #{check_name, jdbcType=VARCHAR},  <!-- 检查单名称 -->
+			</if>
+			<if test="comment != null">
+		          comment = #{comment, jdbcType=VARCHAR},  <!-- 说明 -->
+			</if>
+			<if test="yes_num != null">
+		          yes_num = #{yes_num, jdbcType=INTEGER},  <!-- 统计 符合数 -->
+			</if>
+			<if test="no_num != null">
+		          no_num = #{no_num, jdbcType=INTEGER},  <!-- 统计 不符合数 -->
+			</if>
+			<if test="none_num != null">
+		          none_num = #{none_num, jdbcType=INTEGER},  <!-- 统计 不适应数 -->
+			</if>
+			<if test="suggest != null">
+		          suggest = #{suggest, jdbcType=VARCHAR},  <!-- 建议与意见 -->
+			</if>
+			<if test="check_user_id != null">
+		          check_user_id = #{check_user_id, jdbcType=INTEGER},  <!-- 检查人 -->
+			</if>
+			<if test="check_time != null">
+		          check_time = #{check_time, jdbcType=VARCHAR},  <!-- 检查时间 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+			<if test="plan_check_time != null">
+		          plan_check_time = #{plan_check_time, jdbcType=VARCHAR},  <!-- 计划检查时间 -->
+			</if>
+		</set>
+		WHERE  check_id = #{check_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM pr_check_main WHERE  check_id = #{check_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="CheckMainPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_check_main WHERE  check_id = #{check_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="CheckMainPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_check_main
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="CheckMainPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_main
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="CheckMainPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_main
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="CheckMainPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_main
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="CheckMainPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_check_main
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="CheckMainPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_main
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="CheckMainPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_check_main
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="CountLikeOrPage" parameterType="Dto" resultType="CheckMainPO" useCache="false">
+	   SELECT
+			pr_check_main.*,
+			(pr_check_main.yes_num + pr_check_main.no_num + pr_check_main.none_num) as all_num,
+			(SELECT COUNT(*) FROM pr_problem_trace WHERE pr_problem_trace.check_id = pr_check_main.check_id)as problem_num,
+			au2. NAME check_user_name
+		FROM
+			pr_check_main pr_check_main
+		LEFT JOIN aos_user au2 ON au2.id = pr_check_main.check_user_id
+		<where>
+		    <if test="check_id !=null and check_id != ''">
+				AND check_id = #{check_id}  
+			</if>
+			<if test="proj_id !=null and proj_id != ''">
+				AND proj_id = #{proj_id}  
+			</if>
+			<if test="check_cata_id != null ">
+				AND check_id in(select check_id from pr_check_main where check_cata_id=#{check_cata_id})  <!-- 检查单ID -->
+			</if>
+			<if test="check_begin_time !=null and check_begin_time != ''">
+				AND DATE_FORMAT(pr_check_main.check_time,'%Y-%m-%d') &gt;= #{check_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="check_end_time !=null and check_end_time != ''">
+				AND DATE_FORMAT(pr_check_main.check_time,'%Y-%m-%d') &lt;= #{check_end_time, jdbcType=VARCHAR}
+			</if>
+			AND pr_check_main.state != -1	
+		</where>
+	</select>	
+	
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="problemCountPage" parameterType="Dto" resultType="ProblemTracePO" useCache="false">
+		SELECT
+			check_name,
+			problem_level ,
+			deduct_point ,
+			COUNT(check_name) AS problem_count,
+			solve_times ,
+			solve_deduct_point ,
+			SUM(count_test) as count_point ,
+			ROUND((
+				COUNT(check_name) * deduct_point + SUM(count_test) * solve_deduct_point),2) AS check_all
+		FROM
+			(SELECT * ,if((solve_time_point>0),1,0) AS count_test
+				FROM pr_problem_trace) pr_problem_trace
+		<where>
+			<if test="proj_id !=null and proj_id != ''">
+				AND proj_id = #{proj_id}  
+			</if>
+			<if test="check_cata_id != null ">
+				AND check_id in(select check_id from pr_check_main where check_cata_id=#{check_cata_id})  <!-- 检查单ID -->
+			</if>
+			<if test="check_begin_time !=null and check_begin_time != ''">
+				AND DATE_FORMAT(pr_problem_trace.check_time,'%Y-%m-%d') &gt;= #{check_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="check_end_time !=null and check_end_time != ''">
+				AND DATE_FORMAT(pr_problem_trace.check_time,'%Y-%m-%d') &lt;= #{check_end_time, jdbcType=VARCHAR}
+			</if>
+		</where>
+		GROUP BY
+			problem_level,
+			check_name
+		ORDER BY
+			check_name,
+			deduct_point
+	</select>
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_check_main
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_check_main
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<select id="listCheckMainInfo" parameterType="Dto" resultType="Dto">
+		SELECT check_id,  <!-- 检查单目录ID -->
+			check_code,
+			proj_id,  <!-- 项目ID -->
+			check_cata_id,
+			check_name,  <!-- 检查单名称 -->
+			comment,  <!-- 说明 -->
+			yes_num,  <!-- 统计 符合数 -->
+			no_num,  <!-- 统计 不符合数 -->
+			none_num,  <!-- 统计 不适应数 -->
+			(SELECT COUNT(*) FROM pr_check_detail WHERE pr_check_detail.check_id = #{check_id} and is_problem = -1)as prob_num,
+			suggest,  <!-- 建议与意见 -->
+			(select name from aos_user where id=create_user_id )create_user_name,
+			cast(check_user_id as char(11))  as check_user_id,
+<!-- 			(select name from aos_user where id=check_user_id )check_user_name, -->
+			check_time,
+			create_user_id,  <!-- 设计人 -->
+			create_time,  <!-- 创建时间 -->
+			update_user_id,  <!-- 更新人 -->
+			update_time,  <!-- 更新时间 -->
+			state,  <!-- 状态 -->
+			plan_check_time
+		FROM pr_check_main a 
+		WHERE proj_id = #{proj_id} and check_id = #{check_id} and state!='-1'
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="mainList" parameterType="Dto" resultType="CheckMainPO">
+		SELECT check_cata_id,check_cata_name
+		FROM pr_check_catalog
+		WHERE state = 1
+		AND type_code = #{type_code}
+		order by check_cata_id 
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="detailList" parameterType="Dto" resultType="CheckMainPO">
+		SELECT
+			  distinct check_id,check_code,check_name,state
+		FROM pr_check_main
+		<where>
+		    proj_id = #{proj_id}
+		 and check_cata_id = #{check_cata_id}
+		 and state != -1
+		</where>
+		order by create_time desc
+	</select>
+	
+	<select id="selectStateByCheckCode" resultType="String">
+		select state
+		 from  pr_check_main
+		where  check_code = #{check_code}
+		and state!='-1'
+	</select>
+	
+	<select id="selectTypeCode" resultType="String">
+		select type_code
+		from bs_proj_commons
+		where proj_id = #{proj_id}
+		and state = 1
+	</select>
+	
+	<select id="listComboBoxcheckCata" resultType="Dto">
+		select 
+		check_cata_id as value,check_cata_name as display
+		from pr_check_catalog
+		where state = 1
+		and type_code = #{type_code}
+	</select>
+	
+	<select id="countCata_id" resultType="Integer">
+		select count(*) from pr_check_item where check_cata_id = #{check_cata_id} and state = 1 
+	</select>
+	
+	<select id="selectStateByKey" resultType="CheckMainPO">
+		select state
+		 from  pr_check_main
+		where  check_id = #{check_id}
+	</select>
+	
+	<select id="selectNumByKey" resultType="CheckMainPO">
+		select ifnull(yes_num,0) yes_num,
+			   ifnull(no_num,0) no_num,
+			   ifnull(none_num,0) none_num,
+			   ifnull(suggest,'') suggest
+		from pr_check_main
+		where check_id = #{check_id}
+	</select>
+	
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateDeStateByKey" parameterType="Integer">
+		UPDATE pr_check_main
+		set state = '-1'
+		WHERE check_id = #{check_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteDetailByKey">
+		DELETE FROM pr_check_detail WHERE  check_id = #{check_id}
+	</delete>
+	
+		<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteProblemByKey">
+		DELETE FROM pr_problem_trace WHERE  check_id = #{check_id}
+	</delete>
+	
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateStateByKey" parameterType="Integer">
+		UPDATE pr_check_main
+		set  state = "1" , <!-- 状态 -->
+			update_time = sysdate()
+		WHERE  check_id = #{check_id}
+	</update>
+	
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateStateNoSubmit" parameterType="Integer">
+		UPDATE pr_check_main
+		set  state = "0" , <!-- 状态 -->
+			update_time = sysdate()
+		WHERE  check_id = #{check_id}
+	</update>
+	
+	<!-- 获取测试人员本人-->
+	<select id="listCheckUserId"  resultType="Dto">
+		SELECT  distinct cast(a.id as char(10)) as value,a.name  as display 
+		FROM aos_user a, aos_user_role b 
+		where a.id = b.user_id 
+			and a.id = #{person_id}
+	</select>
+	
+	<!-- 获取其他测试人员-->
+	<select id="listCheckUserId_else"  resultType="Dto">
+		SELECT  distinct cast(a.id as char(10)) as value,a.name  as display 
+		FROM aos_user a, aos_user_role b 
+		where a.id = b.user_id 
+			and b.role_id in ('4985','8537')
+			and a.id <![CDATA[   <>  ]]> '8603'
+			and a.id <![CDATA[   <>  ]]> #{person_id}
+	</select>
+	
+	<!-- 统计查询汇总-->
+	<select id="countNum" resultType="Dto" parameterType="Dto">
+		SELECT
+			count(check_id) as count,
+			IFNULL(sum(yes_num),0) as sum_yes_num,
+			IFNULL(sum(no_num),0) as sum_no_num,
+			IFNULL(sum(none_num),0) as sum_none_num,
+			IFNULL(sum((pr_check_main.yes_num + pr_check_main.no_num + pr_check_main.none_num)),0) as sum_all_num
+		FROM
+			pr_check_main
+		<where>
+			<if test="check_id !=null and check_id != ''">
+				AND check_id = #{check_id}  
+			</if>
+			<if test="proj_id !=null and proj_id != ''">
+				AND proj_id = #{proj_id}  
+			</if>
+			<if test="check_cata_id != null ">
+				AND check_id in(select check_id from pr_check_main where check_cata_id=#{check_cata_id})  <!-- 检查单ID -->
+			</if>
+			<if test="check_begin_time !=null and check_begin_time != ''">
+				AND DATE_FORMAT(pr_check_main.check_time,'%Y-%m-%d') &gt;= #{check_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="check_end_time !=null and check_end_time != ''">
+				AND DATE_FORMAT(pr_check_main.check_time,'%Y-%m-%d') &lt;= #{check_end_time, jdbcType=VARCHAR}
+			</if>
+				and state != -1
+		</where>
+	</select>
+	
+	<!-- 扣分小计汇总 -->
+	<select id="problemNum" resultType="ProblemTracePO" parameterType="Dto">
+		SELECT
+			check_name,
+			problem_level ,
+			deduct_point ,
+			COUNT(check_name) AS problem_count,
+			solve_times ,
+			solve_deduct_point ,
+			SUM(count_test) as count_point ,
+			(COUNT(check_name) * deduct_point + SUM(count_test) * solve_deduct_point) as check_all
+		FROM
+			(SELECT * ,if((solve_time_point>0),1,0) AS count_test
+				FROM pr_problem_trace) pr_problem_trace
+		<where>
+			<if test="proj_id !=null and proj_id != ''">
+				AND proj_id = #{proj_id}  
+			</if>
+			<if test="check_cata_id != null ">
+				AND check_id in(select check_id from pr_check_main where check_cata_id=#{check_cata_id})  <!-- 检查单ID -->
+			</if>
+			<if test="check_begin_time !=null and check_begin_time != ''">
+				AND DATE_FORMAT(pr_problem_trace.check_time,'%Y-%m-%d') &gt;= #{check_begin_time, jdbcType=VARCHAR}
+			</if>
+			<if test="check_end_time !=null and check_end_time != ''">
+				AND DATE_FORMAT(pr_problem_trace.check_time,'%Y-%m-%d') &lt;= #{check_end_time, jdbcType=VARCHAR}
+			</if>
+		</where>
+		GROUP BY
+			problem_level,
+			check_name
+		ORDER BY
+			check_name,
+			deduct_point
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  check_id,  <!-- 检查单目录ID -->
+		  check_code,  <!-- 检查项编码 -->
+		  proj_id,  <!-- proj_id -->
+		  check_cata_id,  <!-- 检查项维护ID -->
+		  check_name,  <!-- 检查单名称 -->
+		  comment,  <!-- 说明 -->
+		  yes_num,  <!-- 统计 符合数 -->
+		  no_num,  <!-- 统计 不符合数 -->
+		  none_num,  <!-- 统计 不适应数 -->
+		  suggest,  <!-- 建议与意见 -->
+		  check_user_id,  <!-- 检查人 -->
+		  check_time,  <!-- 检查时间 -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state,  <!-- 状态 -->
+		  plan_check_time  <!-- 计划检查时间 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_check_main.check_id,  <!-- 检查单目录ID -->
+		  pr_check_main.check_code,  <!-- 检查项编码 -->
+		  pr_check_main.proj_id,  <!-- proj_id -->
+		  pr_check_main.check_cata_id,  <!-- 检查项维护ID -->
+		  pr_check_main.check_name,  <!-- 检查单名称 -->
+		  pr_check_main.comment,  <!-- 说明 -->
+		  pr_check_main.yes_num,  <!-- 统计 符合数 -->
+		  pr_check_main.no_num,  <!-- 统计 不符合数 -->
+		  pr_check_main.none_num,  <!-- 统计 不适应数 -->
+		  pr_check_main.suggest,  <!-- 建议与意见 -->
+		  pr_check_main.check_user_id,  <!-- 检查人 -->
+		  pr_check_main.check_time,  <!-- 检查时间 -->
+		  pr_check_main.create_user_id,  <!-- 创建人 -->
+		  pr_check_main.create_time,  <!-- 创建时间 -->
+		  pr_check_main.update_user_id,  <!-- 更新人 -->
+		  pr_check_main.update_time,  <!-- 更新时间 -->
+		  pr_check_main.state,  <!-- 状态 -->
+		  pr_check_main.plan_check_time  <!-- 计划检查时间 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="check_id != null ">
+		      AND check_id = #{check_id}  <!-- 检查单目录ID -->
+		</if>
+	    <if test="check_code != null and check_code != ''">
+		      AND check_code = #{check_code}  <!-- 检查项编码 -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- proj_id -->
+		</if>
+	   <if test="check_cata_id != null ">
+		      AND check_cata_id = #{check_cata_id}  <!-- 检查项维护ID -->
+		</if>
+	    <if test="check_name != null and check_name != ''">
+		      AND check_name = #{check_name}  <!-- 检查单名称 -->
+		</if>
+	    <if test="comment != null and comment != ''">
+		      AND comment = #{comment}  <!-- 说明 -->
+		</if>
+	   <if test="yes_num != null ">
+		      AND yes_num = #{yes_num}  <!-- 统计 符合数 -->
+		</if>
+	   <if test="no_num != null ">
+		      AND no_num = #{no_num}  <!-- 统计 不符合数 -->
+		</if>
+	   <if test="none_num != null ">
+		      AND none_num = #{none_num}  <!-- 统计 不适应数 -->
+		</if>
+	    <if test="suggest != null and suggest != ''">
+		      AND suggest = #{suggest}  <!-- 建议与意见 -->
+		</if>
+	   <if test="check_user_id != null ">
+		      AND check_user_id = #{check_user_id}  <!-- 检查人 -->
+		</if>
+	    <if test="check_time != null and check_time != ''">
+		      AND check_time = #{check_time}  <!-- 检查时间 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	    <if test="plan_check_time != null and plan_check_time != ''">
+		      AND plan_check_time = #{plan_check_time}  <!-- 计划检查时间 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="check_code != null and check_code != ''">
+		      AND check_code like '${check_code}%'  <!-- 检查项编码 -->
+		</if>
+	    <if test="check_name != null and check_name != ''">
+		      AND check_name like '${check_name}%'  <!-- 检查单名称 -->
+		</if>
+	    <if test="comment != null and comment != ''">
+		      AND comment like '${comment}%'  <!-- 说明 -->
+		</if>
+	    <if test="suggest != null and suggest != ''">
+		      AND suggest like '${suggest}%'  <!-- 建议与意见 -->
+		</if>
+	    <if test="check_time != null and check_time != ''">
+		      AND check_time like '${check_time}%'  <!-- 检查时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	    <if test="plan_check_time != null and plan_check_time != ''">
+		      AND plan_check_time like '${plan_check_time}%'  <!-- 计划检查时间 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="check_code != null and check_code != ''">
+		      Or check_code like '${check_code}%'  <!-- 检查项编码 -->
+		</if>
+	    <if test="check_name != null and check_name != ''">
+		      Or check_name like '${check_name}%'  <!-- 检查单名称 -->
+		</if>
+	    <if test="comment != null and comment != ''">
+		      Or comment like '${comment}%'  <!-- 说明 -->
+		</if>
+	    <if test="suggest != null and suggest != ''">
+		      Or suggest like '${suggest}%'  <!-- 建议与意见 -->
+		</if>
+	    <if test="check_time != null and check_time != ''">
+		      Or check_time like '${check_time}%'  <!-- 检查时间 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	    <if test="plan_check_time != null and plan_check_time != ''">
+		      Or plan_check_time like '${plan_check_time}%'  <!-- 计划检查时间 -->
+		</if>
+	</sql>
+	
+</mapper>

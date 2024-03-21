@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- bs_contract_payment_detail[ContractPaymentDetail]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-17 17:29:20 -->
+<mapper namespace="com.bl3.pm.contract.dao.ContractPaymentDetailDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ContractPaymentDetailPO">
+		INSERT INTO bs_contract_payment_detail (
+		<if test="ct_id != null">
+	         ct_id, <!-- 合同ID -->
+		</if>
+		<if test="ct_pay_id != null">
+	         ct_pay_id, <!-- 支付ID -->
+		</if>
+		<if test="ct_stage_id != null">
+	         ct_stage_id, <!-- 合同支付阶段ID -->
+		</if>
+		<if test="stage_id != null">
+	         stage_id, <!-- 阶段名称ID -->
+		</if>
+		<if test="pay_money != null">
+	         pay_money, <!-- 拆分到阶段的支付金额 -->
+		</if>
+		<if test="pay_remark != null and pay_remark != ''">
+	         pay_remark, <!-- 备注 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 创建时间 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+		<if test="ct_detail_id != null">
+	          ct_detail_id  <!-- 支付明细ID -->
+	   </if>
+		)VALUES(
+		<if test="ct_id != null">
+	          #{ct_id, jdbcType=INTEGER}, <!-- 合同ID -->
+	    </if>
+		<if test="ct_pay_id != null">
+	          #{ct_pay_id, jdbcType=INTEGER}, <!-- 支付ID -->
+	    </if>
+		<if test="ct_stage_id != null">
+	          #{ct_stage_id, jdbcType=INTEGER}, <!-- 合同支付阶段ID -->
+	    </if>
+		<if test="stage_id != null">
+	          #{stage_id, jdbcType=INTEGER}, <!-- 阶段名称ID -->
+	    </if>
+		<if test="pay_money != null">
+	          #{pay_money, jdbcType=NUMERIC}, <!-- 拆分到阶段的支付金额 -->
+	    </if>
+		<if test="pay_remark != null and pay_remark != ''">
+	          #{pay_remark, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 创建时间 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		<if test="ct_detail_id != null">
+		     #{ct_detail_id, jdbcType=INTEGER}  <!-- 支付明细ID -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ContractPaymentDetailPO">
+		INSERT INTO bs_contract_payment_detail (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{ct_detail_id, jdbcType=INTEGER},  <!-- 支付明细ID -->
+		    #{ct_id, jdbcType=INTEGER},  <!-- 合同ID -->
+		    #{ct_pay_id, jdbcType=INTEGER},  <!-- 支付ID -->
+		    #{ct_stage_id, jdbcType=INTEGER},  <!-- 合同支付阶段ID -->
+		    #{stage_id, jdbcType=INTEGER},  <!-- 阶段名称ID -->
+		    #{pay_money, jdbcType=NUMERIC},  <!-- 拆分到阶段的支付金额 -->
+		    #{pay_remark, jdbcType=VARCHAR},  <!-- 备注 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ContractPaymentDetailPO">
+		UPDATE bs_contract_payment_detail
+		<set>
+			<if test="ct_detail_id != null">
+		          ct_detail_id = #{ct_detail_id, jdbcType=INTEGER},  <!-- 支付明细ID -->
+			</if>
+			<if test="ct_id != null">
+		          ct_id = #{ct_id, jdbcType=INTEGER},  <!-- 合同ID -->
+			</if>
+			<if test="ct_pay_id != null">
+		          ct_pay_id = #{ct_pay_id, jdbcType=INTEGER},  <!-- 支付ID -->
+			</if>
+			<if test="ct_stage_id != null">
+		          ct_stage_id = #{ct_stage_id, jdbcType=INTEGER},  <!-- 合同支付阶段ID -->
+			</if>
+			<if test="stage_id != null">
+		          stage_id = #{stage_id, jdbcType=INTEGER},  <!-- 阶段名称ID -->
+			</if>
+			<if test="pay_money != null">
+		          pay_money = #{pay_money, jdbcType=NUMERIC},  <!-- 拆分到阶段的支付金额 -->
+			</if>
+			<if test="pay_remark != null">
+		          pay_remark = #{pay_remark, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  ct_detail_id = #{ct_detail_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM bs_contract_payment_detail WHERE  ct_detail_id = #{ct_detail_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ContractPaymentDetailPO">
+		SELECT
+		<include refid="column" />
+		FROM bs_contract_payment_detail WHERE  ct_detail_id = #{ct_detail_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ContractPaymentDetailPO">
+		SELECT
+		    <include refid="column" />
+		FROM bs_contract_payment_detail
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ContractPaymentDetailPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_contract_payment_detail
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ContractPaymentDetailPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_contract_payment_detail a
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ContractPaymentDetailPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_contract_payment_detail
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ContractPaymentDetailPO">
+		SELECT
+			<include refid="column" />	
+		FROM bs_contract_payment_detail
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ContractPaymentDetailPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_contract_payment_detail
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ContractPaymentDetailPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM bs_contract_payment_detail
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM bs_contract_payment_detail
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM bs_contract_payment_detail
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  ct_detail_id,  <!-- 支付明细ID -->
+		  ct_id,  <!-- 合同ID -->
+		  ct_pay_id,  <!-- 支付ID -->
+		  (select pay_name from bs_contract_payment b where b.ct_pay_id = a.ct_pay_id) ct_pay_name,
+		  ct_stage_id,  <!-- 合同支付阶段ID -->
+		  (select stage_name from bs_contract_stage b where b.ct_stage_id = a.ct_stage_id) ct_stage_name,
+		  stage_id,  <!-- 阶段名称ID -->
+		  pay_money,  <!-- 拆分到阶段的支付金额 -->
+		  pay_remark,  <!-- 备注 -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  bs_contract_payment_detail.ct_detail_id,  <!-- 支付明细ID -->
+		  bs_contract_payment_detail.ct_id,  <!-- 合同ID -->
+		  bs_contract_payment_detail.ct_pay_id,  <!-- 支付ID -->
+		  bs_contract_payment_detail.ct_stage_id,  <!-- 合同支付阶段ID -->
+		  bs_contract_payment_detail.stage_id,  <!-- 阶段名称ID -->
+		  bs_contract_payment_detail.pay_money,  <!-- 拆分到阶段的支付金额 -->
+		  bs_contract_payment_detail.pay_remark,  <!-- 备注 -->
+		  bs_contract_payment_detail.create_user_id,  <!-- 创建人 -->
+		  bs_contract_payment_detail.create_time,  <!-- 创建时间 -->
+		  bs_contract_payment_detail.update_user_id,  <!-- 更新人 -->
+		  bs_contract_payment_detail.update_time,  <!-- 更新时间 -->
+		  bs_contract_payment_detail.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="ct_detail_id != null ">
+		      AND ct_detail_id = #{ct_detail_id}  <!-- 支付明细ID -->
+		</if>
+	   <if test="ct_id != null ">
+		      AND ct_id = #{ct_id}  <!-- 合同ID -->
+		</if>
+	   <if test="ct_pay_id != null ">
+		      AND ct_pay_id = #{ct_pay_id}  <!-- 支付ID -->
+		</if>
+	   <if test="ct_stage_id != null ">
+		      AND ct_stage_id = #{ct_stage_id}  <!-- 合同支付阶段ID -->
+		</if>
+	   <if test="stage_id != null ">
+		      AND stage_id = #{stage_id}  <!-- 阶段名称ID -->
+		</if>
+	   <if test="pay_money != null ">
+		      AND pay_money = #{pay_money}  <!-- 拆分到阶段的支付金额 -->
+		</if>
+	    <if test="pay_remark != null and pay_remark != ''">
+		      AND pay_remark = #{pay_remark}  <!-- 备注 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+		      AND state = #{state}  <!--状态 -->
+		</if>
+		    <if test="state == null">
+		      AND state = 1  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="pay_remark != null and pay_remark != ''">
+		      AND pay_remark like '${pay_remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="pay_remark != null and pay_remark != ''">
+		      Or pay_remark like '${pay_remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+</mapper>

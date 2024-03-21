@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- ta_daily_report[DailyReport]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-27 15:21:21 -->
+<mapper namespace="com.bl3.pm.task.dao.DailyReportDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="DailyReportPO">
+		INSERT INTO ta_daily_report (
+		<if test="name != null and name != ''">
+	         name, <!-- 日报名称 -->
+		</if>
+		<if test="descc != null and descc != ''">
+	         descc, <!-- 日报描述 -->
+		</if>
+		<if test="remark != null and remark != ''">
+	         remark, <!-- remark -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="week_day != null and week_day != ''">
+	         week_day, <!-- week_day -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 日报状态 -->
+		</if>
+		<if test="daily_time != null and daily_time != ''">
+	         daily_time, <!-- 工作时间 -->
+		</if>
+		<if test="desccc != null and desccc != ''">
+	         desccc, <!-- desccc -->
+		</if>
+	          id
+		)VALUES(
+		<if test="name != null and name != ''">
+	          #{name, jdbcType=VARCHAR}, <!-- 日报名称 -->
+	    </if>
+		<if test="descc != null and descc != ''">
+	          #{descc, jdbcType=VARCHAR}, <!-- 日报描述 -->
+	    </if>
+		<if test="remark != null and remark != ''">
+	          #{remark, jdbcType=VARCHAR}, <!-- remark -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="week_day != null and week_day != ''">
+	          #{week_day, jdbcType=VARCHAR}, <!-- week_day -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 日报状态 -->
+	    </if>
+		<if test="daily_time != null and daily_time != ''">
+	          #{daily_time, jdbcType=VARCHAR}, <!-- 工作时间 -->
+	    </if>
+		<if test="desccc != null and desccc != ''">
+	          #{desccc, jdbcType=VARCHAR}, <!-- desccc -->
+	    </if>
+	          null
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll" useGeneratedKeys="true" keyProperty="id" parameterType="DailyReportPO">
+		INSERT INTO ta_daily_report (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{id, jdbcType=INTEGER},  <!-- 日报编码 -->
+		    #{name, jdbcType=VARCHAR},  <!-- 日报名称 -->
+		    #{descc, jdbcType=VARCHAR},  <!-- 日报描述 -->
+		    #{remark, jdbcType=VARCHAR},  <!-- remark -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{week_day, jdbcType=VARCHAR},  <!-- week_day -->
+		    #{state, jdbcType=VARCHAR},  <!-- 日报状态 -->
+		    #{daily_time, jdbcType=VARCHAR},  <!-- 工作时间 -->
+		    #{desccc, jdbcType=VARCHAR}  <!-- desccc -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="DailyReportPO">
+		UPDATE ta_daily_report
+		<set>
+			<if test="id != null">
+		          id = #{id, jdbcType=INTEGER},  <!-- 日报编码 -->
+			</if>
+			<if test="name != null">
+		          name = #{name, jdbcType=VARCHAR},  <!-- 日报名称 -->
+			</if>
+			<if test="descc != null">
+		          descc = #{descc, jdbcType=VARCHAR},  <!-- 日报描述 -->
+			</if>
+			<if test="remark != null">
+		          remark = #{remark, jdbcType=VARCHAR},  <!-- remark -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="week_day != null">
+		          week_day = #{week_day, jdbcType=VARCHAR},  <!-- week_day -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 日报状态 -->
+			</if>
+			<if test="daily_time != null">
+		          daily_time = #{daily_time, jdbcType=VARCHAR},  <!-- 工作时间 -->
+			</if>
+			<if test="desccc != null">
+		          desccc = #{desccc, jdbcType=VARCHAR},  <!-- desccc -->
+			</if>
+		</set>
+		WHERE  id = #{id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM ta_daily_report WHERE  id = #{id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="DailyReportPO">
+		SELECT
+		<include refid="column" />
+		FROM ta_daily_report WHERE  id = #{id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="DailyReportPO">
+		SELECT
+		    <include refid="column" />
+		FROM ta_daily_report
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="DailyReportPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_daily_report
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="DailyReportPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_daily_report
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="DailyReportPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_daily_report
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="DailyReportPO">
+		SELECT
+			<include refid="column" />	
+		FROM ta_daily_report
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="DailyReportPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_daily_report
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="DailyReportPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM ta_daily_report
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM ta_daily_report
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM ta_daily_report
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  id,  <!-- 日报编码 -->
+		  name,  <!-- 日报名称 -->
+		  descc,  <!-- 日报描述 -->
+		  remark,  <!-- remark -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  week_day,  <!-- week_day -->
+		  state,  <!-- 日报状态 -->
+		  daily_time,  <!-- 工作时间 -->
+		  desccc  <!-- desccc -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  ta_daily_report.id,  <!-- 日报编码 -->
+		  ta_daily_report.name,  <!-- 日报名称 -->
+		  ta_daily_report.descc,  <!-- 日报描述 -->
+		  ta_daily_report.remark,  <!-- remark -->
+		  ta_daily_report.update_user_id,  <!-- 更新人 -->
+		  ta_daily_report.update_time,  <!-- 更新时间 -->
+		  ta_daily_report.week_day,  <!-- week_day -->
+		  ta_daily_report.state,  <!-- 日报状态 -->
+		  ta_daily_report.daily_time,  <!-- 工作时间 -->
+		  ta_daily_report.desccc  <!-- desccc -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="id != null ">
+		      AND id = #{id}  <!-- 日报编码 -->
+		</if>
+	    <if test="name != null and name != ''">
+		      AND name = #{name}  <!-- 日报名称 -->
+		</if>
+	    <if test="descc != null and descc != ''">
+		      AND descc = #{descc}  <!-- 日报描述 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark = #{remark}  <!-- remark -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="week_day != null and week_day != ''">
+		      AND week_day = #{week_day}  <!-- week_day -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 日报状态 -->
+		</if>
+	    <if test="daily_time != null and daily_time != ''">
+		      AND daily_time = #{daily_time}  <!-- 工作时间 -->
+		</if>
+	    <if test="desccc != null and desccc != ''">
+		      AND desccc = #{desccc}  <!-- desccc -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="name != null and name != ''">
+		      AND name like '${name}%'  <!-- 日报名称 -->
+		</if>
+	    <if test="descc != null and descc != ''">
+		      AND descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark like '${remark}%'  <!-- remark -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="week_day != null and week_day != ''">
+		      AND week_day like '${week_day}%'  <!-- week_day -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 日报状态 -->
+		</if>
+	    <if test="daily_time != null and daily_time != ''">
+		      AND daily_time like '${daily_time}%'  <!-- 工作时间 -->
+		</if>
+	    <if test="desccc != null and desccc != ''">
+		      AND desccc like '${desccc}%'  <!-- desccc -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="name != null and name != ''">
+		      Or name like '${name}%'  <!-- 日报名称 -->
+		</if>
+	    <if test="descc != null and descc != ''">
+		      Or descc like '${descc}%'  <!-- 日报描述 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      Or remark like '${remark}%'  <!-- remark -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="week_day != null and week_day != ''">
+		      Or week_day like '${week_day}%'  <!-- week_day -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 日报状态 -->
+		</if>
+	    <if test="daily_time != null and daily_time != ''">
+		      Or daily_time like '${daily_time}%'  <!-- 工作时间 -->
+		</if>
+	    <if test="desccc != null and desccc != ''">
+		      Or desccc like '${desccc}%'  <!-- desccc -->
+		</if>
+	</sql>
+	
+</mapper>

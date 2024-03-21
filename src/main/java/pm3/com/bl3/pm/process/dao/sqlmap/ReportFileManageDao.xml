@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_report_file_manage[ReportFileManage]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2018-01-23 13:30:44 -->
+<mapper namespace="com.bl3.pm.process.dao.ReportFileManageDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ReportFileManagePO">
+		INSERT INTO pr_report_file_manage (
+		<if test="re_file_title != null and re_file_title != ''">
+	         re_file_title, <!-- 文档标题 -->
+		</if>
+		<if test="re_file_path != null and re_file_path != ''">
+	         re_file_path, <!-- 上传文件路径 -->
+		</if>
+		<if test="re_file_url != null and re_file_url != ''">
+	         re_file_url, <!-- 上传文件URL -->
+		</if>
+		<if test="re_file_size != null and re_file_size != ''">
+	         re_file_size, <!-- 上传文件大小 -->
+		</if>
+		<if test="re_file_type != null">
+	         re_file_type, <!-- 文档类型（1周总结、2月总结、3季度总结、4年度总结） -->
+		</if>
+		<if test="re_file_year != null and re_file_year != ''">
+	         re_file_year, <!-- 年份 -->
+		</if>
+		<if test="re_file_mark != null and re_file_mark != ''">
+	         re_file_mark, <!-- 上传文件备注 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 上传人 -->
+		</if>
+		<if test="create_time != null and create_time != ''">
+	         create_time, <!-- 上传时间 -->
+		</if>
+		<if test="submit_user_id != null">
+	         submit_user_id, <!-- 提交查阅人 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 0 未提交 1已提交 -->
+		</if>
+		<if test="down_num != null">
+	         down_num, <!-- 下载次数 -->
+		</if>
+		<if test="sort_no != null">
+	         sort_no, <!-- 排序号 -->
+		</if>
+		<if test="re_file_id != null">
+	          re_file_id  <!-- 文档ID -->
+	   </if>
+		)VALUES(
+		<if test="re_file_title != null and re_file_title != ''">
+	          #{re_file_title, jdbcType=VARCHAR}, <!-- 文档标题 -->
+	    </if>
+		<if test="re_file_path != null and re_file_path != ''">
+	          #{re_file_path, jdbcType=VARCHAR}, <!-- 上传文件路径 -->
+	    </if>
+		<if test="re_file_url != null and re_file_url != ''">
+	          #{re_file_url, jdbcType=VARCHAR}, <!-- 上传文件URL -->
+	    </if>
+		<if test="re_file_size != null and re_file_size != ''">
+	          #{re_file_size, jdbcType=VARCHAR}, <!-- 上传文件大小 -->
+	    </if>
+		<if test="re_file_type != null">
+	          #{re_file_type, jdbcType=INTEGER}, <!-- 文档类型（1周总结、2月总结、3季度总结、4年度总结） -->
+	    </if>
+		<if test="re_file_year != null and re_file_year != ''">
+	          #{re_file_year, jdbcType=VARCHAR}, <!-- 年份 -->
+	    </if>
+		<if test="re_file_mark != null and re_file_mark != ''">
+	          #{re_file_mark, jdbcType=VARCHAR}, <!-- 上传文件备注 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 上传人 -->
+	    </if>
+		<if test="create_time != null and create_time != ''">
+	          #{create_time, jdbcType=VARCHAR}, <!-- 上传时间 -->
+	    </if>
+		<if test="submit_user_id != null">
+	          #{submit_user_id, jdbcType=INTEGER}, <!-- 提交查阅人 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 0 未提交 1已提交 -->
+	    </if>
+		<if test="down_num != null">
+	          #{down_num, jdbcType=INTEGER}, <!-- 下载次数 -->
+	    </if>
+		<if test="sort_no != null">
+	          #{sort_no, jdbcType=INTEGER}, <!-- 排序号 -->
+	    </if>
+		<if test="re_file_id != null">
+		     #{re_file_id, jdbcType=INTEGER}  <!-- 文档ID -->
+	    </if>
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ReportFileManagePO">
+		INSERT INTO pr_report_file_manage (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{re_file_id, jdbcType=INTEGER},  <!-- 文档ID -->
+		    #{re_file_title, jdbcType=VARCHAR},  <!-- 文档标题 -->
+		    #{re_file_path, jdbcType=VARCHAR},  <!-- 上传文件路径 -->
+		    #{re_file_url, jdbcType=VARCHAR},  <!-- 上传文件URL -->
+		    #{re_file_size, jdbcType=VARCHAR},  <!-- 上传文件大小 -->
+		    #{re_file_type, jdbcType=INTEGER},  <!-- 文档类型（1周总结、2月总结、3季度总结、4年度总结） -->
+		    #{re_file_year, jdbcType=VARCHAR},  <!-- 年份 -->
+		    #{re_file_mark, jdbcType=VARCHAR},  <!-- 上传文件备注 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 上传人 -->
+		    #{create_time, jdbcType=VARCHAR},  <!-- 上传时间 -->
+		    #{submit_user_id, jdbcType=INTEGER},  <!-- 提交查阅人 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR},  <!-- 状态 0 未提交 1已提交 -->
+		    #{down_num, jdbcType=INTEGER},  <!-- 下载次数 -->
+		    #{sort_no, jdbcType=INTEGER}  <!-- 排序号 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ReportFileManagePO">
+		UPDATE pr_report_file_manage
+		<set>
+			<if test="re_file_id != null">
+		          re_file_id = #{re_file_id, jdbcType=INTEGER},  <!-- 文档ID -->
+			</if>
+			<if test="re_file_title != null">
+		          re_file_title = #{re_file_title, jdbcType=VARCHAR},  <!-- 文档标题 -->
+			</if>
+			<if test="re_file_path != null">
+		          re_file_path = #{re_file_path, jdbcType=VARCHAR},  <!-- 上传文件路径 -->
+			</if>
+			<if test="re_file_url != null">
+		          re_file_url = #{re_file_url, jdbcType=VARCHAR},  <!-- 上传文件URL -->
+			</if>
+			<if test="re_file_size != null">
+		          re_file_size = #{re_file_size, jdbcType=VARCHAR},  <!-- 上传文件大小 -->
+			</if>
+			<if test="re_file_type != null">
+		          re_file_type = #{re_file_type, jdbcType=INTEGER},  <!-- 文档类型（1周总结、2月总结、3季度总结、4年度总结） -->
+			</if>
+			<if test="re_file_year != null">
+		          re_file_year = #{re_file_year, jdbcType=VARCHAR},  <!-- 年份 -->
+			</if>
+			<if test="re_file_mark != null">
+		          re_file_mark = #{re_file_mark, jdbcType=VARCHAR},  <!-- 上传文件备注 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 上传人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 上传时间 -->
+			</if>
+			<if test="submit_user_id != null">
+		          submit_user_id = #{submit_user_id, jdbcType=INTEGER},  <!-- 提交查阅人 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 0 未提交 1已提交 -->
+			</if>
+			<if test="down_num != null">
+		          down_num = #{down_num, jdbcType=INTEGER},  <!-- 下载次数 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+		</set>
+		WHERE  re_file_id = #{re_file_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM pr_report_file_manage WHERE  re_file_id = #{re_file_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ReportFileManagePO">
+		SELECT
+		<include refid="column" />
+		FROM pr_report_file_manage WHERE  re_file_id = #{re_file_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ReportFileManagePO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_report_file_manage
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ReportFileManagePO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_report_file_manage
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ReportFileManagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_report_file_manage
+		<where>
+		    <include refid="equal" />
+		    <if test="org_id != null and org_id != ''">
+		    	and create_user_id IN (
+					SELECT id FROM aos_user b
+					 WHERE b.org_id IN (
+							SELECT id FROM aos_org a WHERE
+								(id = #{org_id} OR parent_id = #{org_id})
+						)
+				)
+		    </if>
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ReportFileManagePO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_report_file_manage
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ReportFileManagePO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_report_file_manage
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ReportFileManagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_report_file_manage
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ReportFileManagePO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_report_file_manage
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_report_file_manage
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_report_file_manage
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  re_file_id,  <!-- 文档ID -->
+		  re_file_title,  <!-- 文档标题 -->
+		  re_file_path,  <!-- 上传文件路径 -->
+		  re_file_url,  <!-- 上传文件URL -->
+		  re_file_size,  <!-- 上传文件大小 -->
+		  re_file_type,  <!-- 文档类型（1周总结、2月总结、3季度总结、4年度总结） -->
+		  re_file_year,  <!-- 年份 -->
+		  re_file_mark,  <!-- 上传文件备注 -->
+		  create_user_id,  <!-- 上传人 -->
+		  create_time,  <!-- 上传时间 -->
+		  submit_user_id,  <!-- 提交查阅人 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state,  <!-- 状态 0 未提交 1已提交 -->
+		  down_num,  <!-- 下载次数 -->
+		  sort_no  <!-- 排序号 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_report_file_manage.re_file_id,  <!-- 文档ID -->
+		  pr_report_file_manage.re_file_title,  <!-- 文档标题 -->
+		  pr_report_file_manage.re_file_path,  <!-- 上传文件路径 -->
+		  pr_report_file_manage.re_file_url,  <!-- 上传文件URL -->
+		  pr_report_file_manage.re_file_size,  <!-- 上传文件大小 -->
+		  pr_report_file_manage.re_file_type,  <!-- 文档类型（1周总结、2月总结、3季度总结、4年度总结） -->
+		  pr_report_file_manage.re_file_year,  <!-- 年份 -->
+		  pr_report_file_manage.re_file_mark,  <!-- 上传文件备注 -->
+		  pr_report_file_manage.create_user_id,  <!-- 上传人 -->
+		  pr_report_file_manage.create_time,  <!-- 上传时间 -->
+		  pr_report_file_manage.submit_user_id,  <!-- 提交查阅人 -->
+		  pr_report_file_manage.update_user_id,  <!-- 更新人 -->
+		  pr_report_file_manage.update_time,  <!-- 更新时间 -->
+		  pr_report_file_manage.state,  <!-- 状态 0 未提交 1已提交 -->
+		  pr_report_file_manage.down_num,  <!-- 下载次数 -->
+		  pr_report_file_manage.sort_no  <!-- 排序号 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="re_file_id != null ">
+		      AND re_file_id = #{re_file_id}  <!-- 文档ID -->
+		</if>
+	    <if test="re_file_title != null and re_file_title != ''">
+		      AND re_file_title = #{re_file_title}  <!-- 文档标题 -->
+		</if>
+	    <if test="re_file_path != null and re_file_path != ''">
+		      AND re_file_path = #{re_file_path}  <!-- 上传文件路径 -->
+		</if>
+	    <if test="re_file_url != null and re_file_url != ''">
+		      AND re_file_url = #{re_file_url}  <!-- 上传文件URL -->
+		</if>
+	    <if test="re_file_size != null and re_file_size != ''">
+		      AND re_file_size = #{re_file_size}  <!-- 上传文件大小 -->
+		</if>
+	   <if test="re_file_type != null ">
+		      AND re_file_type = #{re_file_type}  <!-- 文档类型（1周总结、2月总结、3季度总结、4年度总结） -->
+		</if>
+	    <if test="re_file_year != null and re_file_year != ''">
+		      AND re_file_year = #{re_file_year}  <!-- 年份 -->
+		</if>
+	    <if test="re_file_mark != null and re_file_mark != ''">
+		      AND re_file_mark = #{re_file_mark}  <!-- 上传文件备注 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 上传人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 上传时间 -->
+		</if>
+	   <if test="submit_user_id != null ">
+		      AND submit_user_id = #{submit_user_id}  <!-- 提交查阅人 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 0 未提交 1已提交 -->
+		</if>
+	   <if test="down_num != null ">
+		      AND down_num = #{down_num}  <!-- 下载次数 -->
+		</if>
+	   <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="re_file_title != null and re_file_title != ''">
+		      AND re_file_title like '${re_file_title}%'  <!-- 文档标题 -->
+		</if>
+	    <if test="re_file_path != null and re_file_path != ''">
+		      AND re_file_path like '${re_file_path}%'  <!-- 上传文件路径 -->
+		</if>
+	    <if test="re_file_url != null and re_file_url != ''">
+		      AND re_file_url like '${re_file_url}%'  <!-- 上传文件URL -->
+		</if>
+	    <if test="re_file_size != null and re_file_size != ''">
+		      AND re_file_size like '${re_file_size}%'  <!-- 上传文件大小 -->
+		</if>
+	    <if test="re_file_year != null and re_file_year != ''">
+		      AND re_file_year like '${re_file_year}%'  <!-- 年份 -->
+		</if>
+	    <if test="re_file_mark != null and re_file_mark != ''">
+		      AND re_file_mark like '${re_file_mark}%'  <!-- 上传文件备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 上传时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 0 未提交 1已提交 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="re_file_title != null and re_file_title != ''">
+		      Or re_file_title like '${re_file_title}%'  <!-- 文档标题 -->
+		</if>
+	    <if test="re_file_path != null and re_file_path != ''">
+		      Or re_file_path like '${re_file_path}%'  <!-- 上传文件路径 -->
+		</if>
+	    <if test="re_file_url != null and re_file_url != ''">
+		      Or re_file_url like '${re_file_url}%'  <!-- 上传文件URL -->
+		</if>
+	    <if test="re_file_size != null and re_file_size != ''">
+		      Or re_file_size like '${re_file_size}%'  <!-- 上传文件大小 -->
+		</if>
+	    <if test="re_file_year != null and re_file_year != ''">
+		      Or re_file_year like '${re_file_year}%'  <!-- 年份 -->
+		</if>
+	    <if test="re_file_mark != null and re_file_mark != ''">
+		      Or re_file_mark like '${re_file_mark}%'  <!-- 上传文件备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 上传时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 0 未提交 1已提交 -->
+		</if>
+	</sql>
+	
+	
+	<!-- 查询多级联动下拉框数据(第一级) -->
+	<select id="listComboBoxUserData" resultType="Dto">
+		select aur.id as value, concat(aur.id,'-',aur.name) as display
+		  from aos_user aur, aos_user_role aure
+		 where aur.id = aure.user_id
+		   and aure.role_id in (1639,1640,1635)
+		order by aure.role_id
+	</select>
+	
+	<select id="queryUserNameByUserId" resultType="String" parameterType="Integer" >
+		select aur.name from aos_user aur
+		 where aur.id = #{user_id}
+	</select>
+</mapper>

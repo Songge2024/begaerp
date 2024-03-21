@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ContractDao">
+	<!-- 查询合同相关项目名称 -->
+	<select id="selectProjName" resultType="String">
+		select  GROUP_CONCAT(p.proj_name) proj_names 
+		from bs_proj_commons p
+		<where>
+       	 	 and p.proj_id in
+	        <foreach collection="proj_id" item="id" index="index" open="("
+				close=")" separator=",">
+				#{id}
+			</foreach>
+        </where>
+	</select>
+	<!-- 查询项目信息管理的有效的合同信息 -->
+	<select id="likeCommonPage" parameterType="Dto" resultType="Dto" useCache="false">
+	   select a.*,GROUP_CONCAT(pc.proj_id SEPARATOR ',')proj_ids from(  
+	   select b.*,u.name as update_user_name  from (SELECT
+			<include refid="com.bl3.pm.contract.dao.ContractDao.column" />
+			,u.name 	as create_user_name
+		FRoM bs_contract c,aos_user u
+		<where>
+		    <include refid="com.bl3.pm.contract.dao.ContractDao.like" />
+		    and c.create_user_id = u.id
+		    and c.state not in(1,0)
+		</where>
+		)b left join aos_user u on u.id = b.update_user_id
+		)a left join bs_proj_contract pc 
+		on pc.ct_id = a.ct_id group by a.ct_id order by create_date desc
+	</select>
+<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="Dto" useCache="false">
+	   select a.*,GROUP_CONCAT(pc.proj_id SEPARATOR ',')proj_ids from(  
+	   select b.*,u.name as update_user_name  from (SELECT
+			<include refid="com.bl3.pm.contract.dao.ContractDao.column" />
+			,u.name 	as create_user_name
+		FRoM bs_contract c,aos_user u
+		<where>
+		    <include refid="com.bl3.pm.contract.dao.ContractDao.like" />
+		    and c.create_user_id = u.id
+		</where>
+		)b left join aos_user u on u.id = b.update_user_id
+		)a left join bs_proj_contract pc 
+		on pc.ct_id = a.ct_id 
+		 <if test="proj_id_query != null and proj_id_query != ''">
+		    where a.ct_id in (select ct_id from bs_contract c 
+		    					where c.ct_id in (
+									select ct_id from bs_proj_contract bp 
+												where bp.proj_id in (${proj_id_query}))) 
+		</if>
+		
+		group by a.ct_id order by create_date desc
+	</select>
+	
+	
+	<select id="queryProContact" resultType="Dto">
+		SELECT 
+			<include refid="com.bl3.pm.contract.dao.ContractDao.column2" />
+		FROM
+		  `bs_contract` bs_contract,
+		   `bs_proj_contract` bpc
+		   WHERE bpc.`ct_id` = bs_contract.`ct_id`
+		   AND bpc.`proj_id` = ${proj_id}
+	</select>
+	
+	<!-- 合同删除 -->
+	<delete id="delete" parameterType="Dto">
+		delete from bs_proj_contract where ct_id = #{ct_id}
+	</delete>
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="Dto">
+		UPDATE bs_contract set state = #{state}
+		WHERE  ct_id = #{ct_id}
+	</update>
+
+	
+	<select id="querySaveContract" resultType="Dto">
+			SELECT 
+				bpc.`ct_id`,
+				bc.`ct_name`,
+				bc.`ct_type`,
+				bc.`ct_total_amount`,
+				bc.ct_sign_date
+				
+			FROM
+			  `bs_proj_contract` bpc,
+			  `bs_contract` bc
+			  WHERE bpc.`proj_id` = ${proj_id}
+			  AND bc.`ct_id` = bpc.`ct_id`
+	</select>
+	
+	<delete id="delectSaveContract">
+			DELETE 
+				FROM
+				  `bs_proj_contract` 
+				WHERE  proj_id = ${proj_id}
+	</delete>
+	
+	<select id="queryPayContract">
+		SELECT
+		 <include refid="com.bl3.pm.contract.dao.ContractPaymentDetailDao.column" />
+		FROM
+		  `bs_contract_payment_detail`
+		   WHERE  ct_id = ${ct_id}
+	</select>
+</mapper>

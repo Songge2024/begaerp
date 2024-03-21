@@ -1,0 +1,827 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_process[Process]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-14 16:24:05 -->
+<mapper namespace="com.bl3.pm.process.dao.ProcessDao">
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ProcessPO" >
+		INSERT INTO pr_process (
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="process_subdir_id != null">
+	         process_subdir_id, <!-- 过程子目录ID -->
+		</if>
+		<if test="process_name != null and process_name != ''">
+	         process_name, <!-- 过程子目录名称 -->
+		</if>
+		<if test="rootdir_id != null">
+	         rootdir_id, <!-- 过程根目录ID -->
+		</if>
+		<if test="rootdir_name != null and rootdir_name != ''">
+	         rootdir_name, <!-- 过程根目录名称 -->
+		</if>
+		<if test="sort_no != null and sort_no != ''">
+	         sort_no, <!-- 排序号 -->
+	    </if>
+	    <if test="sort_no == null">
+	         sort_no, <!-- 排序号 -->
+	    </if>
+		<if test="create_user_id != null and create_user_id != ''">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="flow_state != null and flow_state != ''">
+	         flow_state, <!-- 是否必须 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 是否必须流程 0 是 1 否 -->
+		</if>
+		<if test="process_id != null">
+	          process_id,  <!-- 过程ID -->
+	   </if>
+	         create_time <!-- 创建时间 -->
+		)VALUES(
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="process_subdir_id != null">
+	          #{process_subdir_id, jdbcType=INTEGER}, <!-- 过程子目录ID -->
+	    </if>
+		<if test="process_name != null and process_name != ''">
+	          #{process_name, jdbcType=VARCHAR}, <!-- 过程子目录名称 -->
+	    </if>
+		<if test="rootdir_id != null">
+	          #{rootdir_id, jdbcType=INTEGER}, <!-- 过程根目录ID -->
+	    </if>
+		<if test="rootdir_name != null and rootdir_name != ''">
+	          #{rootdir_name, jdbcType=VARCHAR}, <!-- 过程根目录名称 -->
+	    </if>
+		<if test="sort_no != null and sort_no != ''">
+			#{sort_no, jdbcType=INTEGER},
+		 </if>
+		 <if test="sort_no == null">
+		 (SELECT ifnull(max(sort_no),0) FROM pr_process a WHERE  proj_id = #{proj_id} and state = 1)+1,
+		 </if>
+		<if test="create_user_id != null and create_user_id != ''">
+	          #{create_user_id, jdbcType=VARCHAR}, <!-- 创建人 -->
+	    </if>
+		<if test="flow_state != null and flow_state != ''">
+	          #{flow_state, jdbcType=VARCHAR}, <!-- 是否必须-->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 是否必须流程 0 是 1 否 -->
+	    </if>
+		<if test="process_id != null">
+		     #{process_id, jdbcType=INTEGER},  <!-- 过程ID -->
+	    </if>
+	          sysdate()
+		)
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="Dto">
+		INSERT INTO pr_process (
+		  proj_id,  
+		  process_subdir_id,  
+		  process_name,  
+		  rootdir_id,  
+		  rootdir_name,  
+		 <if test="sort_no != null and sort_no != ''">
+	         sort_no, <!-- 排序号 -->
+	    </if>
+	    <if test="sort_no == ''">
+	         sort_no, <!-- 排序号 -->
+	    </if>
+		  flow_state,  
+		  create_user_id,
+		  create_time, 
+		  state  
+		)
+		 select* from (select
+		  #{proj_id},
+		  subdir_id,
+		  subdir_name,
+		  rootdir_id,  
+		  (select rootdir_name from pr_rootdir where rootdir_id = #{rootdir_id}),
+		  <if test="sort_no != null and sort_no != ''">
+			#{sort_no, jdbcType=INTEGER},
+		 </if>
+		 <if test="sort_no ==''">
+		 (SELECT ifnull(max(sort_no),0) FROM pr_process a WHERE  state =1 and proj_id = #{proj_id})+@rownum:=@rownum+1,
+		 </if>
+		 
+		  1 AS flow_state,
+		  #{create_user_id},
+		  sysdate(),
+		  state from pr_subdir ,(SELECT @rownum:=0) r
+		   where rootdir_id = #{rootdir_id} and state =1  and subdir_id not in (
+			SELECT  process_subdir_id FROM pr_process WHERE proj_id = #{proj_id} AND rootdir_id = #{rootdir_id} AND STATE =1 
+			)
+		  ) as tb
+	</insert>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertFiletypeAll"  parameterType="Dto">
+		INSERT INTO pr_process_filetype (
+		  	 proj_id,
+	         subdir_id, 
+	         filetype_id, 
+	         proc_filetype_name, 
+	         sort_no, 
+	         file_state, 
+	         create_user_id, 
+	         state, 
+		   	create_time 
+		)
+		 select* from (select
+		  #{proj_id},
+		  subdir_id,
+		  filetype_id,
+		  filetype_name,  
+		  sort_no,
+		  1 AS flow_state,
+		  #{create_user_id},
+		  state,
+		  sysdate() from pr_filetype 
+		   where rootdir_id = #{rootdir_id} and state =1  and subdir_id  in (
+			SELECT  process_subdir_id FROM pr_process WHERE proj_id = #{proj_id} AND rootdir_id = #{rootdir_id} AND STATE =1 
+			)and filetype_id not in (
+			SELECT  filetype_id FROM pr_process_filetype WHERE proj_id = #{proj_id}  AND STATE =1 
+			)
+		  ) as tb
+	</insert>
+	
+	
+	<!--updateFiletype 批量更新-->
+	<update id="updateProcessFiletype" parameterType="Dto">
+		UPDATE pr_process_filetype a
+		SET a.process_id = (
+			SELECT
+			b.process_id
+		FROM
+			pr_process b
+		where 
+		b.proj_id = a.proj_id
+	and b.process_subdir_id = a.subdir_id
+	and b.state = 1) where a.process_id is null
+	</update>
+	<!--updateFiletype 批量更新-->
+	<update id="updateSeqence" parameterType="Dto">
+		UPDATE aos_sequence a
+		SET a.current_value = (select max(process_id) from pr_process)
+		where a.name = 'seq_pr_process'
+	</update>
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ProcessPO">
+		UPDATE pr_process
+		<set>
+			<if test="process_id != null">
+		          process_id = #{process_id, jdbcType=INTEGER},  <!-- 过程ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="process_subdir_id != null">
+		          process_subdir_id = #{process_subdir_id, jdbcType=INTEGER},  <!-- 过程子目录ID -->
+			</if>
+			<if test="process_name != null">
+		          process_name = #{process_name, jdbcType=VARCHAR},  <!-- 过程子目录名称 -->
+			</if>
+			<if test="rootdir_id != null">
+		          rootdir_id = #{rootdir_id, jdbcType=INTEGER},  <!-- 过程根目录ID -->
+			</if>
+			<if test="rootdir_name != null">
+		          rootdir_name = #{rootdir_name, jdbcType=VARCHAR},  <!-- 过程根目录名称 -->
+			</if>
+			<if test="sort_no != null">
+		          sort_no = #{sort_no, jdbcType=INTEGER},  <!-- 排序号 -->
+			</if>
+			<if test="flow_state != null">
+		          flow_state = #{flow_state, jdbcType=INTEGER},  <!-- 是否必须 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=VARCHAR},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=VARCHAR},  <!-- 更新人 -->
+			</if>
+		          update_time = sysdate(),  <!-- 更新时间 -->
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 是否必须流程 0 是 1 否 -->
+			</if>
+		</set>
+		WHERE  process_id = #{process_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<update id="deleteByKey">
+		update pr_process  set state = 0 WHERE  process_id = #{process_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<update id="updateByProcessId">
+		update pr_process_filetype  set state = 0 WHERE  process_id = #{process_id}
+	</update>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ProcessPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_process WHERE  process_id = #{process_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ProcessPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_process
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ProcessPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_process
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ProcessPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_process
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listProcessPage" parameterType="Dto" resultType="ProcessPO" useCache="false">
+	    SELECT
+			<include refid="processColumn" />	
+		FRoM pr_templet_process
+		<where>
+		    <include refid="processEqual" />
+		</where>	
+	</select>
+	
+		<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listFiletypePage" parameterType="Dto" resultType="ProcessPO" useCache="false">
+	    SELECT
+			<include refid="filetypeColumn" />	
+		FRoM pr_templet_filetype
+		<where>
+		    <include refid="filetypeEqual" />
+		</where>	
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ProcessPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_process
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ProcessPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_process
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ProcessPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_process
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ProcessPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_process
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_process
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_process
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  process_id,  <!-- 过程ID -->
+		  proj_id,  <!-- 项目ID -->
+		  process_subdir_id,  <!-- 过程子目录ID -->
+		  process_name,  <!-- 过程子目录名称 -->
+		  rootdir_id,  <!-- 过程根目录ID -->
+		  rootdir_name,  <!-- 过程根目录名称 -->
+		  sort_no,  <!-- 排序号 -->
+		  flow_state,<!--是否必须-->
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段 -->
+	<sql id="processColumn">
+		  templet_id,  <!-- 过程ID -->
+		  rootdir_id,  <!-- 过程跟目录ID -->
+		  rootdir_name rootdir_name,  <!-- 过程跟目录名称 -->
+	   	  temp_proc_id process_subdir_id, <!-- 过程子目录ID -->
+		  temp_proc_name process_name,  <!-- 过程子目录 -->
+		  sort_no,  <!-- 排序号 -->
+		  flow_state,
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	<!-- 表字段 -->
+	<sql id="filetypeColumn">
+		  temp_filetype_id,
+		  temp_proc_id,  
+		  templet_id,
+		  temp_filetype_id as filetype_id,  
+		  temp_filetype_name as proc_filetype_name, 
+		  sort_no, 
+		  flow_state as file_state,
+		  create_user_id,  
+		  create_time,  
+		  update_user_id,  
+		  update_time,  
+		  state  
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_process.process_id,  <!-- 过程ID -->
+		  pr_process.proj_id,  <!-- 项目ID -->
+		  pr_process.process_subdir_id,  <!-- 过程子目录ID -->
+		  pr_process.process_name,  <!-- 过程子目录名称 -->
+		  pr_process.rootdir_id,  <!-- 过程根目录ID -->
+		  pr_process.rootdir_name,  <!-- 过程根目录名称 -->
+		  pr_process.sort_no,  <!-- 排序号 -->
+		  pr_process.create_user_id,  <!-- 创建人 -->
+		  pr_process.create_time,  <!-- 创建时间 -->
+		  pr_process.update_user_id,  <!-- 更新人 -->
+		  pr_process.update_time,  <!-- 更新时间 -->
+		  pr_process.state  <!-- 是否必须流程 0 是 1 否 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="process_id != null ">
+		      AND process_id = #{process_id}  <!-- 过程ID -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="process_subdir_id != null ">
+		      AND process_subdir_id = #{process_subdir_id}  <!-- 过程子目录ID -->
+		</if>
+	    <if test="process_name != null and process_name != ''">
+		      AND process_name = #{process_name}  <!-- 过程子目录名称 -->
+		</if>
+	   <if test="rootdir_id != null ">
+		      AND rootdir_id = #{rootdir_id}  <!-- 过程根目录ID -->
+		</if>
+	    <if test="rootdir_name != null and rootdir_name != ''">
+		      AND rootdir_name = #{rootdir_name}  <!-- 过程根目录名称 -->
+		</if>
+	   <if test="sort_no != null ">
+		      AND sort_no = #{sort_no}  <!-- 排序号 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+		      AND state >= 1 <!-- 是否必须流程 0 是 1 否 -->
+		      order by sort_no
+	</sql>
+	
+	
+	<sql id="processEqual">
+		 <if test="templet_id != null and templet_id != ''">
+		      and templet_id=#{templet_id}
+		</if>
+		and state =1
+	</sql>
+	
+	<sql id="filetypeEqual">
+		 <if test="templet_id != null and templet_id != ''">
+		      and templet_id=#{templet_id}
+		</if>
+		and state =1
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="process_name != null and process_name != ''">
+		      AND process_name like '${process_name}%'  <!-- 过程子目录名称 -->
+		</if>
+	    <if test="rootdir_name != null and rootdir_name != ''">
+		      AND rootdir_name like '${rootdir_name}%'  <!-- 过程根目录名称 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      AND create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      AND update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 是否必须流程 0 是 1 否 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="process_name != null and process_name != ''">
+		      Or process_name like '${process_name}%'  <!-- 过程子目录名称 -->
+		</if>
+	    <if test="rootdir_name != null and rootdir_name != ''">
+		      Or rootdir_name like '${rootdir_name}%'  <!-- 过程根目录名称 -->
+		</if>
+	    <if test="create_user_id != null and create_user_id != ''">
+		      Or create_user_id like '${create_user_id}%'  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_user_id != null and update_user_id != ''">
+		      Or update_user_id like '${update_user_id}%'  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 是否必须流程 0 是 1 否 -->
+		</if>
+	</sql>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="rootdirList" parameterType="Dto" resultType="ProcessPO">
+		SELECT
+			DISTINCT rootdir_id, rootdir_name
+		FROM pr_process
+		<where>
+		    proj_id = #{proj_id}
+		 and state = '1'
+		</where>	
+		order by sort_no
+	</select>
+	
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="subdirList" parameterType="Dto" resultType="ProcessPO">
+		SELECT
+			 process_id, process_name,rootdir_id,rootdir_name,process_subdir_id
+		FROM pr_process
+		<where>
+		    proj_id = #{proj_id}
+		 and rootdir_id = #{rootdir_id}
+		 and state = '1'
+		</where>
+		order by sort_no	
+	</select>
+	
+	
+	
+	<select id="listComboBoxTempletData" resultType="Dto">
+		SELECT
+		templet_id AS value, templet_name AS display
+		FROM
+		pr_templet_main where state = 2
+	</select>
+	<!-- 项目人员 -->
+	<select id="listProjPersonInfo" parameterType="Dto" resultType="Dto">
+	SELECT
+		bpt.`TEAM_USER_ID` AS VALUE,
+		au.`name` AS proj_person ,
+		CONCAT( au.`name`, '(',bprt.`TRP_NAME`,')-', bpt.`TEAM_USER_ID` ) AS display
+		FROM `bs_proj_teams` bpt,
+		`aos_user` au,
+		`bs_proj_role_types` bprt
+		WHERE bpt.`TEAM_USER_ID` = au.`id`
+		AND bpt.`TRP_CODE` = bprt.`TRP_CODE`
+		<if test="proj_id != null and proj_id != ''">
+			AND bpt.`PROJ_ID` = #{proj_id}  <!-- 周报id -->
+			</if>
+			    GROUP BY VALUE
+	</select> 
+	
+	<!-- 周报详情 -->
+	<select id="listWeekDetailInfo" parameterType="Dto" resultType="Dto">
+	select a.solve,a.description from ta_week a where 1=1 
+	 <if test="week_id != null and week_id != ''">
+		      and week_id = #{week_id}  <!-- 周报id -->
+		</if>
+		 <if test="week_code != null and week_code != ''">
+		      and week_code = #{week_code}  <!-- 周报code -->
+		</if>
+	</select> 
+	<!-- 缺陷新增数 -->
+	<select id="listProjNum" parameterType="Dto" resultType="Dto">
+	SELECT
+  ( SELECT
+     COUNT(0)
+   FROM qa_bug_manage
+   WHERE create_time BETWEEN(select begin_date from ta_week where week_id =${week_id})
+       AND (select end_date from ta_week where week_id =${week_id})  
+  ) AS bug_add_num,
+  (SELECT
+     COUNT(0)
+   FROM qa_bug_manage
+   WHERE create_time BETWEEN(select begin_date from ta_week where week_id =${week_id})
+       AND (select end_date from ta_week where week_id =${week_id}) 
+       AND close_time <![CDATA[ <= ]]> (select end_date from ta_week where week_id =${week_id})
+  ) AS bug_fin_num,
+  (SELECT
+     COUNT(0)
+   FROM ta_task
+   WHERE create_time BETWEEN(select begin_date from ta_week where week_id =${week_id})
+       AND (select end_date from ta_week where week_id =${week_id})  
+  ) AS task_add_num,
+  (SELECT
+     COUNT(0)
+   FROM ta_task
+   WHERE create_time BETWEEN(select begin_date from ta_week where week_id =${week_id})
+       AND (select end_date from ta_week where week_id =${week_id}) 
+       AND real_end_time <![CDATA[ <= ]]> (select end_date from ta_week where week_id =${week_id})
+  )AS task_fin_num,
+  (SELECT
+     COUNT(0)
+   FROM re_demand_action
+   WHERE create_time BETWEEN(select begin_date from ta_week where week_id =${week_id})
+       AND (select end_date from ta_week where week_id =${week_id})  
+  ) AS demand_add_num,
+  (SELECT
+     COUNT(0)
+   FROM re_demand_action
+   WHERE create_time BETWEEN(select begin_date from ta_week where week_id =${week_id})
+       AND (select end_date from ta_week where week_id =${week_id}) 
+       AND AD_ACTUAL_FINISH_DATE <![CDATA[ <= ]]> (select end_date from ta_week where week_id =${week_id})
+  )AS demand_fin_num
+	</select>
+	<!-- 缺陷完成数 -->
+	<select id="bugFinNum" parameterType="Dto" resultType="Dto">
+	SELECT
+     COUNT(0) AS bug_fin_num
+   FROM qa_bug_manage
+   WHERE create_time BETWEEN(
+   select begin_date from ta_week where week_id =${week_id})
+   AND (select end_date from ta_week where week_id =${week_id})
+   and close_time <![CDATA[ < ]]> (select end_date from ta_week where week_id =${week_id} )
+	</select>
+	
+	<select id="listProjInfo" parameterType="Dto" resultType="Dto">
+		SELECT proj_id,
+			proj_name,
+			type_code,
+			(select type_name from bs_proj_types b where b.type_code= a.type_code ) as type_code_name,
+			pm_user_id,
+			pm2_user_id,
+			(SELECT 
+			  GROUP_CONCAT(CONCAT(au.`name`,'-',bpt.TEAM_USER_ID)) AS NAME
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au
+			  WHERE bpt.`PROJ_ID` = a.`PROJ_ID`
+			  AND bpt.`TRP_CODE` = '26'
+			  AND au.id = bpt.`TEAM_USER_ID`) pm_user_name,
+			  (SELECT 
+			  GROUP_CONCAT(CONCAT(au.`name`,'-',bpt.TEAM_USER_ID)) AS NAME
+			FROM
+			  `bs_proj_teams` bpt,
+			  `aos_user` au
+			  WHERE bpt.`PROJ_ID` = a.`PROJ_ID`
+			  AND bpt.`TRP_CODE` = '10'
+			  AND au.id = bpt.`TEAM_USER_ID`) pm2_user_name,
+			client_name,
+			client_address,
+			date_format(begin_date,'%Y-%m-%d')begin_date,
+			state
+		 FROM bs_proj_commons a where proj_id = #{proj_id}
+	</select>
+		<!-- 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="listComboBoxRootDirId" resultType="Dto">
+		SELECT
+		rootdir_id AS value, rootdir_name AS display
+		FROM
+		pr_rootdir
+		where state =1
+	</select>
+	
+		<!-- 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="listComboBoxSubDirId" resultType="Dto">
+		SELECT
+		subdir_id AS  value, subdir_name AS display
+		FROM
+		pr_subdir
+		where state =1
+		  <if test="rootdir_id != null and rootdir_id != ''">
+		      and rootdir_id = #{rootdir_id}  <!-- 过程子目录名称 -->
+		</if>
+	
+	</select>
+	<!-- 插入过程裁剪表 -->
+	<insert id="insertProcessCut"  parameterType="Dto">
+	insert into pr_process ( 
+		  proj_id, 
+		  process_subdir_id,  
+		  process_name,  
+		  rootdir_id,  
+		  rootdir_name,  
+		  sort_no, 
+		  flow_state,
+		  create_user_id,  
+		  create_time , 
+		  state)
+		  select* from (select
+		  #{proj_id},
+		  subdir_id, 
+		  temp_proc_name process_name,  
+		  rootdir_id,  
+		  rootdir_name rootdir_name,  
+		  sort_no,  
+		  flow_state,
+		  #{create_user_id},
+		  sysdate(),
+		  state from pr_templet_process where templet_id = #{templet_id} and state =1
+		  ) as tb
+	</insert>
+	
+	<!-- 新增过程带入文件 -->
+	<insert id="insertFiletype"  parameterType="Dto">
+	insert into pr_process_filetype ( 
+		  process_id,
+		  proj_id, 
+		  subdir_id,
+		  filetype_id,  
+		  proc_filetype_name,  
+		  sort_no, 
+		  file_state,
+		  create_user_id, 
+		  create_time , 
+		  state)
+		  select * from (select
+		  #{process_id},
+		  #{proj_id},
+		  subdir_id,
+		  filetype_id, 
+		  filetype_name,    
+		  sort_no,  
+		  1 as file_state,
+		  #{create_user_id},
+		  sysdate(),
+		  state from pr_filetype where subdir_id = #{subdir_id} and state =1
+		  )
+		as tb
+	</insert>
+	<!-- 插入文件裁剪表 -->
+	<insert id="insertProcessFiletype"  parameterType="Dto">
+	insert into pr_process_filetype ( 
+		  proj_id, 
+		  subdir_id,
+		  filetype_id,  
+		  proc_filetype_name,  
+		  sort_no, 
+		  file_state,
+		  create_user_id, 
+		  create_time , 
+		  state)
+		  select * from (select
+		  #{proj_id},
+		  subdir_id,
+		  filetype_id, 
+		  temp_filetype_name,    
+		  sort_no,  
+		  flow_state,
+		  #{create_user_id},
+		  sysdate(),
+		  state from pr_templet_filetype where templet_id = #{templet_id} and state =1
+		  )
+		as tb
+	</insert>
+	<!-- 批量更新 -->
+	<update id="updateFiletype" parameterType="TempletFiletypePO">
+		UPDATE pr_templet_filetype a
+		SET a.temp_proc_id = (
+			SELECT
+			b.temp_proc_id
+		FROM
+			pr_templet_process b
+		where 
+		b.templet_id = a.templet_id
+	and b.subdir_id = a.subdir_id
+	and b.state = 1) where a.temp_proc_id is null
+		</update>
+		
+			
+	<!--updateCUTFiletype 批量更新-->
+	<update id="updateCutFiletype" parameterType="Dto">
+		UPDATE pr_process_filetype a
+	SET a.process_id = (
+	SELECT
+		b.process_id
+	FROM
+		pr_process b
+	where a.subdir_id = b.process_subdir_id
+	and a.proj_id = b.proj_id
+	and state = 1
+		)
+		where a.process_id is NULL and a.proj_id = #{proj_id}
+		</update>
+		
+		<!--updateProcessGridSortNo 更新-->
+	<update id="updateProcessGridSortNo" parameterType="Dto">
+		UPDATE pr_process a
+	SET a.sort_no =#{sort_no}
+		where a.process_id = #{process_id}
+		</update>
+	
+	<!-- 公共下拉框 评审文档过滤 -->
+	<select id="listComboBoxPr_PRocess" resultType="Dto">
+			SELECT 
+			  pp.`process_name` AS display,
+			  pp.`process_subdir_id` AS value
+			FROM
+			  pr_process pp
+			WHERE process_NAME LIKE '%评审%' 
+			<if test="proj_id != null and proj_id != ''">
+				    and pp.`proj_id` = ${proj_id}
+			</if>
+			  GROUP BY VALUE
+	</select>
+	
+	
+		<!-- 查询是否重复 -->
+	<select id="countProcessId" resultType="Integer">
+		select count(1) from pr_process 
+		where proj_id = #{proj_id}
+		 and rootdir_id = #{rootdir_id}
+		 and process_subdir_id =#{process_subdir_id}
+		 and state = 1
+	</select>
+	
+	
+	<!-- 查询是否已上传文件 -->
+	<select id="countProcessFiletype" resultType="Integer">
+	select count(1) from pr_process_file_upload a where a.proj_id = #{proj_id} and a.process_id = #{process_id}
+	</select>
+</mapper>

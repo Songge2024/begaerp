@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- pr_contract_pay_info[ContractPayInfo]SQL自动映射 -->
+<!--  注意:此文件由AOS平台自动生成-禁止手工修改 2017-12-21 14:27:43 -->
+<mapper namespace="com.bl3.pm.process.dao.ContractPayInfoDao">
+	
+	<!-- 公共下拉框 查询自定义下拉组件数据(重点是字段的别名) -->
+	<select id="listComboBoxData" resultType="Dto">
+		SELECT
+		proj_id AS value, proj_name AS display
+		FROM
+		bs_proj_commons
+		
+	</select>
+	
+	<select id="listProjInfo" parameterType="Dto" resultType="Dto">
+		SELECT 
+		    pcs.*,
+		    bpc.proj_id,
+			bpc.proj_name,
+			bpc.proj_code,
+			bpc.type_code,
+			(select type_name from bs_proj_types b where b.type_code= bpc.type_code ) as type_code_name,
+			bpc.pm_user_id,
+			bpc.pm2_user_id,
+			bpc.client_name,
+			bpc.client_address,
+			bpc.client_out_phone,
+			date_format(begin_date,'%Y-%m-%d')begin_date,
+			bpc.period,
+			bpc.ct_code,
+			sum(rece_amount) as ct_money,
+			sum(pay_amount) as ct_pay_money,
+			bpc.pt_desc,
+			bpc.rt_desc,
+			bpc.state
+		FROM
+			bs_proj_commons bpc
+		LEFT JOIN pr_contract_stage pcs ON bpc.proj_id = pcs.proj_id
+		where bpc.proj_id = #{proj_id}
+		GROUP BY
+		bpc.proj_id
+		
+	</select>
+	
+	<!-- 插入一个数据持久化对象(插入字段为传入PO实体的非空属性) -->
+	<insert id="insert"  parameterType="ContractPayInfoPO">
+		INSERT INTO pr_contract_pay_info (
+		<if test="ct_id != null">
+	         ct_id, <!-- 合同ID -->
+		</if>
+		<if test="proj_id != null">
+	         proj_id, <!-- 项目ID -->
+		</if>
+		<if test="stage_id != null">
+	         stage_id, <!--  阶段名称ID -->
+		</if>
+		<if test="pay_name != null and pay_name != ''">
+	         pay_name, <!-- 支付名称 -->
+		</if>
+		<if test="pay_money != null">
+	         pay_money, <!-- 支付金额 -->
+		</if>
+		<if test="pay_condition != null and pay_condition != ''">
+	         pay_condition, <!-- 支付条件 -->
+		</if>
+		<if test="pay_time != null and pay_time != ''">
+	         pay_time, <!-- 支付时间 -->
+		</if>
+		<if test="pay_object != null and pay_object != ''">
+	         pay_object, <!-- 支付人 -->
+		</if>
+		<if test="remark != null and remark != ''">
+	         remark, <!-- 备注 -->
+		</if>
+		<if test="create_user_id != null">
+	         create_user_id, <!-- 创建人 -->
+		</if>
+		<if test="update_user_id != null">
+	         update_user_id, <!-- 更新人 -->
+		</if>
+		<if test="update_time != null and update_time != ''">
+	         update_time, <!-- 更新时间 -->
+		</if>
+		<if test="state != null and state != ''">
+	         state, <!-- 状态 -->
+		</if>
+	          create_time,<!-- 创建时间 -->
+	          pay_id  
+		)VALUES(
+		<if test="ct_id != null">
+	          #{ct_id, jdbcType=INTEGER}, <!-- 合同ID -->
+	    </if>
+		<if test="proj_id != null">
+	          #{proj_id, jdbcType=INTEGER}, <!-- 项目ID -->
+	    </if>
+		<if test="stage_id != null">
+	          #{stage_id, jdbcType=INTEGER}, <!--  阶段名称ID -->
+	    </if>
+		<if test="pay_name != null and pay_name != ''">
+	          #{pay_name, jdbcType=VARCHAR}, <!-- 支付名称 -->
+	    </if>
+		<if test="pay_money != null">
+	          #{pay_money, jdbcType=NUMERIC}, <!-- 支付金额 -->
+	    </if>
+		<if test="pay_condition != null and pay_condition != ''">
+	          #{pay_condition, jdbcType=VARCHAR}, <!-- 支付条件 -->
+	    </if>
+		<if test="pay_time != null and pay_time != ''">
+	          #{pay_time, jdbcType=VARCHAR}, <!-- 支付时间 -->
+	    </if>
+		<if test="pay_object != null and pay_object != ''">
+	          #{pay_object, jdbcType=VARCHAR}, <!-- 支付人 -->
+	    </if>
+		<if test="remark != null and remark != ''">
+	          #{remark, jdbcType=VARCHAR}, <!-- 备注 -->
+	    </if>
+		<if test="create_user_id != null">
+	          #{create_user_id, jdbcType=INTEGER}, <!-- 创建人 -->
+	    </if>
+		<if test="update_user_id != null">
+	          #{update_user_id, jdbcType=INTEGER}, <!-- 更新人 -->
+	    </if>
+		<if test="update_time != null and update_time != ''">
+	          #{update_time, jdbcType=VARCHAR}, <!-- 更新时间 -->
+	    </if>
+		<if test="state != null and state != ''">
+	          #{state, jdbcType=VARCHAR}, <!-- 状态 -->
+	    </if>
+		sysdate(), <!-- 创建时间 -->
+		null
+	  
+		)
+	</insert>
+	
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey1" parameterType="ContractPayInfoPO">
+		UPDATE pr_contract_stage
+		set		pay_amount=pr_contract_stage.pay_amount+#{pay_money}
+		WHERE  stage_id = #{stage_id}
+	</update>
+	
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey2" parameterType="ContractPayInfoPO">
+		UPDATE pr_contract_stage
+		set		pay_amount=pr_contract_stage.pay_amount-#{pay_money}
+		WHERE  stage_id = #{stage_id}
+	</update>
+	
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey3" parameterType="ContractPayInfoPO">
+		UPDATE pr_contract_stage
+		set	   pay_amount=#{pay_money}
+		WHERE  stage_id = #{stage_id}
+	</update>
+	
+		<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey4" parameterType="ContractPayInfoPO">
+		UPDATE pr_contract_stage
+		set	   pay_amount = pay_amount+#{pay_money}
+		WHERE  stage_id = #{stage_id}
+	</update>
+	
+	<!-- 插入一个数据持久化对象(含所有字段) -->
+	<insert id="insertAll"  parameterType="ContractPayInfoPO">
+		INSERT INTO pr_contract_pay_info (
+		    <include refid="column" />
+		)
+		VALUES (
+		    #{pay_id, jdbcType=INTEGER},  <!-- 支付ID -->
+		    #{ct_id, jdbcType=INTEGER},  <!-- 合同ID -->
+		    #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+		    #{stage_id, jdbcType=INTEGER},  <!--  阶段名称ID -->
+		    #{pay_name, jdbcType=VARCHAR},  <!-- 支付名称 -->
+		    #{pay_money, jdbcType=NUMERIC},  <!-- 支付金额 -->
+		    #{pay_condition, jdbcType=VARCHAR},  <!-- 支付条件 -->
+		    #{pay_time, jdbcType=VARCHAR},  <!-- 支付时间 -->
+		    #{pay_object, jdbcType=VARCHAR},  <!-- 支付人 -->
+		    #{remark, jdbcType=VARCHAR},  <!-- 备注 -->
+		    #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+		    sysdate(),  <!-- 创建时间 -->
+		    #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+		    #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+		    #{state, jdbcType=VARCHAR}  <!-- 状态 -->
+		)
+	</insert>
+
+	<!-- 根据主键修改数据持久化对象 -->
+	<update id="updateByKey" parameterType="ContractPayInfoPO">
+		UPDATE pr_contract_pay_info
+		<set>
+			<if test="pay_id != null">
+		          pay_id = #{pay_id, jdbcType=INTEGER},  <!-- 支付ID -->
+			</if>
+			<if test="ct_id != null">
+		          ct_id = #{ct_id, jdbcType=INTEGER},  <!-- 合同ID -->
+			</if>
+			<if test="proj_id != null">
+		          proj_id = #{proj_id, jdbcType=INTEGER},  <!-- 项目ID -->
+			</if>
+			<if test="stage_id != null">
+		          stage_id = #{stage_id, jdbcType=INTEGER},  <!--  阶段名称ID -->
+			</if>
+			<if test="pay_name != null">
+		          pay_name = #{pay_name, jdbcType=VARCHAR},  <!-- 支付名称 -->
+			</if>
+			<if test="pay_money != null">
+		          pay_money = #{pay_money, jdbcType=NUMERIC},  <!-- 支付金额 -->
+			</if>
+			<if test="pay_condition != null">
+		          pay_condition = #{pay_condition, jdbcType=VARCHAR},  <!-- 支付条件 -->
+			</if>
+			<if test="pay_time != null">
+		          pay_time = #{pay_time, jdbcType=VARCHAR},  <!-- 支付时间 -->
+			</if>
+			<if test="pay_object != null">
+		          pay_object = #{pay_object, jdbcType=VARCHAR},  <!-- 支付人 -->
+			</if>
+			<if test="remark != null">
+		          remark = #{remark, jdbcType=VARCHAR},  <!-- 备注 -->
+			</if>
+			<if test="create_user_id != null">
+		          create_user_id = #{create_user_id, jdbcType=INTEGER},  <!-- 创建人 -->
+			</if>
+			<if test="create_time != null">
+		          create_time = #{create_time, jdbcType=VARCHAR},  <!-- 创建时间 -->
+			</if>
+			<if test="update_user_id != null">
+		          update_user_id = #{update_user_id, jdbcType=INTEGER},  <!-- 更新人 -->
+			</if>
+			<if test="update_time != null">
+		          update_time = #{update_time, jdbcType=VARCHAR},  <!-- 更新时间 -->
+			</if>
+			<if test="state != null">
+		          state = #{state, jdbcType=VARCHAR},  <!-- 状态 -->
+			</if>
+		</set>
+		WHERE  pay_id = #{pay_id}
+	</update>
+	
+	<!-- 根据主键删除数据持久化对象 -->
+	<delete id="deleteByKey">
+		DELETE FROM pr_contract_pay_info WHERE  pay_id = #{pay_id}
+	</delete>
+
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey" resultType="ContractPayInfoPO">
+		SELECT
+		<include refid="column" />
+		FROM pr_contract_pay_info WHERE  pay_id = #{pay_id}
+	</select>
+	
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey2" resultType="int">
+		SELECT
+		count(stage_id)
+		FROM pr_contract_pay_info WHERE  pay_id = #{pay_id}
+	</select>
+	
+	<!-- 根据主键查询并返回数据持久化对象 -->
+	<select id="selectByKey1" resultType="int">
+		SELECT
+		 pay_money
+		FROM pr_contract_pay_info WHERE  pay_id = #{pay_id}
+	</select>
+
+	<!-- 根据唯一组合条件查询并返回数据持久化对象 -->
+	<select id="selectOne" parameterType="Dto" resultType="ContractPayInfoPO">
+		SELECT
+		    <include refid="column" />
+		FROM pr_contract_pay_info
+		<where>
+		    <include refid="equal" />
+		</where>		
+	</select>
+
+	<!-- 根据Dto查询并返回数据持久化对象集合 -->
+	<select id="list" parameterType="Dto" resultType="ContractPayInfoPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_contract_pay_info
+		<where>
+		    <include refid="equal" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto查询并返回分页数据持久化对象集合 -->
+	<select id="listPage" parameterType="Dto" resultType="ContractPayInfoPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_contract_pay_info
+		<where>
+		    <include refid="equal" />
+		</where>	
+		order by pay_id desc
+	</select>
+	
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="like" parameterType="Dto" resultType="ContractPayInfoPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_contract_pay_info
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likeOr" parameterType="Dto" resultType="ContractPayInfoPO">
+		SELECT
+			<include refid="column" />	
+		FROM pr_contract_pay_info
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>
+
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)交集 -->
+	<select id="likePage" parameterType="Dto" resultType="ContractPayInfoPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_contract_pay_info
+		<where>
+		    <include refid="like" />
+		</where>	
+	</select>
+	<!-- 根据Dto模糊查询并返回分页数据持久化对象集合(字符型字段模糊匹配，其余字段精确匹配)并集 -->
+	<select id="likeOrPage" parameterType="Dto" resultType="ContractPayInfoPO" useCache="false">
+	    SELECT
+			<include refid="column" />	
+		FRoM pr_contract_pay_info
+		<where>
+		    <include refid="likeOr" />
+		</where>	
+	</select>	
+	
+	<!-- 根据Dto统计行数 -->
+	<select id="rows" resultType="Integer" parameterType="Dto">
+		SELECT COUNT(1) AS aos_rows_ FROM pr_contract_pay_info
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 根据数学表达式进行数学运算 -->
+	<select id="calc" parameterType="Dto" resultType="String">
+		SELECT
+			${_expr}
+		FROM pr_contract_pay_info
+		<where>
+		    <include refid="equal" />
+		</where>
+	</select>
+	
+	<!-- 表字段 -->
+	<sql id="column">
+		  pay_id,  <!-- 支付ID -->
+		  ct_id,  <!-- 合同ID -->
+		  proj_id,  <!-- 项目ID -->
+		  stage_id,  <!--  阶段名称ID -->
+		  pay_name,  <!-- 支付名称 -->
+		  pay_money,  <!-- 支付金额 -->
+		  pay_condition,  <!-- 支付条件 -->
+		  str_to_date(pay_time,'%Y-%m-%d') pay_time,  <!-- 支付时间 -->
+		  pay_object,  <!-- 支付人 -->
+		  remark,  <!-- 备注 -->
+		  (select name from aos_user where id =create_user_id)create_user_name,<!-- 创建人名称 -->
+		  create_user_id,  <!-- 创建人 -->
+		  create_time,  <!-- 创建时间 -->
+		  update_user_id,  <!-- 更新人 -->
+		  update_time,  <!-- 更新时间 -->
+		  state  <!-- 状态 -->
+	</sql>
+	
+	<!-- 表字段(用于外表的关联时引用) -->
+	<sql id="column2">
+		  pr_contract_pay_info.pay_id,  <!-- 支付ID -->
+		  pr_contract_pay_info.ct_id,  <!-- 合同ID -->
+		  pr_contract_pay_info.proj_id,  <!-- 项目ID -->
+		  pr_contract_pay_info.stage_id,  <!--  阶段名称ID -->
+		  pr_contract_pay_info.pay_name,  <!-- 支付名称 -->
+		  pr_contract_pay_info.pay_money,  <!-- 支付金额 -->
+		  pr_contract_pay_info.pay_condition,  <!-- 支付条件 -->
+		  pr_contract_pay_info.pay_time,  <!-- 支付时间 -->
+		  pr_contract_pay_info.pay_object,  <!-- 支付人 -->
+		  pr_contract_pay_info.remark,  <!-- 备注 -->
+		  pr_contract_pay_info.create_user_id,  <!-- 创建人 -->
+		  pr_contract_pay_info.create_time,  <!-- 创建时间 -->
+		  pr_contract_pay_info.update_user_id,  <!-- 更新人 -->
+		  pr_contract_pay_info.update_time,  <!-- 更新时间 -->
+		  pr_contract_pay_info.state  <!-- 状态 -->
+	</sql>
+
+	<!-- Where精确匹配字段 -->
+	<sql id="equal">
+	   <if test="pay_id != null ">
+		      AND pay_id = #{pay_id}  <!-- 支付ID -->
+		</if>
+	   <if test="ct_id != null ">
+		      AND ct_id = #{ct_id}  <!-- 合同ID -->
+		</if>
+	   <if test="proj_id != null ">
+		      AND proj_id = #{proj_id}  <!-- 项目ID -->
+		</if>
+	   <if test="stage_id != null ">
+		      AND stage_id = #{stage_id}  <!--  阶段名称ID -->
+		</if>
+	    <if test="pay_name != null and pay_name != ''">
+		      AND pay_name = #{pay_name}  <!-- 支付名称 -->
+		</if>
+	   <if test="pay_money != null ">
+		      AND pay_money = #{pay_money}  <!-- 支付金额 -->
+		</if>
+	    <if test="pay_condition != null and pay_condition != ''">
+		      AND pay_condition = #{pay_condition}  <!-- 支付条件 -->
+		</if>
+	    <if test="pay_time != null and pay_time != ''">
+		      AND pay_time = #{pay_time}  <!-- 支付时间 -->
+		</if>
+	    <if test="pay_object != null and pay_object != ''">
+		      AND pay_object = #{pay_object}  <!-- 支付人 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark = #{remark}  <!-- 备注 -->
+		</if>
+	   <if test="create_user_id != null ">
+		      AND create_user_id = #{create_user_id}  <!-- 创建人 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time = #{create_time}  <!-- 创建时间 -->
+		</if>
+	   <if test="update_user_id != null ">
+		      AND update_user_id = #{update_user_id}  <!-- 更新人 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time = #{update_time}  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state = #{state}  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	<!-- Where模糊匹配字段 交集-->
+	<sql id="like">
+	    <if test="pay_name != null and pay_name != ''">
+		      AND pay_name like '${pay_name}%'  <!-- 支付名称 -->
+		</if>
+	    <if test="pay_condition != null and pay_condition != ''">
+		      AND pay_condition like '${pay_condition}%'  <!-- 支付条件 -->
+		</if>
+	    <if test="pay_time != null and pay_time != ''">
+		      AND pay_time like '${pay_time}%'  <!-- 支付时间 -->
+		</if>
+	    <if test="pay_object != null and pay_object != ''">
+		      AND pay_object like '${pay_object}%'  <!-- 支付人 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      AND remark like '${remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      AND create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      AND update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      AND state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	<!-- Where模糊匹配字段 并集 -->
+	<sql id="likeOr">
+	    <if test="pay_name != null and pay_name != ''">
+		      Or pay_name like '${pay_name}%'  <!-- 支付名称 -->
+		</if>
+	    <if test="pay_condition != null and pay_condition != ''">
+		      Or pay_condition like '${pay_condition}%'  <!-- 支付条件 -->
+		</if>
+	    <if test="pay_time != null and pay_time != ''">
+		      Or pay_time like '${pay_time}%'  <!-- 支付时间 -->
+		</if>
+	    <if test="pay_object != null and pay_object != ''">
+		      Or pay_object like '${pay_object}%'  <!-- 支付人 -->
+		</if>
+	    <if test="remark != null and remark != ''">
+		      Or remark like '${remark}%'  <!-- 备注 -->
+		</if>
+	    <if test="create_time != null and create_time != ''">
+		      Or create_time like '${create_time}%'  <!-- 创建时间 -->
+		</if>
+	    <if test="update_time != null and update_time != ''">
+		      Or update_time like '${update_time}%'  <!-- 更新时间 -->
+		</if>
+	    <if test="state != null and state != ''">
+		      Or state like '${state}%'  <!-- 状态 -->
+		</if>
+	</sql>
+	
+	<select  id="getmoney" parameterType="Dto" resultType="ContractPayInfoPO" useCache="false">
+		SELECT
+		pcs.*,
+		bpc.ct_id,
+		sum(pay_amount)total_pay_money,
+		sum(rece_amount)total_money,
+		cont_name,cont_type,
+		cp_bengin_date,cp_end_date,
+		cp_type
+		FROM
+			bs_proj_contract bpc
+		LEFT JOIN pr_contract_stage pcs ON bpc.ct_id = pcs.ct_id
+		where bpc.proj_id = #{proj_id}
+		GROUP BY
+		bpc.ct_id
+	</select>
+	
+	<select  id="getmoney1" parameterType="Dto" resultType="ContractPayInfoPO" useCache="false">
+		SELECT
+		pcpi.*,
+		pcs.stage_id,
+		sum(pay_money)pay_amount,
+		pcs.stage_code,
+		pcs.stage_name,
+		pcs.percentage,
+		pcs.rece_amount
+		FROM
+			pr_contract_stage pcs
+		LEFT JOIN pr_contract_pay_info pcpi ON pcs.stage_id = pcpi.stage_id
+		where pcs.ct_id = #{ct_id}
+		GROUP BY
+		pcs.stage_id
+	</select>
+	
+</mapper>
